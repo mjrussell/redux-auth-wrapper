@@ -1,5 +1,7 @@
 # redux-auth-wrapper
 
+[![Build Status](https://travis-ci.org/mjrussell/redux-auth-wrapper.svg?branch=master)](https://travis-ci.org/mjrussell/redux-auth-wrapper)
+
 **Decouple your Authentication and Authorization from your components!**
 
 ## Tutorial
