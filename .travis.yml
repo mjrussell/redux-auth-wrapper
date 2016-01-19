@@ -10,4 +10,6 @@ node_js:
   - "4"
   - "5"
 script:
-  - npm run test
+  - npm run test:cov
+after_success:
+- cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
