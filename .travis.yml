@@ -1,0 +1,13 @@
+sudo: false
+branches:
+  only:
+    - master
+language: node_js
+cache:
+  directories:
+  - node_modules
+node_js:
+  - "4"
+  - "5"
+script:
+  - npm run test
