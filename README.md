@@ -1,5 +1,6 @@
 # redux-auth-wrapper
-A React Higher Order Component (HOC) for handling Authentication and Authorization with Redux and React-Router
+
+**Decouple your Authentication and Authorization from your components!**
 
 ## Tutorial
 
@@ -79,7 +80,7 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param. 
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
-* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check
+* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the propert `authData` which is the result of the `userAuthSelector`
 
 ## Authorization & More Advanced Usage
 
@@ -103,3 +104,18 @@ means that logged out admins will be redirected to `/login` before checking if t
 
 Otherwise admins would be sent to `/app` if they weren't logged in and then redirected to `/login`, only to find themselves at `/app`
 after entering their credentials.
+
+### Where to define & apply the wrappers
+
+One benefit of the beginning example is that it is clear from looking at the Routes where the 
+authentication & authorization logic is applied.
+
+An alternative choice might be to use es7 decorators (after turning on the proper presets) in your component:
+
+```js
+import { UserIsAuthenticated } from '<projectpath>/auth/authWrappers';
+
+@UserIsAuthenticated
+class MyComponents extends Component {
+}
+```
