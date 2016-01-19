@@ -6,6 +6,8 @@
 
 **Decouple your Authentication and Authorization from your components!**
 
+`npm install --save redux-auth-wrapper`
+
 ## Tutorial
 
 Usage with [Redux-Simple-Router](https://github.com/rackt/redux-simple-router)
