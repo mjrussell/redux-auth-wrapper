@@ -63,10 +63,10 @@ export const UserAuthWrapper = authSelector =>
           this.ensureLoggedIn(nextProps)
         }
 
-        isAuthorized = () => predicate(this.props.authData);
+        isAuthorized = (authData) => predicate(authData);
 
         ensureLoggedIn = (props) => {
-          const { replace, location } = props
+          const { replace, location, authData } = props
           let query
           if (allowRedirectBack) {
             query = { redirect: `${location.pathname}${location.search}` }
@@ -74,7 +74,7 @@ export const UserAuthWrapper = authSelector =>
             query = {}
           }
 
-          if (!this.isAuthorized()) {
+          if (!this.isAuthorized(authData)) {
             replace({
               pathname: failureRedirectPath,
               query
@@ -85,10 +85,10 @@ export const UserAuthWrapper = authSelector =>
         render() {
           // Allow everything but the replace aciton creator to be passed down
           // Includes route props from React-Router and authData
-          const { replace, ...otherProps } = this.props
+          const { replace, authData, ...otherProps } = this.props
 
-          if (this.isAuthorized()) {
-            return <DecoratedComponent {...otherProps} />
+          if (this.isAuthorized(authData)) {
+            return <DecoratedComponent authData={authData} {...otherProps} />
           } else {
             // Don't need to display anything because the user will be redirected
             return <div/>

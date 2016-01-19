@@ -147,6 +147,7 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.location.pathname).to.equal('/auth')
 
     store.dispatch({ type: USER_LOGGED_OUT })
+    expect(store.getState().routing.location.pathname).to.equal('/login')
   })
 
   it('allows predicate authorization', () => {
