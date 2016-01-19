@@ -1,5 +1,6 @@
 # redux-auth-wrapper
 
+[![npm version](https://badge.fury.io/js/redux-auth-wrapper.svg)](https://badge.fury.io/js/redux-auth-wrapper)
 [![Build Status](https://travis-ci.org/mjrussell/redux-auth-wrapper.svg?branch=master)](https://travis-ci.org/mjrussell/redux-auth-wrapper)
 [![Coverage Status](https://coveralls.io/repos/github/mjrussell/redux-auth-wrapper/badge.svg?branch=master)](https://coveralls.io/github/mjrussell/redux-auth-wrapper?branch=master)
 
