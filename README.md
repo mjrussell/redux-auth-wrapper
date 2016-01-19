@@ -9,7 +9,7 @@ Usage with [Redux-Simple-Router](https://github.com/rackt/redux-simple-router)
 ```js
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore, combineReducers, combineReducers } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 import { createHistory } from 'history'
@@ -21,10 +21,14 @@ const reducer = combineReducers({
   routing: routeReducer,
   user: userReducer
 })
-const store = createStore(reducer)
 const history = createHistory()
+const routingMiddleware = syncHistory(history)
 
-syncReduxAndRouter(history, store)
+const finalCreateStore = compose(
+  applyMiddleware(routingMiddleware)
+)(createStore);
+const store = finalCreateStore(reducer)
+routingMiddleware.listenForReplays(store)
 
 const UserIsAuthenticated = UserAuthWrapper(state => state.user)('/login', 'UserIsAuthenticated')
 
@@ -59,8 +63,8 @@ When the user navigates to `/foo`, one of the following occurs:
 
 1. If The user data is null or an empty object:
 
-    The user is redicted to `/login?redirect=%2foo`
-    
+    The user is redirected to `/login?redirect=%2foo`
+
     *Notice the url contains the query parameter `redirect` for sending the user back to after you log them into your app*
 2. Otherwise:
 
@@ -77,10 +81,10 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 * `userAuthSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`
 * `failureRedirectPath` \(*String*): The path to redirect the browser to on a failed check
 * `wrapperDisplayName` \(*String*): A name describing this authentication or authorization check. It will display in the React-devtools
-* `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param. 
+* `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
-* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the propert `authData` which is the result of the `userAuthSelector`
+* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `userAuthSelector`
 
 ## Authorization & More Advanced Usage
 
@@ -99,7 +103,7 @@ const UserIsAdmin = UserAuthWrapper(state => state.user)('/app', 'UserIsAdmin', 
 <Route path="foo" component={UserIsAuthenticated(UserIsAdmin(Admin))}/>
 ```
 
-The ordering of the nested higher order components is important because `UserIsAuthenticated(UserIsAdmin(Admin))` 
+The ordering of the nested higher order components is important because `UserIsAuthenticated(UserIsAdmin(Admin))`
 means that logged out admins will be redirected to `/login` before checking if they are an admin.
 
 Otherwise admins would be sent to `/app` if they weren't logged in and then redirected to `/login`, only to find themselves at `/app`
@@ -107,7 +111,7 @@ after entering their credentials.
 
 ### Where to define & apply the wrappers
 
-One benefit of the beginning example is that it is clear from looking at the Routes where the 
+One benefit of the beginning example is that it is clear from looking at the Routes where the
 authentication & authorization logic is applied.
 
 An alternative choice might be to use es7 decorators (after turning on the proper presets) in your component:

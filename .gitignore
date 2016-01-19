@@ -1,5 +1,5 @@
 lib
-examples/**/*-bundle.js
+examples/**/bundle.js
 node_modules
 coverage
 npm-debug.log
