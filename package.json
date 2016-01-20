@@ -48,5 +48,8 @@
     "react-router": "2.0.0-rc5",
     "redux": "~3.0.0",
     "redux-simple-router": "~2.0.3"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^1.0.3"
   }
 }

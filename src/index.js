@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { routeActions } from 'redux-simple-router'
 import { connect } from 'react-redux'
+import hoistStatics from 'hoist-non-react-statics'
 
 const emptyOrNull = obj => {
   // null and undefined are "empty"
@@ -96,6 +97,6 @@ export const UserAuthWrapper = authSelector =>
         }
       }
 
-      return UserAuthWrapper
+      return hoistStatics(UserAuthWrapper, DecoratedComponent)
     }
   }

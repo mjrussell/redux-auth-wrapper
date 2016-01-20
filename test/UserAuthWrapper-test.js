@@ -264,4 +264,21 @@ describe('UserAuthWrapper', () => {
     // Props from parent
     expect(comp.props.testProp).to.equal(true)
   })
+
+  it('hoists statics to the wrapper', () => {
+    class WithStatic extends Component {
+      static staticProp = true;
+
+      render() {
+        return <div/>
+      }
+    }
+
+    WithStatic.staticFun = () => 'auth'
+
+    const authed = UserIsAuthenticated(WithStatic)
+    expect(authed.staticProp).to.equal(true)
+    expect(authed.staticFun).to.be.a('function')
+    expect(authed.staticFun()).to.equal('auth')
+  })
 })
