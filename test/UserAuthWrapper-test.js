@@ -59,6 +59,20 @@ class UnprotectedComponent extends Component {
   }
 }
 
+class UnprotectedParentComponent extends Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return (
+      <div>
+        {this.props.children}
+      </div>
+    )
+  }
+}
+
 const userSelector = state => state.user
 
 const UserIsAuthenticated = UserAuthWrapper(userSelector)('/login', 'UserIsAuthenticated')
@@ -76,6 +90,9 @@ const routes = (
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
     <Route path="testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
+    <Route path="parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
+      <Route path="child" component={UserIsAuthenticated(UnprotectedComponent)} />
+    </Route>
   </Route>
 )
 
@@ -206,5 +223,23 @@ describe('UserAuthWrapper', () => {
     history.push('/testMcDudersonOnly')
     expect(store.getState().routing.location.pathname).to.equal('/testMcDudersonOnly')
     expect(store.getState().routing.location.search).to.equal('')
+  })
+
+  it('supports nested routes', () => {
+    const { history, store } = setupTest()
+
+    history.push('/parent/child')
+    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fparent%2Fchild')
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/parent/child')
+    expect(store.getState().routing.location.pathname).to.equal('/parent/child')
+    expect(store.getState().routing.location.search).to.equal('')
+
+    store.dispatch({ type: USER_LOGGED_OUT })
+    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fparent%2Fchild')
   })
 })
