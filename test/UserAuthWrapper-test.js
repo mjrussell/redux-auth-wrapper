@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react'
 import { Route, Router } from 'react-router'
 import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux'
-import { renderIntoDocument } from 'react-addons-test-utils'
+import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routeReducer, syncHistory  } from 'redux-simple-router'
 
@@ -37,6 +37,16 @@ const configureStore = (history, initialState) => {
   return createStoreWithMiddleware(rootReducer, initialState)
 }
 
+const userSelector = state => state.user
+
+const UserIsAuthenticated = UserAuthWrapper(userSelector)('/login', 'UserIsAuthenticated')
+
+const HiddenNoRedir = UserAuthWrapper(userSelector)('/', 'NoRedir', () => false, false)
+
+const UserIsOnlyTest = UserAuthWrapper(userSelector)('/', 'UserIsOnlyTest', user => user.firstName === 'Test')
+
+const UserIsOnlyMcDuderson = UserAuthWrapper(userSelector)('/', 'UserIsOnlyMcDuderson', user => user.lastName === 'McDuderson')
+
 class App extends Component {
   static propTypes = {
     children: PropTypes.node
@@ -59,6 +69,15 @@ class UnprotectedComponent extends Component {
   }
 }
 
+class PropParentComponent extends Component {
+  static Child = UserIsAuthenticated(UnprotectedComponent);
+
+  render() {
+    // Need to pass down at least location from router, but can just pass it all down
+    return <PropParentComponent.Child testProp {...this.props} />
+  }
+}
+
 class UnprotectedParentComponent extends Component {
   static propTypes = {
     children: PropTypes.node
@@ -73,16 +92,6 @@ class UnprotectedParentComponent extends Component {
   }
 }
 
-const userSelector = state => state.user
-
-const UserIsAuthenticated = UserAuthWrapper(userSelector)('/login', 'UserIsAuthenticated')
-
-const HiddenNoRedir = UserAuthWrapper(userSelector)('/', 'NoRedir', () => false, false)
-
-const UserIsOnlyTest = UserAuthWrapper(userSelector)('/', 'UserIsOnlyTest', user => user.firstName === 'Test')
-
-const UserIsOnlyMcDuderson = UserAuthWrapper(userSelector)('/', 'UserIsOnlyMcDuderson', user => user.lastName === 'McDuderson')
-
 const routes = (
   <Route path="/" component={App} >
     <Route path="login" component={UnprotectedComponent} />
@@ -93,6 +102,7 @@ const routes = (
     <Route path="parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
       <Route path="child" component={UserIsAuthenticated(UnprotectedComponent)} />
     </Route>
+    <Route path="prop" component={PropParentComponent} />
   </Route>
 )
 
@@ -111,7 +121,7 @@ const setupTest = () => {
   const history = createMemoryHistory()
   const store = configureStore(history)
 
-  renderIntoDocument(
+  const tree = renderIntoDocument(
     <Provider store={store}>
       <Router history={history} >
         {routes}
@@ -121,7 +131,8 @@ const setupTest = () => {
 
   return {
     history,
-    store
+    store,
+    tree
   }
 }
 
@@ -232,5 +243,25 @@ describe('UserAuthWrapper', () => {
     store.dispatch({ type: USER_LOGGED_OUT })
     expect(store.getState().routing.location.pathname).to.equal('/login')
     expect(store.getState().routing.location.search).to.equal('?redirect=%2Fparent%2Fchild')
+  })
+
+  it('passes props to authed components', () => {
+    const { history, store, tree } = setupTest()
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/prop')
+
+    const comp = findRenderedComponentWithType(tree, UnprotectedComponent)
+    // Props from React-Router
+    expect(comp.props.location.pathname).to.equal('/prop')
+    // Props from auth selector
+    expect(comp.props.authData).to.deep.equal({
+      email: 'test@test.com',
+      firstName: 'Test',
+      lastName: 'McDuderson'
+    })
+    // Props from parent
+    expect(comp.props.testProp).to.equal(true)
   })
 })
