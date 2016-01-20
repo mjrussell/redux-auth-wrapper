@@ -168,16 +168,7 @@ describe('UserAuthWrapper', () => {
   })
 
   it('allows predicate authorization', () => {
-    const history = createMemoryHistory()
-    const store = configureStore(history)
-
-    renderIntoDocument(
-      <Provider store={store}>
-        <Router history={history} >
-          {routes}
-        </Router>
-      </Provider>
-    )
+    const { history, store } = setupTest()
 
     store.dispatch(userLoggedIn('NotTest'))
 
