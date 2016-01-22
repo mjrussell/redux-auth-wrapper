@@ -1,11 +1,11 @@
-import * as constants from '../constants';
+import * as constants from '../constants'
 
-export default function userUpdate(state = {}, {type, payload}) {
+export default function userUpdate(state = {}, { type, payload }) {
   if(type === constants.USER_LOGGED_IN) {
-    return payload;
+    return payload
   }
   else if(type === constants.USER_LOGGED_OUT) {
-    return {};
+    return {}
   }
-  return state;
+  return state
 }

@@ -1,3 +1,3 @@
-import user from './user';
+import user from './user'
 
-module.exports = { user };
+module.exports = { user }

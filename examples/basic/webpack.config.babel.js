@@ -1,4 +1,6 @@
-const path = require('path');
+import path from 'path'
+import fs from 'fs'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
 
 module.exports = {
   entry: './app.js',
@@ -6,29 +8,36 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js'
   },
+  devServer: {
+    inline: true,
+    historyApiFallback: true
+  },
   module: {
-    loaders: [{
+    loaders: [ {
       test: /\.js$/,
-      loaders: ['babel'],
+      loaders: [ 'babel' ],
       exclude: /node_modules/,
       include: __dirname
-    }]
-  }
+    } ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'index.html', // Load a custom template
+      inject: 'body' // Inject all scripts into the body
+    })
+  ]
 }
-
-
 
 // This will make the redux-auth-wrapper module resolve to the
 // latest src instead of using it from npm. Remove this if running
 // outside of the source.
-var src = path.join(__dirname, '..', '..', 'src')
-var fs = require('fs')
+const src = path.join(__dirname, '..', '..', 'src')
 if (fs.existsSync(src)) {
   // Use the latest src
   module.exports.resolve = { alias: { 'redux-auth-wrapper': src } }
   module.exports.module.loaders.push({
     test: /\.js$/,
-    loaders: ['babel'],
+    loaders: [ 'babel' ],
     include: src
-  });
+  })
 }

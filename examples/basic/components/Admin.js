@@ -1,5 +1,5 @@
-import React from 'react';
+import React from 'react'
 
 export default function Admin({ authData }) {
-  return <div>{`Welcome admin user: ${authData.name}`}</div>;
+  return <div>{`Welcome admin user: ${authData.name}`}</div>
 }

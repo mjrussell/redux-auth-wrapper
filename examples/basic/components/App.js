@@ -1,10 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { connect } from 'react-redux';
-import { routeActions } from 'redux-simple-router';
-import { logout } from '../actions/user';
+import React from 'react'
+import { Link } from 'react-router'
+import { connect } from 'react-redux'
+import { logout } from '../actions/user'
 
-function App({ push, children, logout }) {
+function App({ children, logout }) {
   return (
     <div>
       <header>
@@ -20,9 +19,9 @@ function App({ push, children, logout }) {
         {' '}
         <button onClick={() => logout()}>Logout</button>
       </header>
-      <div style={{marginTop: '1.5em'}}>{children}</div>
+      <div style={{ marginTop: '1.5em' }}>{children}</div>
     </div>
-  );
-};
+  )
+}
 
-export default connect(false, { push: routeActions.push, logout })(App);
+export default connect(false, { logout })(App)
