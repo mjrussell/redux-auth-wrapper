@@ -10,7 +10,14 @@ module.exports = {
   },
   devServer: {
     inline: true,
-    historyApiFallback: true
+    historyApiFallback: true,
+    stats: {
+      colors: true,
+      hash: false,
+      version: false,
+      chunks: false,
+      children: false
+    }
   },
   module: {
     loaders: [ {
