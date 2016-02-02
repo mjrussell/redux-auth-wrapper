@@ -90,7 +90,8 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 
 * `authSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`
 * `[failureRedirectPath]` \(*String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`
-* `[wrapperDisplayName]` \(*String*): Option name describing this authentication or authorization check. It will display in React-devtools
+* `[wrapperDisplayName]` \(*String*): Option name describing this authentication or authorization check.
+It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
