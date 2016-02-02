@@ -36,7 +36,11 @@ const finalCreateStore = compose(
 const store = finalCreateStore(reducer)
 routingMiddleware.listenForReplays(store)
 
-const UserIsAuthenticated = UserAuthWrapper(state => state.user)('/login', 'UserIsAuthenticated')
+// Redirects to /login by default
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
 
 ReactDOM.render(
   <Provider store={store}>
@@ -80,30 +84,46 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 
 ## API
 
-`UserAuthWrapper(userAuthSelector)(failureRedirectPath, wrapperDisplayName, [predicate], [allowRedirect])(DecoratedComponent)`
+`UserAuthWrapper(configObject)(DecoratedComponent)`
 
-#### Arguments
+#### Config Object Keys
 
-* `userAuthSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`
-* `failureRedirectPath` \(*String*): The path to redirect the browser to on a failed check
-* `wrapperDisplayName` \(*String*): A name describing this authentication or authorization check. It will display in the React-devtools
+* `authSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`
+* `[failureRedirectPath]` \(*String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`
+* `[wrapperDisplayName]` \(*String*): Option name describing this authentication or authorization check. It will display in React-devtools
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
-* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `userAuthSelector`
+
+#### Component Parameter
+* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `authSelector`
 
 ## Authorization & More Advanced Usage
 
 ```js
 /* Allow only users with first name Bob */
-const OnlyBob = UserAuthWrapper(state => state.user)('/app', 'UserIsOnlyTest', user => user.firstName === 'Bob')
+const OnlyBob = UserAuthWrapper({
+  authSelector: state => state.user,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsOnlyBob',
+  predicate: user => user.firstName === 'Bob'
+})
 
 /* Admins only */
 
 // Take the regular authentication & redirect to login from before
-const UserIsAuthenticated = UserAuthWrapper(state => state.user)('/login', 'UserIsAuthenticated')
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
 // Admin Authorization, redirects non-admins to /app and don't send a redirect param
-const UserIsAdmin = UserAuthWrapper(state => state.user)('/app', 'UserIsAdmin', user => user.isAdmin, false)
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: user => user.isAdmin,
+  allowRedirectBack: false
+})
 
 // Now to secure the component:
 <Route path="foo" component={UserIsAuthenticated(UserIsAdmin(Admin))}/>

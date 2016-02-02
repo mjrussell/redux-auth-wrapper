@@ -33,8 +33,17 @@ const finalCreateStore = compose(
 const store = finalCreateStore(reducer)
 routingMiddleware.listenForReplays(store)
 
-const UserIsAuthenticated = UserAuthWrapper(state => state.user)('/login', 'UserIsAuthenticated')
-const UserIsAdmin = UserAuthWrapper(state => state.user)('/', 'UserIsAdmin', user => user.isAdmin, false)
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: user => user.isAdmin,
+  allowRedirectBack: false
+})
 
 ReactDOM.render(
   <Provider store={store}>
