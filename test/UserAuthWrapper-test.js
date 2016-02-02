@@ -39,12 +39,27 @@ const configureStore = (history, initialState) => {
 
 const userSelector = state => state.user
 
-const UserIsAuthenticated = UserAuthWrapper(userSelector)('/login', 'UserIsAuthenticated')
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: userSelector,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
 
-const HiddenNoRedir = UserAuthWrapper(userSelector)('/', 'NoRedir', () => false, false)
+const HiddenNoRedir = UserAuthWrapper({
+  authSelector: userSelector,
+  failureRedirectPath: '/',
+  wrapperDisplayName: 'NoRedir',
+  predicate: () => false,
+  allowRedirectBack: false
+})
 
-const UserIsOnlyTest = UserAuthWrapper(userSelector)('/', 'UserIsOnlyTest', user => user.firstName === 'Test')
+const UserIsOnlyTest = UserAuthWrapper({
+  authSelector: userSelector,
+  failureRedirectPath: '/',
+  wrapperDisplayName: 'UserIsOnlyTest',
+  predicate: user => user.firstName === 'Test'
+})
 
+// Intential deprecated version
 const UserIsOnlyMcDuderson = UserAuthWrapper(userSelector)('/', 'UserIsOnlyMcDuderson', user => user.lastName === 'McDuderson')
 
 class App extends Component {
