@@ -2,21 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { routeActions } from 'redux-simple-router'
 import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
-
-const emptyOrNull = obj => {
-  // null and undefined are "empty"
-  if (obj == null) return true
-
-  // Assume if it has a length property with a non-zero value
-  // that that property is correct.
-  if (obj.length > 0)    return false
-  if (obj.length === 0)  return true
-
-  // Otherwise, does it have any properties of its own?
-  if (Object.getOwnPropertyNames(obj).length > 0) return false
-
-  return true
-}
+import isEmpty from 'lodash.isempty'
 
 /**
 * A function which simplifies User Authentication and Authorization
@@ -34,7 +20,7 @@ const emptyOrNull = obj => {
 */
 
 export const UserAuthWrapper = authSelector =>
-  (failureRedirectPath, wrapperDisplayName, predicate = x => !emptyOrNull(x), allowRedirectBack = true) => {
+  (failureRedirectPath, wrapperDisplayName, predicate = x => !isEmpty(x), allowRedirectBack = true) => {
     // Wraps the component that needs the auth enforcement
     return function wrapComponent(DecoratedComponent) {
       const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
