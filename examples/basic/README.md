@@ -5,7 +5,7 @@ This is a basic example that demonstrates wrapping components
 with authentication and authorization checks. It shows how to handle
 nested checks and demonstrates redirect support.
 
-This example uses React-Router 2.x and Redux-Simple-Router 2.x.
+This example uses React-Router 2.x and React-Router-Redux 2.x.
 
 **To run, follow these steps:**
 
