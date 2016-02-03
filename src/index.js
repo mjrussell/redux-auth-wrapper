@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import { routeActions } from 'redux-simple-router'
 import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
@@ -13,7 +12,7 @@ const defaults = {
 }
 
 const UserAuthWrapper = (args) => {
-  const { authSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack } = {
+  const { authSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction } = {
     ...defaults,
     ...args
   }
@@ -21,9 +20,17 @@ const UserAuthWrapper = (args) => {
   return function wrapComponent(DecoratedComponent) {
     const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
 
+    const mapDispatchToProps = (dispatch) => {
+      if (redirectAction !== undefined) {
+        return { redirect: (args) => dispatch(redirectAction(args)) }
+      } else {
+        return {}
+      }
+    }
+
     @connect(
       state => { return { authData: authSelector(state) } },
-      { replace: routeActions.replace }
+      mapDispatchToProps,
     )
     class UserAuthWrapper extends Component {
 
@@ -34,8 +41,13 @@ const UserAuthWrapper = (args) => {
           pathname: PropTypes.string.isRequired,
           search: PropTypes.string.isRequired
         }).isRequired,
-        replace: PropTypes.func.isRequired,
+        redirect: PropTypes.func,
         authData: PropTypes.object
+      };
+
+      static contextTypes = {
+        // Only used if no redirectAction specified
+        router: React.PropTypes.object.isRequired
       };
 
       componentWillMount() {
@@ -46,10 +58,12 @@ const UserAuthWrapper = (args) => {
         this.ensureLoggedIn(nextProps)
       }
 
+      getRedirectFunc = () => this.props.redirect || this.context.router.replace;
+
       isAuthorized = (authData) => predicate(authData);
 
       ensureLoggedIn = (props) => {
-        const { replace, location, authData } = props
+        const { location, authData } = props
         let query
         if (allowRedirectBack) {
           query = { redirect: `${location.pathname}${location.search}` }
@@ -58,7 +72,7 @@ const UserAuthWrapper = (args) => {
         }
 
         if (!this.isAuthorized(authData)) {
-          replace({
+          this.getRedirectFunc()({
             pathname: failureRedirectPath,
             query
           })
@@ -68,7 +82,7 @@ const UserAuthWrapper = (args) => {
       render() {
         // Allow everything but the replace aciton creator to be passed down
         // Includes route props from React-Router and authData
-        const { replace, authData, ...otherProps } = this.props
+        const { redirect, authData, ...otherProps } = this.props
 
         if (this.isAuthorized(authData)) {
           return <DecoratedComponent authData={authData} {...otherProps} />

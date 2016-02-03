@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import { syncHistory, routeReducer } from 'redux-simple-router'
+import { syncHistory, routeReducer, routeActions } from 'redux-simple-router'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 
 import * as reducers from './reducers'
@@ -35,10 +35,12 @@ routingMiddleware.listenForReplays(store)
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
+  redirectAction: routeActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 const UserIsAdmin = UserAuthWrapper({
   authSelector: state => state.user,
+  redirectAction: routeActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,

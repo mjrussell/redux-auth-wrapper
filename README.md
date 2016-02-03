@@ -19,7 +19,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 import { createHistory } from 'history'
-import { syncReduxAndRouter, routeReducer } from 'redux-simple-router'
+import { syncReduxAndRouter, routeReducer, routeActions } from 'redux-simple-router'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 import userReducer from '<project-path>/reducers/userReducer'
 
@@ -38,8 +38,9 @@ routingMiddleware.listenForReplays(store)
 
 // Redirects to /login by default
 const UserIsAuthenticated = UserAuthWrapper({
-  authSelector: state => state.user,
-  wrapperDisplayName: 'UserIsAuthenticated'
+  authSelector: state => state.user, // how to get the user state
+  redirectAction: routeActions.replace, // the redux action to dispatch for redirect
+  wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
 })
 
 ReactDOM.render(
@@ -90,6 +91,7 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 
 * `authSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`
 * `[failureRedirectPath]` \(*String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`
+* `[redirectAction]` \(*Function*): Optional redux action creator for redirecting the user. If not present, will use React-Router's router context to perform the transition.
 * `[wrapperDisplayName]` \(*String*): Optional name describing this authentication or authorization check.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param.
@@ -105,6 +107,7 @@ If it evaluates to false the browser will be redirected to `failureRedirectPath`
 /* Allow only users with first name Bob */
 const OnlyBob = UserAuthWrapper({
   authSelector: state => state.user,
+  redirectAction: routeActions.replace,
   failureRedirectPath: '/app',
   wrapperDisplayName: 'UserIsOnlyBob',
   predicate: user => user.firstName === 'Bob'
@@ -115,11 +118,13 @@ const OnlyBob = UserAuthWrapper({
 // Take the regular authentication & redirect to login from before
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
+  redirectAction: routeActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 // Admin Authorization, redirects non-admins to /app and don't send a redirect param
 const UserIsAdmin = UserAuthWrapper({
   authSelector: state => state.user,
+  redirectAction: routeActions.replace,
   failureRedirectPath: '/app',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,
