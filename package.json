@@ -39,16 +39,16 @@
     "coveralls": "^2.11.6",
     "eslint": "^1.7.1",
     "eslint-config-rackt": "^1.1.1",
-    "eslint-plugin-react": "~3.15.0",
+    "eslint-plugin-react": "~3.16.0",
     "expect": "^1.10.0",
-    "jsdom": "^7.2.2",
+    "jsdom": "~8.0.0",
     "mocha": "^2.3.4",
     "react": "~0.14.3",
     "react-addons-test-utils": "^0.14.6",
     "react-redux": "^4.0.1",
     "react-router": "2.0.0-rc5",
-    "react-router-redux": "~2.1.0",
-    "redux": "~3.0.0"
+    "react-router-redux": "~3.0.0",
+    "redux": "~3.2.0"
   },
   "dependencies": {
     "hoist-non-react-statics": "1.0.5",
