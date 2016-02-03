@@ -1,7 +1,7 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.1.1...master)
-- **Feature:** new replaceAction config arg, removes dependency on a redux-routing impl ([#13])
-- **Feature:** New config object syntax for AuthWrapper ([#12])
-- **Deprecation:** Deprecates AuthWrapper args syntax ([#12])
+- **Feature:** new replaceAction config arg, removes dependency on a redux-routing impl [#13](https://github.com/mjrussell/redux-auth-wrapper/issues/13)
+- **Feature:** New config object syntax for AuthWrapper [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
+- **Deprecation:** Deprecates AuthWrapper args syntax [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
 - **Feature:** Hoists wrapped component's statics up to the returned component
 
 ## [0.1.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.1.0...v0.1.1)
