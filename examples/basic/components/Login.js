@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { routeActions } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 import { connect } from 'react-redux'
 
 import { login } from '../actions/user'

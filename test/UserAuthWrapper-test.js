@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux'
 import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
-import { routeReducer, syncHistory, routeActions  } from 'redux-simple-router'
+import { routeReducer, syncHistory, routeActions  } from 'react-router-redux'
 
 import { UserAuthWrapper } from '../src'
 

@@ -10,7 +10,7 @@
 
 ## Tutorial
 
-Usage with [Redux-Simple-Router](https://github.com/rackt/redux-simple-router)
+Usage with [React-Router-Redux](https://github.com/rackt/react-router-redux)
 
 ```js
 import React from 'react'
@@ -19,7 +19,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 import { createHistory } from 'history'
-import { syncReduxAndRouter, routeReducer, routeActions } from 'redux-simple-router'
+import { syncReduxAndRouter, routeReducer, routeActions } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 import userReducer from '<project-path>/reducers/userReducer'
 

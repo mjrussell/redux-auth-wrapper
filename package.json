@@ -46,8 +46,8 @@
     "react-addons-test-utils": "^0.14.6",
     "react-redux": "^4.0.1",
     "react-router": "2.0.0-rc5",
-    "redux": "~3.0.0",
-    "redux-simple-router": "~2.0.3"
+    "react-router-redux": "~2.1.0",
+    "redux": "~3.0.0"
   },
   "dependencies": {
     "hoist-non-react-statics": "1.0.5",

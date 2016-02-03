@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import { syncHistory, routeReducer, routeActions } from 'redux-simple-router'
+import { syncHistory, routeReducer, routeActions } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 
 import * as reducers from './reducers'
