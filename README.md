@@ -8,6 +8,20 @@
 
 `npm install --save redux-auth-wrapper`
 
+## Motivation
+
+At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/rackt/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it? 
+
+`onEnter` is great, and useful in certain situations. However, here are some common authentication and authorization problems `onEnter` does not solve:
+* Decide authentication/authorization from redux store data
+* Recheck authentication/authorization if the store updates (but not the current route)
+* Recheck authentication/authorization if a child route changes underneath the protected route
+
+An alternative approach is to use [Higher Order Components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.ao9jjxx89). 
+> A higher-order component is just a function that takes an existing component and returns another component that wraps it
+
+Redux-auth-wrapper provides higher-order components for easy to read and apply authentication and authorization constraints for your components.
+
 ## Tutorial
 
 Usage with [React-Router-Redux](https://github.com/rackt/react-router-redux)
