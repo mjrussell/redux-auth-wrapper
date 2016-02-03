@@ -100,7 +100,7 @@ const UserAuthWrapper = (args) => {
 // Support the old 0.1.x with deprecation warning
 const DeprecatedWrapper = authSelector =>
   (failureRedirectPath, wrapperDisplayName, predicate = x => !isEmpty(x), allowRedirectBack = true) => {
-    warning(false, `Deprecated arg style syntax found for auth wrapped named ${wrapperDisplayName}. Pass a config object instead`)
+    warning(false, `Deprecated arg style syntax found for auth wrapper named ${wrapperDisplayName}. Pass a config object instead`)
     return UserAuthWrapper({
       ...defaults,
       authSelector,
