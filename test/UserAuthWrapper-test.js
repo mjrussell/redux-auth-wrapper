@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import { applyMiddleware, createStore, combineReducers, compose } from 'redux'
 import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
-import { routeReducer, syncHistory  } from 'redux-simple-router'
+import { routeReducer, syncHistory, routeActions  } from 'redux-simple-router'
 
 import { UserAuthWrapper } from '../src'
 
@@ -41,11 +41,13 @@ const userSelector = state => state.user
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: userSelector,
+  redirectAction: routeActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
 const HiddenNoRedir = UserAuthWrapper({
   authSelector: userSelector,
+  redirectAction: routeActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'NoRedir',
   predicate: () => false,
@@ -54,6 +56,7 @@ const HiddenNoRedir = UserAuthWrapper({
 
 const UserIsOnlyTest = UserAuthWrapper({
   authSelector: userSelector,
+  redirectAction: routeActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsOnlyTest',
   predicate: user => user.firstName === 'Test'
