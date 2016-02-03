@@ -1,6 +1,6 @@
 {
   "name": "redux-auth-wrapper",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
   "main": "lib/index.js",
   "files": [
