@@ -39,7 +39,7 @@ const UserIsAuthenticated = UserAuthWrapper({
 })
 const UserIsAdmin = UserAuthWrapper({
   authSelector: state => state.user,
-  failureRedirectPath: '/app',
+  failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,
   allowRedirectBack: false
