@@ -12,6 +12,7 @@
   "scripts": {
     "build": "mkdir -p lib && babel ./src/index.js --out-file ./lib/index.js",
     "lint": "eslint src test",
+    "prepublish": "rm -rf lib && npm run build",
     "test": "mocha --compilers js:babel-core/register --recursive --require test/init.js test/**/*-test.js",
     "test:cov": "babel-node $(npm bin)/babel-istanbul cover $(npm bin)/_mocha -- --require test/init.js test/**/*-test.js",
     "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w test/**/*-test.js"
