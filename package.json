@@ -50,6 +50,8 @@
     "redux-simple-router": "~2.0.3"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^1.0.3"
+    "hoist-non-react-statics": "1.0.5",
+    "lodash.isempty": "4.1.0",
+    "warning": "2.1.0"
   }
 }
