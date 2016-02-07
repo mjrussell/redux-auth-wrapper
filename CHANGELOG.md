@@ -4,7 +4,7 @@ Nothing yet
 ## [0.2.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.2.0...v0.2.1)
 - router context is only required if no redirectAction
 
-## [0.2.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.2.0...v0.1.1)
+## [0.2.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.1.1...v0.2.0)
 - **Feature:** new redirectAction config arg, removes dependency on a redux-routing impl [#13](https://github.com/mjrussell/redux-auth-wrapper/issues/13)
 - **Feature:** New config object syntax for AuthWrapper [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
 - **Deprecation:** Deprecates AuthWrapper args syntax [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
