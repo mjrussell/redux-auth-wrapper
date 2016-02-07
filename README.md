@@ -170,3 +170,6 @@ import { UserIsAuthenticated } from '<projectpath>/auth/authWrappers';
 class MyComponents extends Component {
 }
 ```
+
+### Other examples
+* [Redux-Router and React-Router with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
