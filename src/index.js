@@ -47,7 +47,7 @@ const UserAuthWrapper = (args) => {
 
       static contextTypes = {
         // Only used if no redirectAction specified
-        router: React.PropTypes.object.isRequired
+        router: React.PropTypes.object
       };
 
       componentWillMount() {
@@ -58,7 +58,17 @@ const UserAuthWrapper = (args) => {
         this.ensureLoggedIn(nextProps)
       }
 
-      getRedirectFunc = () => this.props.redirect || this.context.router.replace;
+      getRedirectFunc = () => {
+        if (this.props.redirect) {
+          return this.props.redirect
+        } else {
+          if (!this.context.router.replace) {
+            throw new Error(`You must provide a router context (or use React-Router 2.x) if not passing a redirectAction to ${wrapperDisplayName}`)
+          } else {
+            return this.context.router.replace
+          }
+        }
+      };
 
       isAuthorized = (authData) => predicate(authData);
 
