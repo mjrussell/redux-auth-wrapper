@@ -44,10 +44,11 @@ const reducer = combineReducers({
 const history = createHistory()
 const routingMiddleware = syncHistory(history)
 
-const finalCreateStore = compose(
+// Note: passing middleware as the last argument requires redux@>=3.1.0
+const store = createStore(
+  reducer,
   applyMiddleware(routingMiddleware)
-)(createStore);
-const store = finalCreateStore(reducer)
+)
 routingMiddleware.listenForReplays(store)
 
 // Redirects to /login by default
