@@ -4,10 +4,10 @@
   "dependencies": {
     "react": "~0.14.2",
     "react-dom": "~0.14.2",
-    "react-redux": "~4.2.0",
+    "react-redux": "^4.4.0",
     "react-router": "2.0.0-rc5",
     "react-router-redux": "~3.0.0",
-    "redux": "~3.2.1"
+    "redux": "^3.3.1"
   },
   "devDependencies": {
     "babel-core": "^6.1.21",

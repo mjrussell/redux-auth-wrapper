@@ -26,11 +26,14 @@ const DevTools = createDevTools(
   </DockMonitor>
 )
 
-const finalCreateStore = compose(
+const enhancer = compose(
+  // Middleware you want to use in development:
   applyMiddleware(routingMiddleware),
   DevTools.instrument()
-)(createStore)
-const store = finalCreateStore(reducer)
+)
+
+// Note: passing enhancer as the last argument requires redux@>=3.1.0
+const store = createStore(reducer, enhancer)
 routingMiddleware.listenForReplays(store)
 
 const UserIsAuthenticated = UserAuthWrapper({
