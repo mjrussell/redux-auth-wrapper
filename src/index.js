@@ -63,6 +63,7 @@ const UserAuthWrapper = (args) => {
           return this.props.redirect
         } else {
           if (!this.context.router.replace) {
+            /* istanbul ignore next sanity */
             throw new Error(`You must provide a router context (or use React-Router 2.x) if not passing a redirectAction to ${wrapperDisplayName}`)
           } else {
             return this.context.router.replace
