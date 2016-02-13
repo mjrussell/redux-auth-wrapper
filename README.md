@@ -113,8 +113,14 @@ It will display in React-devtools. Defaults to `UserAuthWrapper`
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
 
+#### Returns
+After applying the configObject, `UserAuthWrapper` returns a function which can applied to a Component to wrap in authentication and
+authorization checks. The function also has the following extra properties:
+* `onEnter(store, nextState, replace)` \(*Function*): Function to be optionally used in the [onEnter](https://github.com/reactjs/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) property of a route.
+
 #### Component Parameter
-* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `authSelector`
+* `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `authSelector`.
+The component is not modified and all static properties are hoisted to the returned component
 
 ## Authorization & More Advanced Usage
 
@@ -169,6 +175,32 @@ import { UserIsAuthenticated } from '<projectpath>/auth/authWrappers';
 @UserIsAuthenticated
 class MyComponents extends Component {
 }
+```
+
+### Server Side Rendering
+In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
+of a `<Route>`. You can access the `onEnter` method of the UserAuthWrapper after applying the config parameters:
+```js
+import { UserAuthWrapper } from 'redux-auth-wrapper';
+
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routeActions.replace,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
+
+const getRoutes = (store) => {
+  const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
+
+  return (
+    <Route>
+      <Route path="/" component={App}>
+        <Route path="login" component={Login}/>
+        <Route path="foo" component={UserIsAuthenticated(Foo)} onEnter={connect(UserIsAuthenticated.onEnter)} />
+      </Route>
+    </Route>
+  );
+};
 ```
 
 ### Other examples

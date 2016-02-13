@@ -16,8 +16,27 @@ const UserAuthWrapper = (args) => {
     ...defaults,
     ...args
   }
+
+  const isAuthorized = (authData) => predicate(authData)
+
+  const ensureAuth = ({ location, authData }, redirect) => {
+    let query
+    if (allowRedirectBack) {
+      query = { redirect: `${location.pathname}${location.search}` }
+    } else {
+      query = {}
+    }
+
+    if (!isAuthorized(authData)) {
+      redirect({
+        pathname: failureRedirectPath,
+        query
+      })
+    }
+  }
+
   // Wraps the component that needs the auth enforcement
-  return function wrapComponent(DecoratedComponent) {
+  function wrapComponent(DecoratedComponent) {
     const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
 
     const mapDispatchToProps = (dispatch) => {
@@ -51,16 +70,16 @@ const UserAuthWrapper = (args) => {
       };
 
       componentWillMount() {
-        this.ensureAuth(this.props)
+        ensureAuth(this.props, this.getRedirectFunc(this.props))
       }
 
       componentWillReceiveProps(nextProps) {
-        this.ensureAuth(nextProps)
+        ensureAuth(nextProps, this.getRedirectFunc(nextProps))
       }
 
-      getRedirectFunc = () => {
-        if (this.props.redirect) {
-          return this.props.redirect
+      getRedirectFunc = (props) => {
+        if (props.redirect) {
+          return props.redirect
         } else {
           if (!this.context.router.replace) {
             /* istanbul ignore next sanity */
@@ -71,31 +90,12 @@ const UserAuthWrapper = (args) => {
         }
       };
 
-      isAuthorized = (authData) => predicate(authData);
-
-      ensureAuth = (props) => {
-        const { location, authData } = props
-        let query
-        if (allowRedirectBack) {
-          query = { redirect: `${location.pathname}${location.search}` }
-        } else {
-          query = {}
-        }
-
-        if (!this.isAuthorized(authData)) {
-          this.getRedirectFunc()({
-            pathname: failureRedirectPath,
-            query
-          })
-        }
-      };
-
       render() {
         // Allow everything but the replace aciton creator to be passed down
         // Includes route props from React-Router and authData
         const { redirect, authData, ...otherProps } = this.props
 
-        if (this.isAuthorized(authData)) {
+        if (isAuthorized(authData)) {
           return <DecoratedComponent authData={authData} {...otherProps} />
         } else {
           // Don't need to display anything because the user will be redirected
@@ -106,6 +106,14 @@ const UserAuthWrapper = (args) => {
 
     return hoistStatics(UserAuthWrapper, DecoratedComponent)
   }
+
+  wrapComponent.onEnter = (store, nextState, replace) => {
+    const replaceWithState = ({ pathname, query }) => replace({ pathname, state: query })
+    const authData = authSelector(store.getState())
+    ensureAuth({ location: nextState.location, authData }, replaceWithState)
+  }
+
+  return wrapComponent
 }
 
 // Support the old 0.1.x with deprecation warning
