@@ -51,11 +51,11 @@ const UserAuthWrapper = (args) => {
       };
 
       componentWillMount() {
-        this.ensureLoggedIn(this.props)
+        this.ensureAuth(this.props)
       }
 
       componentWillReceiveProps(nextProps) {
-        this.ensureLoggedIn(nextProps)
+        this.ensureAuth(nextProps)
       }
 
       getRedirectFunc = () => {
@@ -73,7 +73,7 @@ const UserAuthWrapper = (args) => {
 
       isAuthorized = (authData) => predicate(authData);
 
-      ensureLoggedIn = (props) => {
+      ensureAuth = (props) => {
         const { location, authData } = props
         let query
         if (allowRedirectBack) {
