@@ -172,4 +172,5 @@ class MyComponents extends Component {
 ```
 
 ### Other examples
-* [Redux-Router and React-Router with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
+* [Redux-Router and React-Router 1.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
+* [React-Router-Redux and React-Router 2.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/react-router-redux)
