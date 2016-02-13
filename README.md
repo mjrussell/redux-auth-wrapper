@@ -33,7 +33,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 import { createHistory } from 'history'
-import { syncReduxAndRouter, routeReducer, routeActions } from 'react-router-redux'
+import { syncHistory, routeReducer, routeActions } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 import userReducer from '<project-path>/reducers/userReducer'
 
