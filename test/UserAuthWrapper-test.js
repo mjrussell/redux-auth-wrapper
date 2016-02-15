@@ -318,6 +318,6 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.location.search).to.equal('')
     history.push('/onEnter')
     expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.state).to.deep.equal({ redirect: '/onEnter' })
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2FonEnter')
   })
 })

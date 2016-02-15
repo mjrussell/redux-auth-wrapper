@@ -108,9 +108,8 @@ const UserAuthWrapper = (args) => {
   }
 
   wrapComponent.onEnter = (store, nextState, replace) => {
-    const replaceWithState = ({ pathname, query }) => replace({ pathname, state: query })
     const authData = authSelector(store.getState())
-    ensureAuth({ location: nextState.location, authData }, replaceWithState)
+    ensureAuth({ location: nextState.location, authData }, replace)
   }
 
   return wrapComponent
