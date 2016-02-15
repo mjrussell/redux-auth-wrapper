@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
-import warning from 'warning'
 
 const defaults = {
   failureRedirectPath: '/login',
@@ -11,7 +10,7 @@ const defaults = {
   allowRedirectBack: true
 }
 
-const UserAuthWrapper = (args) => {
+export const UserAuthWrapper = (args) => {
   const { authSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction } = {
     ...defaults,
     ...args
@@ -114,27 +113,3 @@ const UserAuthWrapper = (args) => {
 
   return wrapComponent
 }
-
-// Support the old 0.1.x with deprecation warning
-const DeprecatedWrapper = authSelector =>
-  (failureRedirectPath, wrapperDisplayName, predicate = x => !isEmpty(x), allowRedirectBack = true) => {
-    warning(false, `Deprecated arg style syntax found for auth wrapper named ${wrapperDisplayName}. Pass a config object instead`)
-    return UserAuthWrapper({
-      ...defaults,
-      authSelector,
-      failureRedirectPath,
-      wrapperDisplayName,
-      predicate,
-      allowRedirectBack
-    })
-  }
-
-const BackwardsCompatWrapper = (arg) => {
-  if (typeof arg === 'function') {
-    return DeprecatedWrapper(arg)
-  } else {
-    return UserAuthWrapper(arg)
-  }
-}
-
-module.exports.UserAuthWrapper = BackwardsCompatWrapper

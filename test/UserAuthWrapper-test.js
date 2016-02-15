@@ -62,8 +62,13 @@ const UserIsOnlyTest = UserAuthWrapper({
   predicate: user => user.firstName === 'Test'
 })
 
-// Intential deprecated version
-const UserIsOnlyMcDuderson = UserAuthWrapper(userSelector)('/', 'UserIsOnlyMcDuderson', user => user.lastName === 'McDuderson')
+const UserIsOnlyMcDuderson = UserAuthWrapper({
+  authSelector: userSelector,
+  redirectAction: routeActions.replace,
+  failureRedirectPath: '/',
+  wrapperDisplayName: 'UserIsOnlyMcDuderson',
+  predicate: user => user.lastName === 'McDuderson'
+})
 
 class App extends Component {
   static propTypes = {
@@ -361,5 +366,29 @@ describe('UserAuthWrapper', () => {
     history.push('/ownProps/2')
     expect(store.getState().routing.location.pathname).to.equal('/login')
     expect(store.getState().routing.location.search).to.equal('?redirect=%2FownProps%2F2')
+  })
+
+  it('uses router for redirect if no redirectAction specified', () => {
+
+    const UserIsAuthenticatedNoAction = UserAuthWrapper({
+      authSelector: userSelector,
+      wrapperDisplayName: 'UserIsAuthenticatedRouter'
+    })
+
+    const routes = (
+      <Route path="/" component={App} >
+        <Route path="login" component={UnprotectedComponent} />
+        <Route path="noaction" component={UserIsAuthenticatedNoAction(UnprotectedComponent)} />
+      </Route>
+    )
+
+    const { history, store } = setupTest(routes)
+
+    expect(store.getState().routing.location.pathname).to.equal('/')
+    expect(store.getState().routing.location.search).to.equal('')
+
+    history.push('/noaction')
+    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fnoaction')
   })
 })

@@ -52,7 +52,6 @@
   },
   "dependencies": {
     "hoist-non-react-statics": "1.0.5",
-    "lodash.isempty": "4.1.1",
-    "warning": "2.1.0"
+    "lodash.isempty": "4.1.1"
   }
 }
