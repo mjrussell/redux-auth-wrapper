@@ -320,4 +320,46 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.location.pathname).to.equal('/login')
     expect(store.getState().routing.location.search).to.equal('?redirect=%2FonEnter')
   })
+
+  it('passes ownProps for auth selector', () => {
+    const authSelector = (state, ownProps, isOnEnter) => {
+      if (!isOnEnter) {
+        return {
+          ...state.user,
+          ...ownProps.routeParams // from React-Router
+        }
+      } else {
+        return {}
+      }
+    }
+
+    const UserIsAuthenticatedProps = UserAuthWrapper({
+      authSelector: authSelector,
+      redirectAction: routeActions.replace,
+      wrapperDisplayName: 'UserIsAuthenticatedProps',
+      predicate: user => user.firstName === 'Test' && user.id === '1'
+    })
+
+    const routes = (
+      <Route path="/" component={App} >
+        <Route path="login" component={UnprotectedComponent} />
+        <Route path="ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
+      </Route>
+    )
+
+    const { history, store } = setupTest(routes)
+
+    expect(store.getState().routing.location.pathname).to.equal('/')
+    expect(store.getState().routing.location.search).to.equal('')
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/ownProps/1')
+    expect(store.getState().routing.location.pathname).to.equal('/ownProps/1')
+    expect(store.getState().routing.location.search).to.equal('')
+
+    history.push('/ownProps/2')
+    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2FownProps%2F2')
+  })
 })
