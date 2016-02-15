@@ -48,7 +48,7 @@ const UserAuthWrapper = (args) => {
     }
 
     @connect(
-      state => { return { authData: authSelector(state) } },
+      (state, ownProps) => { return { authData: authSelector(state, ownProps, false) } },
       mapDispatchToProps,
     )
     class UserAuthWrapper extends Component {
@@ -108,7 +108,7 @@ const UserAuthWrapper = (args) => {
   }
 
   wrapComponent.onEnter = (store, nextState, replace) => {
-    const authData = authSelector(store.getState())
+    const authData = authSelector(store.getState(), null, true)
     ensureAuth({ location: nextState.location, authData }, replace)
   }
 
