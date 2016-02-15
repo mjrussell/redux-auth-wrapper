@@ -180,7 +180,7 @@ class MyComponents extends Component {
 
 ### Server Side Rendering
 In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
-of a `<Route>`. You can access the `onEnter` method of the UserAuthWrapper after applying the config parameters:
+of a `<Route>`. You can access the `onEnter` method of the `UserAuthWrapper` after applying the config parameters:
 ```js
 import { UserAuthWrapper } from 'redux-auth-wrapper';
 
