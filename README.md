@@ -110,7 +110,7 @@ ownProps will be null if isOnEnter is true because onEnter hooks cannot receive 
 * `[redirectAction]` \(*Function*): Optional redux action creator for redirecting the user. If not present, will use React-Router's router context to perform the transition.
 * `[wrapperDisplayName]` \(*String*): Optional name describing this authentication or authorization check.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
-* `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `userAuthSelector` param.
+* `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `authSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
 * `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
 
