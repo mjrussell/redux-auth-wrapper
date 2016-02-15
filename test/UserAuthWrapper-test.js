@@ -110,7 +110,7 @@ class UnprotectedParentComponent extends Component {
   }
 }
 
-const routes = (
+const defaultRoutes = (
   <Route path="/" component={App} >
     <Route path="login" component={UnprotectedComponent} />
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
@@ -135,7 +135,7 @@ const userLoggedIn = (firstName = 'Test', lastName = 'McDuderson') => {
   }
 }
 
-const setupTest = () => {
+const setupTest = (routes = defaultRoutes) => {
   const history = createMemoryHistory()
   const store = configureStore(history)
 
@@ -298,5 +298,26 @@ describe('UserAuthWrapper', () => {
     expect(authed.staticProp).to.equal(true)
     expect(authed.staticFun).to.be.a('function')
     expect(authed.staticFun()).to.equal('auth')
+  })
+
+  it('provides an onEnter static function', () => {
+    let store
+    const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
+
+    const routesOnEnter = (
+      <Route path="/" component={App} >
+        <Route path="login" component={UnprotectedComponent} />
+        <Route path="onEnter" component={UnprotectedComponent} onEnter={connect(UserIsAuthenticated.onEnter)} />
+      </Route>
+    )
+
+    const { history, store: createdStore } = setupTest(routesOnEnter)
+    store = createdStore
+
+    expect(store.getState().routing.location.pathname).to.equal('/')
+    expect(store.getState().routing.location.search).to.equal('')
+    history.push('/onEnter')
+    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.location.search).to.equal('?redirect=%2FonEnter')
   })
 })
