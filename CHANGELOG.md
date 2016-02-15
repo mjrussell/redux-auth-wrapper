@@ -1,5 +1,7 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.2.1...master)
-Nothing yet
+- **Feature:** Adds `ownProps` param to `authSelector` [#21](https://github.com/mjrussell/redux-auth-wrapper/pull/21)
+- **Feature:** Adds `onEnter` function for Server Side Rendering support [#19](https://github.com/mjrussell/redux-auth-wrapper/pull/19)
+- **Breaking:** Removes arg style syntax that was deprecated in 0.2
 
 ## [0.2.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.2.0...v0.2.1)
 - router context is only required if no redirectAction
