@@ -113,7 +113,7 @@ ownProps will be null if isOnEnter is true because onEnter hooks cannot receive 
 It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `authSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
-* `[allowRedirect]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
+* `[allowRedirectBack]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
 
 #### Returns
 After applying the configObject, `UserAuthWrapper` returns a function which can applied to a Component to wrap in authentication and
