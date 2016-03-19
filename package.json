@@ -47,7 +47,7 @@
     "react-addons-test-utils": "^0.14.6",
     "react-redux": "^4.0.1",
     "react-router": "2.0.1",
-    "react-router-redux": "~3.0.0",
+    "react-router-redux": "~4.0.0",
     "redux": "^3.2.0"
   },
   "dependencies": {
