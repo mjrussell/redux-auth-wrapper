@@ -11,21 +11,21 @@
 
 ## Motivation
 
-At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/rackt/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it? 
+At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/rackt/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it?
 
 `onEnter` is great, and useful in certain situations. However, here are some common authentication and authorization problems `onEnter` does not solve:
 * Decide authentication/authorization from redux store data (there are some [workarounds](https://github.com/CrocoDillon/universal-react-redux-boilerplate/blob/master/src/routes.jsx#L8))
 * Recheck authentication/authorization if the store updates (but not the current route)
 * Recheck authentication/authorization if a child route changes underneath the protected route
 
-An alternative approach is to use [Higher Order Components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.ao9jjxx89). 
+An alternative approach is to use [Higher Order Components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.ao9jjxx89).
 > A higher-order component is just a function that takes an existing component and returns another component that wraps it
 
 Redux-auth-wrapper provides higher-order components for easy to read and apply authentication and authorization constraints for your components.
 
 ## Tutorial
 
-Usage with [React-Router-Redux](https://github.com/rackt/react-router-redux)
+Usage with [React-Router-Redux](https://github.com/rackt/react-router-redux) (Version 4.0)
 
 ```js
 import React from 'react'
@@ -34,28 +34,28 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route } from 'react-router'
 import { createHistory } from 'history'
-import { syncHistory, routeReducer, routeActions } from 'react-router-redux'
+import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 import userReducer from '<project-path>/reducers/userReducer'
 
 const reducer = combineReducers({
-  routing: routeReducer,
+  routing: routerReducer,
   user: userReducer
 })
-const history = createHistory()
-const routingMiddleware = syncHistory(history)
+const baseHistory = createHistory()
+const routingMiddleware = routerMiddleware(baseHistory)
 
 // Note: passing middleware as the last argument requires redux@>=3.1.0
 const store = createStore(
   reducer,
   applyMiddleware(routingMiddleware)
 )
-routingMiddleware.listenForReplays(store)
+const history = syncHistoryWithStore(baseHistory, store)
 
 // Redirects to /login by default
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user, // how to get the user state
-  redirectAction: routeActions.replace, // the redux action to dispatch for redirect
+  redirectAction: routerActions.replace, // the redux action to dispatch for redirect
   wrapperDisplayName: 'UserIsAuthenticated' // a nice name for this auth check
 })
 
@@ -130,7 +130,7 @@ The component is not modified and all static properties are hoisted to the retur
 /* Allow only users with first name Bob */
 const OnlyBob = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/app',
   wrapperDisplayName: 'UserIsOnlyBob',
   predicate: user => user.firstName === 'Bob'
@@ -141,13 +141,13 @@ const OnlyBob = UserAuthWrapper({
 // Take the regular authentication & redirect to login from before
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 // Admin Authorization, redirects non-admins to /app and don't send a redirect param
 const UserIsAdmin = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/app',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,
@@ -187,7 +187,7 @@ import { UserAuthWrapper } from 'redux-auth-wrapper';
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
