@@ -2,10 +2,10 @@
 import React, { Component, PropTypes } from 'react'
 import { Route, Router } from 'react-router'
 import { Provider } from 'react-redux'
-import { applyMiddleware, createStore, combineReducers, compose } from 'redux'
+import {  createStore, combineReducers, applyMiddleware } from 'redux'
 import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
-import { routeReducer, syncHistory, routeActions  } from 'react-router-redux'
+import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 
 import { UserAuthWrapper } from '../src'
 
@@ -23,31 +23,21 @@ const userReducer = (state = {}, { type, payload }) => {
 }
 
 const rootReducer = combineReducers({
-  routing: routeReducer,
+  routing: routerReducer,
   user: userReducer
 })
-
-const configureStore = (history, initialState) => {
-  const routerMiddleware = syncHistory(history)
-
-  const createStoreWithMiddleware = compose(
-    applyMiddleware(routerMiddleware)
-  )(createStore)
-
-  return createStoreWithMiddleware(rootReducer, initialState)
-}
 
 const userSelector = state => state.user
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: userSelector,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
 const HiddenNoRedir = UserAuthWrapper({
   authSelector: userSelector,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'NoRedir',
   predicate: () => false,
@@ -56,7 +46,7 @@ const HiddenNoRedir = UserAuthWrapper({
 
 const UserIsOnlyTest = UserAuthWrapper({
   authSelector: userSelector,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsOnlyTest',
   predicate: user => user.firstName === 'Test'
@@ -64,7 +54,7 @@ const UserIsOnlyTest = UserAuthWrapper({
 
 const UserIsOnlyMcDuderson = UserAuthWrapper({
   authSelector: userSelector,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsOnlyMcDuderson',
   predicate: user => user.lastName === 'McDuderson'
@@ -141,8 +131,13 @@ const userLoggedIn = (firstName = 'Test', lastName = 'McDuderson') => {
 }
 
 const setupTest = (routes = defaultRoutes) => {
-  const history = createMemoryHistory()
-  const store = configureStore(history)
+  const baseHistory = createMemoryHistory()
+  const middleware = routerMiddleware(baseHistory)
+  const store = createStore(
+    rootReducer,
+    applyMiddleware(middleware)
+  )
+  const history = syncHistoryWithStore(baseHistory, store)
 
   const tree = renderIntoDocument(
     <Provider store={store}>
@@ -163,21 +158,21 @@ describe('UserAuthWrapper', () => {
   it('redirects unauthenticated', () => {
     const { history, store } = setupTest()
 
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
     history.push('/auth')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fauth')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fauth')
   })
 
   it('preserves query params on redirect', () => {
     const { history, store } = setupTest()
 
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
     history.push('/auth?test=foo')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fauth%3Ftest%3Dfoo')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fauth%3Ftest%3Dfoo')
   })
 
   it('allows authenticated users', () => {
@@ -186,7 +181,7 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/auth')
-    expect(store.getState().routing.location.pathname).to.equal('/auth')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
   })
 
   it('redirects on no longer authorized', () => {
@@ -195,10 +190,10 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/auth')
-    expect(store.getState().routing.location.pathname).to.equal('/auth')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.location.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
   })
 
   it('allows predicate authorization', () => {
@@ -207,14 +202,14 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn('NotTest'))
 
     history.push('/testOnly')
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2FtestOnly')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestOnly')
 
     store.dispatch(userLoggedIn())
 
     history.push('/testOnly')
-    expect(store.getState().routing.location.pathname).to.equal('/testOnly')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/testOnly')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
   })
 
 
@@ -224,8 +219,8 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/hidden')
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
   })
 
   it('can be nested', () => {
@@ -234,38 +229,38 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn('NotTest'))
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2FtestMcDudersonOnly')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnly')
 
     store.dispatch(userLoggedIn('Test', 'NotMcDuderson'))
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2FtestMcDudersonOnly')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnly')
 
     store.dispatch(userLoggedIn())
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.location.pathname).to.equal('/testMcDudersonOnly')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/testMcDudersonOnly')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
   })
 
   it('supports nested routes', () => {
     const { history, store } = setupTest()
 
     history.push('/parent/child')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fparent%2Fchild')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fparent%2Fchild')
 
     store.dispatch(userLoggedIn())
 
     history.push('/parent/child')
-    expect(store.getState().routing.location.pathname).to.equal('/parent/child')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/parent/child')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fparent%2Fchild')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fparent%2Fchild')
   })
 
   it('passes props to authed components', () => {
@@ -319,11 +314,11 @@ describe('UserAuthWrapper', () => {
     const { history, store: createdStore } = setupTest(routesOnEnter)
     store = createdStore
 
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
     history.push('/onEnter')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2FonEnter')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FonEnter')
   })
 
   it('passes ownProps for auth selector', () => {
@@ -340,7 +335,7 @@ describe('UserAuthWrapper', () => {
 
     const UserIsAuthenticatedProps = UserAuthWrapper({
       authSelector: authSelector,
-      redirectAction: routeActions.replace,
+      redirectAction: routerActions.replace,
       wrapperDisplayName: 'UserIsAuthenticatedProps',
       predicate: user => user.firstName === 'Test' && user.id === '1'
     })
@@ -354,18 +349,18 @@ describe('UserAuthWrapper', () => {
 
     const { history, store } = setupTest(routes)
 
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
 
     store.dispatch(userLoggedIn())
 
     history.push('/ownProps/1')
-    expect(store.getState().routing.location.pathname).to.equal('/ownProps/1')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/ownProps/1')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
 
     history.push('/ownProps/2')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2FownProps%2F2')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
   })
 
   it('uses router for redirect if no redirectAction specified', () => {
@@ -384,11 +379,11 @@ describe('UserAuthWrapper', () => {
 
     const { history, store } = setupTest(routes)
 
-    expect(store.getState().routing.location.pathname).to.equal('/')
-    expect(store.getState().routing.location.search).to.equal('')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
 
     history.push('/noaction')
-    expect(store.getState().routing.location.pathname).to.equal('/login')
-    expect(store.getState().routing.location.search).to.equal('?redirect=%2Fnoaction')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fnoaction')
   })
 })

@@ -7,16 +7,16 @@ import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
-import { syncHistory, routeReducer, routeActions } from 'react-router-redux'
+import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 
 import * as reducers from './reducers'
 import { App, Home, Foo, Admin, Login } from './components'
 
-const history = browserHistory
-const routingMiddleware = syncHistory(history)
+const baseHistory = browserHistory
+const routingMiddleware = routerMiddleware(baseHistory)
 const reducer = combineReducers(Object.assign({}, reducers, {
-  routing: routeReducer
+  routing: routerReducer
 }))
 
 const DevTools = createDevTools(
@@ -34,16 +34,16 @@ const enhancer = compose(
 
 // Note: passing enhancer as the last argument requires redux@>=3.1.0
 const store = createStore(reducer, enhancer)
-routingMiddleware.listenForReplays(store)
+const history = syncHistoryWithStore(baseHistory, store)
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 const UserIsAdmin = UserAuthWrapper({
   authSelector: state => state.user,
-  redirectAction: routeActions.replace,
+  redirectAction: routerActions.replace,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,
