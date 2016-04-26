@@ -1,5 +1,8 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.3.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.4.0...master)
 - Nothing yet
+
+## [0.4](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.3.0...v0.4.0)
+- **Feature:** Adds React Native support [#33](https://github.com/mjrussell/redux-auth-wrapper/pull/33)
 
 ## [0.3](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.2.1...v0.3.0)
 - **Feature:** Adds `ownProps` param to `authSelector` [#21](https://github.com/mjrussell/redux-auth-wrapper/pull/21)
