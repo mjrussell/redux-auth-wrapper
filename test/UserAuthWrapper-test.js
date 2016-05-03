@@ -62,7 +62,7 @@ const UserIsOnlyMcDuderson = UserAuthWrapper({
 
 const AlwaysAuthenticating = UserAuthWrapper({
   authSelector: userSelector,
-  authenticatingSelector: state => true,
+  authenticatingSelector: () => true,
   redirectAction: routerActions.replace,
   wrapperDisplayName: 'AlwaysAuthenticating'
 })

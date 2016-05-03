@@ -1,4 +1,4 @@
-import React from 'react';
-import factory from './factory';
+import React from 'react'
+import factory from './factory'
 
-export const UserAuthWrapper = factory(React, 'div');
+export const UserAuthWrapper = factory(React, 'div')
