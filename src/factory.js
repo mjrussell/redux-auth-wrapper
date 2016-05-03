@@ -23,7 +23,7 @@ export default function factory(React, empty) {
 
     const isAuthorized = (authData) => predicate(authData)
 
-    const ensureAuth = ({location, authData, isAuthenticating}, redirect) => {
+    const ensureAuth = ({location, authData}, redirect) => {
       let query
       if (allowRedirectBack) {
         query = {redirect: `${location.pathname}${location.search}`}
