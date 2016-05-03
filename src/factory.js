@@ -54,7 +54,7 @@ export default function factory(React, empty) {
         (state, ownProps) => {
           return {
             authData: authSelector(state, ownProps, false),
-            isAuthenticating: authenticatingSelector(state, ownProps, false),
+            isAuthenticating: authenticatingSelector(state, ownProps),
           }
         },
         mapDispatchToProps,
