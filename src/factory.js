@@ -3,6 +3,7 @@ import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
 
 const defaults = {
+  LoadingComponent: 'span',
   failureRedirectPath: '/login',
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
@@ -15,7 +16,7 @@ export default function factory(React, empty) {
   const { Component, PropTypes } = React;
 
   return (args) => {
-    const {authSelector, authenticatingSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction} = {
+    const {authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction} = {
       ...defaults,
       ...args
     }
@@ -105,10 +106,11 @@ export default function factory(React, empty) {
         render() {
           // Allow everything but the replace aciton creator to be passed down
           // Includes route props from React-Router and authData
-          const {redirect, authData, ...otherProps} = this.props
-
+          const {redirect, authData, isAuthenticating, ...otherProps} = this.props
           if (isAuthorized(authData)) {
             return <DecoratedComponent authData={authData} {...otherProps} />
+          } else if(isAuthenticating) {
+            return <LoadingComponent {...otherProps} />;
           } else {
             // Don't need to display anything because the user will be redirected
             return React.createElement(empty);
