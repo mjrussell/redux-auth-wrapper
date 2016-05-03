@@ -60,9 +60,18 @@ const UserIsOnlyMcDuderson = UserAuthWrapper({
   predicate: user => user.lastName === 'McDuderson'
 })
 
+class LoadingComponent extends Component {
+  render() {
+    return (
+      <div>Loading!</div>
+    )
+  }
+}
+
 const AlwaysAuthenticating = UserAuthWrapper({
   authSelector: userSelector,
   authenticatingSelector: () => true,
+  LoadingComponent: LoadingComponent,
   redirectAction: routerActions.replace,
   wrapperDisplayName: 'AlwaysAuthenticating'
 })
@@ -182,6 +191,17 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/alwaysAuth')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
   })
+
+  it('renders the specified component when authenticating', () => {
+    const { history, store, tree } = setupTest()
+
+    history.push('/alwaysAuth')
+
+    const comp = findRenderedComponentWithType(tree, LoadingComponent)
+    // Props from React-Router
+    expect(comp.props.location.pathname).to.equal('/alwaysAuth')
+
+  });
 
   it('preserves query params on redirect', () => {
     const { history, store } = setupTest()
