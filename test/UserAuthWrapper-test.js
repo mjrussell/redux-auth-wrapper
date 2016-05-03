@@ -193,7 +193,7 @@ describe('UserAuthWrapper', () => {
   })
 
   it('renders the specified component when authenticating', () => {
-    const { history, store, tree } = setupTest()
+    const { history, tree } = setupTest()
 
     history.push('/alwaysAuth')
 
@@ -201,7 +201,7 @@ describe('UserAuthWrapper', () => {
     // Props from React-Router
     expect(comp.props.location.pathname).to.equal('/alwaysAuth')
 
-  });
+  })
 
   it('preserves query params on redirect', () => {
     const { history, store } = setupTest()
