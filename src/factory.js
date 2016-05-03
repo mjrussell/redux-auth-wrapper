@@ -6,6 +6,7 @@ const defaults = {
   failureRedirectPath: '/login',
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
+  authenticatingSelector: state => false,
   allowRedirectBack: true
 }
 
