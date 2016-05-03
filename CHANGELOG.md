@@ -1,5 +1,5 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.4.0...master)
-- Nothing yet
+- **Feature:** Adds `isAuthenticating` selector and `LoadingComponent` [#35](https://github.com/mjrussell/redux-auth-wrapper/pull/35)
 
 ## [0.4](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.3.0...v0.4.0)
 - **Feature:** Adds React Native support [#33](https://github.com/mjrussell/redux-auth-wrapper/pull/33)
