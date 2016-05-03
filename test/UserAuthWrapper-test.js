@@ -60,6 +60,22 @@ const UserIsOnlyMcDuderson = UserAuthWrapper({
   predicate: user => user.lastName === 'McDuderson'
 })
 
+class LoadingComponent extends Component {
+  render() {
+    return (
+      <div>Loading!</div>
+    )
+  }
+}
+
+const AlwaysAuthenticating = UserAuthWrapper({
+  authSelector: userSelector,
+  authenticatingSelector: () => true,
+  LoadingComponent: LoadingComponent,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'AlwaysAuthenticating'
+})
+
 class App extends Component {
   static propTypes = {
     children: PropTypes.node
@@ -108,6 +124,7 @@ class UnprotectedParentComponent extends Component {
 const defaultRoutes = (
   <Route path="/" component={App} >
     <Route path="login" component={UnprotectedComponent} />
+    <Route path="alwaysAuth" component={AlwaysAuthenticating(UnprotectedComponent)} />
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
@@ -164,6 +181,27 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fauth')
   })
+
+  it('does not redirect if authenticating', () => {
+    const { history, store } = setupTest()
+
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    history.push('/alwaysAuth')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/alwaysAuth')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+  })
+
+  it('renders the specified component when authenticating', () => {
+    const { history, store, tree } = setupTest()
+
+    history.push('/alwaysAuth')
+
+    const comp = findRenderedComponentWithType(tree, LoadingComponent)
+    // Props from React-Router
+    expect(comp.props.location.pathname).to.equal('/alwaysAuth')
+
+  });
 
   it('preserves query params on redirect', () => {
     const { history, store } = setupTest()

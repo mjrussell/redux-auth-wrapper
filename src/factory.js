@@ -3,28 +3,30 @@ import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
 
 const defaults = {
+  LoadingComponent: 'span',
   failureRedirectPath: '/login',
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
+  authenticatingSelector: () => false,
   allowRedirectBack: true
 }
 
 export default function factory(React, empty) {
 
-  const { Component, PropTypes } = React;
+  const { Component, PropTypes } = React
 
   return (args) => {
-    const {authSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction} = {
+    const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction } = {
       ...defaults,
       ...args
     }
 
     const isAuthorized = (authData) => predicate(authData)
 
-    const ensureAuth = ({location, authData}, redirect) => {
+    const ensureAuth = ({ location, authData }, redirect) => {
       let query
       if (allowRedirectBack) {
-        query = {redirect: `${location.pathname}${location.search}`}
+        query = { redirect: `${location.pathname}${location.search}` }
       } else {
         query = {}
       }
@@ -43,7 +45,7 @@ export default function factory(React, empty) {
 
       const mapDispatchToProps = (dispatch) => {
         if (redirectAction !== undefined) {
-          return {redirect: (args) => dispatch(redirectAction(args))}
+          return { redirect: (args) => dispatch(redirectAction(args)) }
         } else {
           return {}
         }
@@ -51,7 +53,10 @@ export default function factory(React, empty) {
 
       @connect(
         (state, ownProps) => {
-          return {authData: authSelector(state, ownProps, false)}
+          return {
+            authData: authSelector(state, ownProps, false),
+            isAuthenticating: authenticatingSelector(state, ownProps)
+          }
         },
         mapDispatchToProps,
       )
@@ -74,11 +79,15 @@ export default function factory(React, empty) {
         };
 
         componentWillMount() {
-          ensureAuth(this.props, this.getRedirectFunc(this.props))
+          if(!this.props.isAuthenticating) {
+            ensureAuth(this.props, this.getRedirectFunc(this.props))
+          }
         }
 
         componentWillReceiveProps(nextProps) {
-          ensureAuth(nextProps, this.getRedirectFunc(nextProps))
+          if(!nextProps.isAuthenticating) {
+            ensureAuth(nextProps, this.getRedirectFunc(nextProps))
+          }
         }
 
         getRedirectFunc = (props) => {
@@ -97,13 +106,14 @@ export default function factory(React, empty) {
         render() {
           // Allow everything but the replace aciton creator to be passed down
           // Includes route props from React-Router and authData
-          const {redirect, authData, ...otherProps} = this.props
-
+          const { redirect, authData, isAuthenticating, ...otherProps } = this.props
           if (isAuthorized(authData)) {
             return <DecoratedComponent authData={authData} {...otherProps} />
+          } else if(isAuthenticating) {
+            return <LoadingComponent {...otherProps} />
           } else {
             // Don't need to display anything because the user will be redirected
-            return React.createElement(empty);
+            return React.createElement(empty)
           }
         }
       }
@@ -113,7 +123,7 @@ export default function factory(React, empty) {
 
     wrapComponent.onEnter = (store, nextState, replace) => {
       const authData = authSelector(store.getState(), null, true)
-      ensureAuth({location: nextState.location, authData}, replace)
+      ensureAuth({ location: nextState.location, authData }, replace)
     }
 
     return wrapComponent
