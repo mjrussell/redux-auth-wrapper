@@ -14,14 +14,14 @@ export default function factory(React, empty) {
   const { Component, PropTypes } = React;
 
   return (args) => {
-    const {authSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction} = {
+    const {authSelector, authenticatingSelector, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction} = {
       ...defaults,
       ...args
     }
 
     const isAuthorized = (authData) => predicate(authData)
 
-    const ensureAuth = ({location, authData}, redirect) => {
+    const ensureAuth = ({location, authData, isAuthenticating}, redirect) => {
       let query
       if (allowRedirectBack) {
         query = {redirect: `${location.pathname}${location.search}`}
@@ -51,7 +51,10 @@ export default function factory(React, empty) {
 
       @connect(
         (state, ownProps) => {
-          return {authData: authSelector(state, ownProps, false)}
+          return {
+            authData: authSelector(state, ownProps, false),
+            isAuthenticating: authenticatingSelector(state, ownProps, false),
+          }
         },
         mapDispatchToProps,
       )
@@ -74,11 +77,15 @@ export default function factory(React, empty) {
         };
 
         componentWillMount() {
-          ensureAuth(this.props, this.getRedirectFunc(this.props))
+          if(!this.props.isAuthenticating) {
+            ensureAuth(this.props, this.getRedirectFunc(this.props))
+          }
         }
 
         componentWillReceiveProps(nextProps) {
-          ensureAuth(nextProps, this.getRedirectFunc(nextProps))
+          if(!nextProps.isAuthenticating) {
+            ensureAuth(nextProps, this.getRedirectFunc(nextProps))
+          }
         }
 
         getRedirectFunc = (props) => {
