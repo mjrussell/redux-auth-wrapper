@@ -212,7 +212,7 @@ Usage as above except include the react-native implementation
 
 
 ```js
-import { UserAuthWrapper } from 'redux-auth-wrapper/native';
+import { UserAuthWrapper } from 'redux-auth-wrapper/lib/native';
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: state => state.user,
