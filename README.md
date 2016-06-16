@@ -171,15 +171,25 @@ after entering their credentials.
 One benefit of the beginning example is that it is clear from looking at the Routes where the
 authentication & authorization logic is applied.
 
+If you are using `getComponent` in React Router you should **not** apply the auth-wrapper inside `getComponent`. This will cause
+React Router to create a new component each time the route changes.
+
 An alternative choice might be to use es7 decorators (after turning on the proper presets) in your component:
 
 ```js
 import { UserIsAuthenticated } from '<projectpath>/auth/authWrappers';
 
 @UserIsAuthenticated
-class MyComponents extends Component {
+class MyComponent extends Component {
 }
 ```
+
+Or with standard ES5/ES6 apply it inside the component file:
+```js
+export default UserIsAuthenticated(MyComponent)
+```
+
+
 
 ### Server Side Rendering
 In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
