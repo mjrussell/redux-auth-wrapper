@@ -21,20 +21,20 @@ class LoginContainer extends Component {
     };
 
     componentWillMount() {
-      this.ensureNotLoggedIn(this.props)
-    }
-
-    componentWillReceiveProps(nextProps) {
-      this.ensureNotLoggedIn(nextProps)
-    }
-
-    ensureNotLoggedIn = (props) => {
-      const { isAuthenticated, replace, redirect } = props
-
+      const { isAuthenticated, replace, redirect } = this.props
       if (isAuthenticated) {
         replace(redirect)
       }
-    };
+    }
+
+    componentWillReceiveProps(nextProps) {
+      const { isAuthenticated, replace, redirect } = nextProps
+      const { isAuthenticated: wasAuthenticated } = this.props
+
+      if (!wasAuthenticated && isAuthenticated) {
+        replace(redirect)
+      }
+    }
 
     onClick = (e) => {
       e.preventDefault()
