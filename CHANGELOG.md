@@ -1,5 +1,5 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.0...master)
-- Nothing yet
+- **BugFix** Adds safeguard to prevent infinite redirects from the wrapper [#45](https://github.com/mjrussell/redux-auth-wrapper/pull/45)
 
 ## [0.5](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.4.0...v0.5.0)
 - **Feature:** Adds `isAuthenticating` selector and `LoadingComponent` [#35](https://github.com/mjrussell/redux-auth-wrapper/pull/35)
