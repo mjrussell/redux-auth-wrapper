@@ -23,7 +23,7 @@ export default function factory(React, empty) {
 
     const isAuthorized = (authData) => predicate(authData)
 
-    const ensureAuth = ({ location, authData }, redirect) => {
+    const createRedirect = (location, redirect) => {
       let query
       if (allowRedirectBack) {
         query = { redirect: `${location.pathname}${location.search}` }
@@ -31,12 +31,10 @@ export default function factory(React, empty) {
         query = {}
       }
 
-      if (!isAuthorized(authData)) {
-        redirect({
-          pathname: failureRedirectPath,
-          query
-        })
-      }
+      redirect({
+        pathname: failureRedirectPath,
+        query
+      })
     }
 
     // Wraps the component that needs the auth enforcement
@@ -79,20 +77,20 @@ export default function factory(React, empty) {
         };
 
         componentWillMount() {
-          if(!this.props.isAuthenticating) {
-            ensureAuth(this.props, this.getRedirectFunc(this.props))
+          if(!this.props.isAuthenticating && !isAuthorized(this.props.authData)) {
+            createRedirect(this.props.location, this.getRedirectFunc(this.props))
           }
         }
 
         componentWillReceiveProps(nextProps) {
-          if(!nextProps.isAuthenticating) {
-            ensureAuth(nextProps, this.getRedirectFunc(nextProps))
+          if(!nextProps.isAuthenticating && !isAuthorized(nextProps.authData) && isAuthorized(this.props.authData)) {
+            createRedirect(nextProps.location, this.getRedirectFunc(nextProps))
           }
         }
 
-        getRedirectFunc = (props) => {
-          if (props.redirect) {
-            return props.redirect
+        getRedirectFunc = ({ redirect }) => {
+          if (redirect) {
+            return redirect
           } else {
             if (!this.context.router.replace) {
               /* istanbul ignore next sanity */
@@ -123,7 +121,9 @@ export default function factory(React, empty) {
 
     wrapComponent.onEnter = (store, nextState, replace) => {
       const authData = authSelector(store.getState(), null, true)
-      ensureAuth({ location: nextState.location, authData }, replace)
+      if (!isAuthorized(authData)) {
+        createRedirect(nextState.location, replace)
+      }
     }
 
     return wrapComponent
