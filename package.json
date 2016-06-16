@@ -38,6 +38,7 @@
     "babel-preset-stage-0": "^6.3.13",
     "chai": "^3.4.1",
     "coveralls": "^2.11.6",
+    "enzyme": "^2.3.0",
     "eslint": "^1.7.1",
     "eslint-config-rackt": "^1.1.1",
     "eslint-plugin-react": "~3.16.0",
@@ -46,11 +47,13 @@
     "mocha": "^2.5.3",
     "react": "^15.1.0",
     "react-addons-test-utils": "^15.1.0",
+    "react-dom": "^15.1.0",
     "react-native": "^0.27.2",
     "react-redux": "^4.0.1",
     "react-router": "^2.4.1",
     "react-router-redux": "^4.0.5",
     "redux": "^3.2.0",
+    "sinon": "^1.17.4",
     "webpack": "^1.13.1"
   },
   "dependencies": {

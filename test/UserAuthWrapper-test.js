@@ -3,7 +3,8 @@ import React, { Component, PropTypes } from 'react'
 import { Route, Router } from 'react-router'
 import { Provider } from 'react-redux'
 import {  createStore, combineReducers, applyMiddleware } from 'redux'
-import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils'
+import { mount } from 'enzyme'
+import sinon from 'sinon'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 
@@ -156,7 +157,7 @@ const setupTest = (routes = defaultRoutes) => {
   )
   const history = syncHistoryWithStore(baseHistory, store)
 
-  const tree = renderIntoDocument(
+  const wrapper = mount(
     <Provider store={store}>
       <Router history={history} >
         {routes}
@@ -167,7 +168,7 @@ const setupTest = (routes = defaultRoutes) => {
   return {
     history,
     store,
-    tree
+    wrapper
   }
 }
 
@@ -193,13 +194,13 @@ describe('UserAuthWrapper', () => {
   })
 
   it('renders the specified component when authenticating', () => {
-    const { history, tree } = setupTest()
+    const { history, wrapper } = setupTest()
 
     history.push('/alwaysAuth')
 
-    const comp = findRenderedComponentWithType(tree, LoadingComponent)
+    const comp = wrapper.find(LoadingComponent)
     // Props from React-Router
-    expect(comp.props.location.pathname).to.equal('/alwaysAuth')
+    expect(comp.props().location.pathname).to.equal('/alwaysAuth')
 
   })
 
@@ -302,23 +303,23 @@ describe('UserAuthWrapper', () => {
   })
 
   it('passes props to authed components', () => {
-    const { history, store, tree } = setupTest()
+    const { history, store, wrapper } = setupTest()
 
     store.dispatch(userLoggedIn())
 
     history.push('/prop')
 
-    const comp = findRenderedComponentWithType(tree, UnprotectedComponent)
+    const comp = wrapper.find(UnprotectedComponent)
     // Props from React-Router
-    expect(comp.props.location.pathname).to.equal('/prop')
+    expect(comp.props().location.pathname).to.equal('/prop')
     // Props from auth selector
-    expect(comp.props.authData).to.deep.equal({
+    expect(comp.props().authData).to.deep.equal({
       email: 'test@test.com',
       firstName: 'Test',
       lastName: 'McDuderson'
     })
     // Props from parent
-    expect(comp.props.testProp).to.equal(true)
+    expect(comp.props().testProp).to.equal(true)
   })
 
   it('hoists statics to the wrapper', () => {
@@ -423,5 +424,32 @@ describe('UserAuthWrapper', () => {
     history.push('/noaction')
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fnoaction')
+  })
+
+  it('only redirects once when props change but authentication is constant', () => {
+
+    const redirectAction = sinon.stub().returns({ type: 'NO_REDIRECT' })
+
+    const StubbedUserIsAuthenticated = UserAuthWrapper({
+      authSelector: userSelector,
+      redirectAction,
+      wrapperDisplayName: 'UserIsAuthenticated',
+      predicate: () => false
+    })
+
+    const Component = StubbedUserIsAuthenticated(UnprotectedComponent)
+
+    // No routing middleware to handle redirects
+    const store = createStore(rootReducer)
+    mount(
+      <Provider store={store}>
+        <Component location={{ pathname: '/', query: {} }}/>
+      </Provider>
+    )
+
+    expect(redirectAction.calledOnce).to.equal(true)
+
+    store.dispatch(userLoggedIn())
+    expect(redirectAction.calledOnce).to.equal(true)
   })
 })
