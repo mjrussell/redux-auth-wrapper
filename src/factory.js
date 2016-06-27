@@ -89,7 +89,7 @@ export default function factory(React, empty) {
           const wasAuthenticating = this.props.isAuthenticating
 
           if ( // Redirect if:
-              // 1. Was authorized, but no longer and not current authenticating
+              // 1. Was authorized, but no longer and not currently authenticating
               (wasAuthorized && !willBeAuthorized && !willbeAuthenticating) ||
               // 2. Was not authorized and authenticating but no longer authenticating
               (wasAuthenticating && !willbeAuthenticating && !willBeAuthorized)
