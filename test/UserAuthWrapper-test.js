@@ -12,13 +12,25 @@ import { UserAuthWrapper } from '../src'
 
 const USER_LOGGED_IN = 'USER_LOGGED_IN'
 const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
+const USER_LOGGING_IN = 'USER_LOGGING_IN'
 
+const userReducerInitialState = {
+  userData: {},
+  isAuthenticating: false
+}
 const userReducer = (state = {}, { type, payload }) => {
   if (type === USER_LOGGED_IN) {
-    return payload
-  }
-  if (type === USER_LOGGED_OUT) {
-    return {}
+    return {
+      userData: payload,
+      isAuthenticating: false
+    }
+  } else if (type === USER_LOGGED_OUT) {
+    return userReducerInitialState
+  } else if (type === USER_LOGGING_IN) {
+    return {
+      ...state,
+      isAuthenticating: true
+    }
   }
   return state
 }
@@ -28,10 +40,11 @@ const rootReducer = combineReducers({
   user: userReducer
 })
 
-const userSelector = state => state.user
+const userSelector = state => state.user.userData
 
 const UserIsAuthenticated = UserAuthWrapper({
   authSelector: userSelector,
+  authenticatingSelector: state => state.user.isAuthenticating,
   redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
@@ -235,6 +248,18 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
   })
 
+  it('redirects if no longer authenticating', () => {
+    const { history, store } = setupTest()
+
+    store.dispatch({ type: USER_LOGGING_IN })
+
+    history.push('/auth')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
+
+    store.dispatch({ type: USER_LOGGED_OUT })
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+  })
+
   it('allows predicate authorization', () => {
     const { history, store } = setupTest()
 
@@ -364,7 +389,7 @@ describe('UserAuthWrapper', () => {
     const authSelector = (state, ownProps, isOnEnter) => {
       if (!isOnEnter) {
         return {
-          ...state.user,
+          ...userSelector(state),
           ...ownProps.routeParams // from React-Router
         }
       } else {

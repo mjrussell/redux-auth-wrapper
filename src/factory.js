@@ -83,7 +83,17 @@ export default function factory(React, empty) {
         }
 
         componentWillReceiveProps(nextProps) {
-          if(!nextProps.isAuthenticating && !isAuthorized(nextProps.authData) && isAuthorized(this.props.authData)) {
+          const willBeAuthorized = isAuthorized(nextProps.authData)
+          const willbeAuthenticating = nextProps.isAuthenticating
+          const wasAuthorized = isAuthorized(this.props.authData)
+          const wasAuthenticating = this.props.isAuthenticating
+
+          if ( // Redirect if:
+              // 1. Was authorized, but no longer and not current authenticating
+              (wasAuthorized && !willBeAuthorized && !willbeAuthenticating) ||
+              // 2. Was not authorized and authenticating but no longer authenticating
+              (wasAuthenticating && !willbeAuthenticating && !willBeAuthorized)
+            ) {
             createRedirect(nextProps.location, this.getRedirectFunc(nextProps))
           }
         }
