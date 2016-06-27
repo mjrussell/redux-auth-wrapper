@@ -83,7 +83,7 @@ export default function factory(React, empty) {
         }
 
         componentWillReceiveProps(nextProps) {
-          if(!nextProps.isAuthenticating && !isAuthorized(nextProps.authData) && isAuthorized(this.props.authData)) {
+          if(!nextProps.isAuthenticating && !isAuthorized(nextProps.authData) && !isAuthorized(this.props.authData)) {
             createRedirect(nextProps.location, this.getRedirectFunc(nextProps))
           }
         }
