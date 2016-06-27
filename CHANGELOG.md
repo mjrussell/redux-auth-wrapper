@@ -1,4 +1,6 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...master)
+
+## [0.5.2](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...v0.5.2)
 - **BugFix** Fixes bug introduced in v0.5.1 that prevented redirection when only isAuthenticating changed [#49](https://github.com/mjrussell/redux-auth-wrapper/issues/49)
 
 ## [0.5.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.0...v0.5.1)
