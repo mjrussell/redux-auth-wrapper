@@ -5,6 +5,7 @@ import isEmpty from 'lodash.isempty'
 const defaults = {
   LoadingComponent: 'span',
   failureRedirectPath: '/login',
+  redirectQueryParamName: 'redirect',
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
   authenticatingSelector: () => false,
@@ -16,17 +17,18 @@ export default function factory(React, empty) {
   const { Component, PropTypes } = React
 
   return (args) => {
-    const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath, wrapperDisplayName, predicate, allowRedirectBack, redirectAction } = {
-      ...defaults,
-      ...args
-    }
+    const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath,
+            wrapperDisplayName, predicate, allowRedirectBack, redirectAction, redirectQueryParamName } = {
+              ...defaults,
+              ...args
+            }
 
     const isAuthorized = (authData) => predicate(authData)
 
     const createRedirect = (location, redirect, redirectPath) => {
       let query
       if (allowRedirectBack) {
-        query = { redirect: `${location.pathname}${location.search}` }
+        query = { [redirectQueryParamName]: `${location.pathname}${location.search}` }
       } else {
         query = {}
       }

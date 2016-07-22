@@ -427,6 +427,30 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
   })
 
+  it('can override query param name', () => {
+    const UserIsAuthenticatedQueryParam = UserAuthWrapper({
+      authSelector: userSelector,
+      redirectQueryParamName: 'customRedirect',
+      redirectAction: routerActions.replace
+    })
+
+    const routes = (
+      <Route path="/" component={App} >
+        <Route path="login" component={UnprotectedComponent} />
+        <Route path="protected" component={UserIsAuthenticatedQueryParam(UnprotectedComponent)} />
+      </Route>
+    )
+
+    const { history, store } = setupTest(routes)
+
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+
+    history.push('/protected')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?customRedirect=%2Fprotected')
+  })
+
   it('can pass a selector for failureRedirectPath', () => {
     const failureRedirectFn = (state, ownProps) => {
       if (userSelector(state) === undefined && ownProps.routeParams.id === '1') {
