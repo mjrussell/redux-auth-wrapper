@@ -110,7 +110,7 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 ownProps will be null if isOnEnter is true because onEnter hooks cannot receive the component properties. Can be ignored when not using onEnter.
 * `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading.
 * `LoadingComponent` \(*Component*): A React component to render while `authenticatingSelector` is `true`. If not present, will be a `<span/>`.
-* `[failureRedirectPath]` \(*String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`
+* `[failureRedirectPath]` \(*String | (state, [ownProps]): String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`. Can also be a function of state and ownProps that returns a string.
 * `[redirectAction]` \(*Function*): Optional redux action creator for redirecting the user. If not present, will use React-Router's router context to perform the transition.
 * `[wrapperDisplayName]` \(*String*): Optional name describing this authentication or authorization check.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
