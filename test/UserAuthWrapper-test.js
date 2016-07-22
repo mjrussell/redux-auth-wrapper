@@ -468,7 +468,7 @@ describe('UserAuthWrapper', () => {
     const store = createStore(rootReducer)
     mount(
       <Provider store={store}>
-        <Component location={{ pathname: '/', query: {} }}/>
+        <Component location={{ pathname: '/', query: {}, search: '' }}/>
       </Provider>
     )
 
