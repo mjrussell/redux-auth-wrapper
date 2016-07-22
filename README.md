@@ -1,5 +1,7 @@
 # redux-auth-wrapper
 
+[![Join the chat at https://gitter.im/mjrussell/redux-auth-wrapper](https://badges.gitter.im/mjrussell/redux-auth-wrapper.svg)](https://gitter.im/mjrussell/redux-auth-wrapper?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![npm](https://img.shields.io/npm/v/redux-auth-wrapper.svg)](https://www.npmjs.com/package/redux-auth-wrapper)
 [![npm dm](https://img.shields.io/npm/dm/redux-auth-wrapper.svg)](https://www.npmjs.com/package/redux-auth-wrapper)
 [![Build Status](https://travis-ci.org/mjrussell/redux-auth-wrapper.svg?branch=master)](https://travis-ci.org/mjrussell/redux-auth-wrapper)
