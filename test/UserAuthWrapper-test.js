@@ -427,6 +427,43 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
   })
 
+  it('can pass a selector for failureRedirectPath', () => {
+    const failureRedirectFn = (state, ownProps) => {
+      if (userSelector(state) === undefined && ownProps.routeParams.id === '1') {
+        return '/login/1'
+      } else {
+        return '/login/0'
+      }
+    }
+
+    const UserIsAuthenticatedProps = UserAuthWrapper({
+      authSelector: userSelector,
+      failureRedirectPath: failureRedirectFn,
+      redirectAction: routerActions.replace,
+      wrapperDisplayName: 'UserIsAuthenticatedProps'
+    })
+
+    const routes = (
+      <Route path="/" component={App} >
+        <Route path="login/:id" component={UnprotectedComponent} />
+        <Route path="ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
+      </Route>
+    )
+
+    const { history, store } = setupTest(routes)
+
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+
+    history.push('/ownProps/1')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login/1')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F1')
+
+    history.push('/ownProps/2')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login/0')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
+  })
+
   it('uses router for redirect if no redirectAction specified', () => {
 
     const UserIsAuthenticatedNoAction = UserAuthWrapper({

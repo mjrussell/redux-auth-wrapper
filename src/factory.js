@@ -23,7 +23,7 @@ export default function factory(React, empty) {
 
     const isAuthorized = (authData) => predicate(authData)
 
-    const createRedirect = (location, redirect) => {
+    const createRedirect = (location, redirect, redirectPath) => {
       let query
       if (allowRedirectBack) {
         query = { redirect: `${location.pathname}${location.search}` }
@@ -32,7 +32,7 @@ export default function factory(React, empty) {
       }
 
       redirect({
-        pathname: failureRedirectPath,
+        pathname: redirectPath,
         query
       })
     }
@@ -53,6 +53,7 @@ export default function factory(React, empty) {
         (state, ownProps) => {
           return {
             authData: authSelector(state, ownProps, false),
+            failureRedirectPath: typeof failureRedirectPath === 'function' ? failureRedirectPath(state, ownProps) : failureRedirectPath,
             isAuthenticating: authenticatingSelector(state, ownProps)
           }
         },
@@ -63,6 +64,7 @@ export default function factory(React, empty) {
         static displayName = `${wrapperDisplayName}(${displayName})`;
 
         static propTypes = {
+          failureRedirectPath: PropTypes.string.isRequired,
           location: PropTypes.shape({
             pathname: PropTypes.string.isRequired,
             search: PropTypes.string.isRequired
@@ -78,7 +80,7 @@ export default function factory(React, empty) {
 
         componentWillMount() {
           if(!this.props.isAuthenticating && !isAuthorized(this.props.authData)) {
-            createRedirect(this.props.location, this.getRedirectFunc(this.props))
+            createRedirect(this.props.location, this.getRedirectFunc(this.props), this.props.failureRedirectPath)
           }
         }
 
@@ -94,7 +96,7 @@ export default function factory(React, empty) {
               // 2. Was not authorized and authenticating but no longer authenticating
               (wasAuthenticating && !willbeAuthenticating && !willBeAuthorized)
             ) {
-            createRedirect(nextProps.location, this.getRedirectFunc(nextProps))
+            createRedirect(nextProps.location, this.getRedirectFunc(nextProps), nextProps.failureRedirectPath)
           }
         }
 
@@ -131,8 +133,10 @@ export default function factory(React, empty) {
 
     wrapComponent.onEnter = (store, nextState, replace) => {
       const authData = authSelector(store.getState(), null, true)
+      const redirectPath = typeof failureRedirectPath === 'function' ? failureRedirectPath(store.getState(), null) : failureRedirectPath
+
       if (!isAuthorized(authData)) {
-        createRedirect(nextState.location, replace)
+        createRedirect(nextState.location, replace, redirectPath)
       }
     }
 
