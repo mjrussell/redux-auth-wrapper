@@ -110,13 +110,14 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 ownProps will be null if isOnEnter is true because onEnter hooks cannot receive the component properties. Can be ignored when not using onEnter.
 * `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading.
 * `LoadingComponent` \(*Component*): A React component to render while `authenticatingSelector` is `true`. If not present, will be a `<span/>`.
-* `[failureRedirectPath]` \(*String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`
+* `[failureRedirectPath]` \(*String | (state, [ownProps]): String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`. Can also be a function of state and ownProps that returns a string.
+* `[redirectQueryParamName]` \(*String*): Optional name of the query parameter added when `allowRedirectBack` is true. Defaults to `redirect`.
 * `[redirectAction]` \(*Function*): Optional redux action creator for redirecting the user. If not present, will use React-Router's router context to perform the transition.
 * `[wrapperDisplayName]` \(*String*): Optional name describing this authentication or authorization check.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `authSelector` param.
-If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered.
-* `[allowRedirectBack]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`
+If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered. By default, it returns true if `authData` is {} or null.
+* `[allowRedirectBack]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`. Defaults to `true`.
 
 #### Returns
 After applying the configObject, `UserAuthWrapper` returns a function which can applied to a Component to wrap in authentication and
