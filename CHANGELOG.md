@@ -1,4 +1,8 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.6.0...master)
+
+## [0.6.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.2...v0.6.0)
+- **Feature** `failureRedirectPath` can be a function of state and props
+- **Feature** option to change the query param name with `redirectQueryParamName`
 
 ## [0.5.2](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...v0.5.2)
 - **BugFix** Fixes bug introduced in v0.5.1 that prevented redirection when only isAuthenticating changed [#49](https://github.com/mjrussell/redux-auth-wrapper/issues/49)
