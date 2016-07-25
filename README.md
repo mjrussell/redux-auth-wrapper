@@ -191,6 +191,22 @@ Or with standard ES5/ES6 apply it inside the component file:
 export default UserIsAuthenticated(MyComponent)
 ```
 
+### Protecting Multiple Routes
+Because routes in React Router are not required to have paths, you can use nesting to protect mutliple routes without applying
+the wrapper mutliple times.
+```js
+const Authenticated = UserIsAuthenticated((props) => props.children);
+
+<Route path='/' component={App}>
+   <IndexRedirect to="/login" />
+    <Route path='login' component={Login} />
+    <Route component={Authenticated}>
+      <Route path="foo" component={Foo} />
+      <Route path="bar" component={Bar} />
+    </Route>
+</Route>
+```
+
 
 
 ### Server Side Rendering
