@@ -199,11 +199,11 @@ const Authenticated = UserIsAuthenticated((props) => props.children);
 
 <Route path='/' component={App}>
    <IndexRedirect to="/login" />
-    <Route path='login' component={Login} />
-    <Route component={Authenticated}>
-      <Route path="foo" component={Foo} />
-      <Route path="bar" component={Bar} />
-    </Route>
+   <Route path='login' component={Login} />
+   <Route component={Authenticated}>
+     <Route path="foo" component={Foo} />
+     <Route path="bar" component={Bar} />
+   </Route>
 </Route>
 ```
 
