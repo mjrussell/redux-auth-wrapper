@@ -33,8 +33,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
-import { Router, Route } from 'react-router'
-import { createHistory } from 'history'
+import { Router, Route, browserHistory } from 'react-router'
 import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 import { UserAuthWrapper } from 'redux-auth-wrapper'
 import userReducer from '<project-path>/reducers/userReducer'
@@ -43,15 +42,15 @@ const reducer = combineReducers({
   routing: routerReducer,
   user: userReducer
 })
-const baseHistory = createHistory()
-const routingMiddleware = routerMiddleware(baseHistory)
+
+const routingMiddleware = routerMiddleware(browserHistory)
 
 // Note: passing middleware as the last argument requires redux@>=3.1.0
 const store = createStore(
   reducer,
   applyMiddleware(routingMiddleware)
 )
-const history = syncHistoryWithStore(baseHistory, store)
+const history = syncHistoryWithStore(browserHistory, store)
 
 // Redirects to /login by default
 const UserIsAuthenticated = UserAuthWrapper({
