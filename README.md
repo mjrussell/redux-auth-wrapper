@@ -17,7 +17,7 @@ At first, handling authentication and authorization seems easy in React-Router a
 `onEnter` is great, and useful in certain situations. However, here are some common authentication and authorization problems `onEnter` does not solve:
 * Decide authentication/authorization from redux store data (there are some [workarounds](https://github.com/CrocoDillon/universal-react-redux-boilerplate/blob/master/src/routes.jsx#L8))
 * Recheck authentication/authorization if the store updates (but not the current route)
-* Recheck authentication/authorization if a child route changes underneath the protected route
+* Recheck authentication/authorization if a child route changes underneath the protected route (React Router 2.0 now supports this with `onChange`)
 
 An alternative approach is to use [Higher Order Components](https://medium.com/@dan_abramov/mixins-are-dead-long-live-higher-order-components-94a0d2f9e750#.ao9jjxx89).
 > A higher-order component is just a function that takes an existing component and returns another component that wraps it
