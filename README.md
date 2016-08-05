@@ -107,7 +107,7 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 
 * `authSelector(state, [ownProps], [isOnEnter]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`.
 ownProps will be null if isOnEnter is true because onEnter hooks cannot receive the component properties. Can be ignored when not using onEnter.
-* `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading. You only need this if you plan to display an alternative component while loading.
+* `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading.
 * `LoadingComponent` \(*Component*): A React component to render while `authenticatingSelector` is `true`. If not present, will be a `<span/>`. Will be passed
 all properties passed into the wrapped component, including `children`.
 * `[failureRedirectPath]` \(*String | (state, [ownProps]): String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`. Can also be a function of state and ownProps that returns a string.
