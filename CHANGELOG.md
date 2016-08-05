@@ -1,8 +1,10 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.6.0...master)
+- **Bugfix** Dont render subroutes as children in default LoadingComponent [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
+- **Bugfix/Breaking Change** Change defaut LoadingComponent to a `div` and use the React native default empty element [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
 
 ## [0.6.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.2...v0.6.0)
-- **Feature** `failureRedirectPath` can be a function of state and props
-- **Feature** option to change the query param name with `redirectQueryParamName`
+- **Feature** `failureRedirectPath` can be a function of state and props [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
+- **Feature** option to change the query param name with `redirectQueryParamName` [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
 
 ## [0.5.2](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...v0.5.2)
 - **BugFix** Fixes bug introduced in v0.5.1 that prevented redirection when only isAuthenticating changed [#49](https://github.com/mjrussell/redux-auth-wrapper/issues/49)
