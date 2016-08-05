@@ -2,17 +2,17 @@ import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
 
-const defaults = {
-  LoadingComponent: 'span',
-  failureRedirectPath: '/login',
-  redirectQueryParamName: 'redirect',
-  wrapperDisplayName: 'AuthWrapper',
-  predicate: x => !isEmpty(x),
-  authenticatingSelector: () => false,
-  allowRedirectBack: true
-}
-
 export default function factory(React, empty) {
+
+  const defaults = {
+    LoadingComponent: () => React.createElement(empty), // dont allow passthrough of props from wrapper
+    failureRedirectPath: '/login',
+    redirectQueryParamName: 'redirect',
+    wrapperDisplayName: 'AuthWrapper',
+    predicate: x => !isEmpty(x),
+    authenticatingSelector: () => false,
+    allowRedirectBack: true
+  }
 
   const { Component, PropTypes } = React
 
