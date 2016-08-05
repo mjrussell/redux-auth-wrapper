@@ -90,6 +90,13 @@ const AlwaysAuthenticating = UserAuthWrapper({
   wrapperDisplayName: 'AlwaysAuthenticating'
 })
 
+const AlwaysAuthenticatingDefault = UserAuthWrapper({
+  authSelector: userSelector,
+  authenticatingSelector: () => true,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'AlwaysAuthenticating'
+})
+
 class App extends Component {
   static propTypes = {
     children: PropTypes.node
@@ -139,6 +146,7 @@ const defaultRoutes = (
   <Route path="/" component={App} >
     <Route path="login" component={UnprotectedComponent} />
     <Route path="alwaysAuth" component={AlwaysAuthenticating(UnprotectedComponent)} />
+    <Route path="alwaysAuthDef" component={AlwaysAuthenticatingDefault(UnprotectedComponent)} />
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
@@ -214,7 +222,16 @@ describe('UserAuthWrapper', () => {
     const comp = wrapper.find(LoadingComponent)
     // Props from React-Router
     expect(comp.props().location.pathname).to.equal('/alwaysAuth')
+  })
 
+  it('renders the default component when authenticating without children and extra props', () => {
+    const { history, wrapper } = setupTest()
+
+    history.push('/alwaysAuthDef')
+
+    const comp = wrapper.find('div').last()
+    // expect no properties to be passed down
+    expect(comp.props()).to.deep.equal({})
   })
 
   it('preserves query params on redirect', () => {
