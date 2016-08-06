@@ -10,6 +10,18 @@
 
 `npm install --save redux-auth-wrapper`
 
+## Contents
+* [Motivation](#motivation)
+* [Tutorial](#tutorial)
+* [API](#api)
+* [Authorization & Advanced Usage](#authorization--advanced-usage)
+* [Where to define & apply the wrappers](#where-to-define--apply-the-wrappers)
+* [Protecting Multiple Routes](#protecting-multiple-routes)
+* [Dispatching an Additional Redux Action on Redirect](#dispatching-an-additional-redux-action-on-redirect)
+* [Server Side Rendering](#server-side-rendering)
+* [React Native](#react-native)
+* [Examples](#examples)
+
 ## Motivation
 
 At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/rackt/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it?
@@ -128,7 +140,7 @@ authorization checks. The function also has the following extra properties:
 * `DecoratedComponent` \(*React Component*): The component to be wrapped in the auth check. It will pass down all props given to the returned component as well as the prop `authData` which is the result of the `authSelector`.
 The component is not modified and all static properties are hoisted to the returned component
 
-## Authorization & More Advanced Usage
+## Authorization & Advanced Usage
 
 ```js
 /* Allow only users with first name Bob */
@@ -168,7 +180,7 @@ means that logged out admins will be redirected to `/login` before checking if t
 Otherwise admins would be sent to `/app` if they weren't logged in and then redirected to `/login`, only to find themselves at `/app`
 after entering their credentials.
 
-### Where to define & apply the wrappers
+## Where to define & apply the wrappers
 
 One benefit of the beginning example is that it is clear from looking at the Routes where the
 authentication & authorization logic is applied.
@@ -191,7 +203,7 @@ Or with standard ES5/ES6 apply it inside the component file:
 export default UserIsAuthenticated(MyComponent)
 ```
 
-### Protecting Multiple Routes
+## Protecting Multiple Routes
 Because routes in React Router are not required to have paths, you can use nesting to protect mutliple routes without applying
 the wrapper mutliple times.
 ```js
@@ -207,9 +219,47 @@ const Authenticated = UserIsAuthenticated((props) => props.children);
 </Route>
 ```
 
+## Dispatching an Additional Redux Action on Redirect
+You may want to dispatch an additonal redux action when a redirect occurs. One example of this is to display a notification message
+that the user is being redirected or don't have access to that protected resource. To do this, you can chain the `redirectAction`
+parameter using `redux-thunk` middleware. It depends slightly on if you are using a redux + routing solution or just React Router.
+
+#### Using `react-router-redux` or `redux-router` and dispatching an extra redux action in the wrapper
+```js
+import { replace } from 'react-router-redux'; // Or your redux-router equivalent
+import addNotification from './notificationActions';
+
+// Admin Authorization, redirects non-admins to /app
+const UserIsAdmin = UserAuthWrapper({
+  failureRedirectPath: '/app',
+  predicate: user => user.isAdmin,
+  redirectAction: (newLoc) => (dispatch) => {
+     dispatch(replace(newLoc));
+     dispatch(addNotification({ message: 'Sorry, you are not an administrator' }));
+  },
+  ...
+})
+```
+
+#### Using React Router with history singleton and extra redux action
+```js
+import { browserHistory } from 'react-router';
+import addNotification from './notificationActions';
+
+// Admin Authorization, redirects non-admins to /app
+const UserIsAdmin = UserAuthWrapper({
+  failureRedirectPath: '/app',
+  predicate: user => user.isAdmin,
+  redirectAction: (newLoc) => (dispatch) => {
+     browserHistory.replace(newLoc);
+     dispatch(addNotification({ message: 'Sorry, you are not an administrator' }));
+  },
+  ...
+})
+```
 
 
-### Server Side Rendering
+## Server Side Rendering
 In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
 of a `<Route>`. You can access the `onEnter` method of the `UserAuthWrapper` after applying the config parameters:
 ```js
@@ -235,7 +285,7 @@ const getRoutes = (store) => {
 };
 ```
 
-### React Native
+## React Native
 Usage as above except include the react-native implementation
 
 
@@ -249,6 +299,6 @@ const UserIsAuthenticated = UserAuthWrapper({
 })
 ```
 
-### Other examples
+## Examples
 * [Redux-Router and React-Router 1.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
 * [React-Router-Redux and React-Router 2.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/react-router-redux)
