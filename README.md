@@ -11,16 +11,16 @@
 `npm install --save redux-auth-wrapper`
 
 ## Contents
-* [Motivation](#Motivation)
-* [Tutorial](#Tutorial)
-* [API](#API)
-* [Authorization & Advanced Usage](#Authorization & Advanced Usage)
-* [Where to define & apply the wrappers](#Where to define & apply the wrappers)
-* [Protecting Multiple Routes](#Protecting Multiple Routes)
-* [Dispatching an Additional Redux Action on Redirect](#Dispatching an Additional Redux Action on Redirect)
-* [Server Side Rendering](#Server Side Rendering)
-* [React Native](#React Native)
-* [Examples](#Examples)
+* [Motivation](#motivation)
+* [Tutorial](#tutorial)
+* [API](#api)
+* [Authorization & Advanced Usage](#authorization--advanced-usage)
+* [Where to define & apply the wrappers](#where-to-define--apply-the-wrappers)
+* [Protecting Multiple Routes](#protecting-multiple-routes)
+* [Dispatching an Additional Redux Action on Redirect](#dispatching-an-additional-redux-action-on-redirect)
+* [Server Side Rendering](#server-side-rendering)
+* [React Native](#react-native)
+* [Examples](#examples)
 
 ## Motivation
 
