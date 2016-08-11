@@ -1,4 +1,6 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.6.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.7.0...master)
+
+## [0.7.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.6.0...v0.7.0)
 - **Bugfix** Dont render subroutes as children in default LoadingComponent [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
 - **Bugfix/Breaking Change** Change defaut LoadingComponent to a `div` and use the React native default empty element [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
 
