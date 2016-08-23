@@ -7,6 +7,7 @@ export default function factory(React, empty) {
   const defaults = {
     LoadingComponent: () => React.createElement(empty), // dont allow passthrough of props from wrapper
     failureRedirectPath: '/login',
+    FailureComponent: undefined,
     redirectQueryParamName: 'redirect',
     wrapperDisplayName: 'AuthWrapper',
     predicate: x => !isEmpty(x),
@@ -17,7 +18,7 @@ export default function factory(React, empty) {
   const { Component, PropTypes } = React
 
   return (args) => {
-    const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath,
+    const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath, FailureComponent,
             wrapperDisplayName, predicate, allowRedirectBack, redirectAction, redirectQueryParamName } = {
               ...defaults,
               ...args
@@ -38,6 +39,12 @@ export default function factory(React, empty) {
         query
       })
     }
+
+    const shouldRedirect = FailureComponent === undefined
+    const locationShape = PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      search: PropTypes.string.isRequired
+    })
 
     // Wraps the component that needs the auth enforcement
     function wrapComponent(DecoratedComponent) {
@@ -67,10 +74,7 @@ export default function factory(React, empty) {
 
         static propTypes = {
           failureRedirectPath: PropTypes.string.isRequired,
-          location: PropTypes.shape({
-            pathname: PropTypes.string.isRequired,
-            search: PropTypes.string.isRequired
-          }).isRequired,
+          location: shouldRedirect ? locationShape.isRequired : locationShape,
           redirect: PropTypes.func,
           authData: PropTypes.object
         };
@@ -81,7 +85,7 @@ export default function factory(React, empty) {
         };
 
         componentWillMount() {
-          if(!this.props.isAuthenticating && !isAuthorized(this.props.authData)) {
+          if(!this.props.isAuthenticating && !isAuthorized(this.props.authData) && shouldRedirect) {
             createRedirect(this.props.location, this.getRedirectFunc(this.props), this.props.failureRedirectPath)
           }
         }
@@ -92,11 +96,16 @@ export default function factory(React, empty) {
           const wasAuthorized = isAuthorized(this.props.authData)
           const wasAuthenticating = this.props.isAuthenticating
 
-          if ( // Redirect if:
-              // 1. Was authorized, but no longer and not currently authenticating
-              (wasAuthorized && !willBeAuthorized && !willbeAuthenticating) ||
-              // 2. Was not authorized and authenticating but no longer authenticating
-              (wasAuthenticating && !willbeAuthenticating && !willBeAuthorized)
+          // Don't bather to redirect if:
+          // 1. currently authenticating or FailureComponent is set
+          if (willbeAuthenticating || !shouldRedirect)
+            return
+
+          // Redirect if:
+          if ( // 1. Was authorized, but no longer
+                (wasAuthorized && !willBeAuthorized) ||
+              // 2. Was not authorized and authenticating
+                (wasAuthenticating && !willBeAuthorized)
             ) {
             createRedirect(nextProps.location, this.getRedirectFunc(nextProps), nextProps.failureRedirectPath)
           }
@@ -123,9 +132,12 @@ export default function factory(React, empty) {
             return <DecoratedComponent authData={authData} {...otherProps} />
           } else if(isAuthenticating) {
             return <LoadingComponent {...otherProps} />
-          } else {
+          } else if(shouldRedirect) {
             // Don't need to display anything because the user will be redirected
             return React.createElement(empty)
+          } else {
+            // Display FailureComponent or nothing if FailureComponent is null
+            return FailureComponent === null ? null : <FailureComponent authData={authData} {...otherProps} />
           }
         }
       }
@@ -133,12 +145,14 @@ export default function factory(React, empty) {
       return hoistStatics(UserAuthWrapper, DecoratedComponent)
     }
 
-    wrapComponent.onEnter = (store, nextState, replace) => {
-      const authData = authSelector(store.getState(), null, true)
-      const redirectPath = typeof failureRedirectPath === 'function' ? failureRedirectPath(store.getState(), null) : failureRedirectPath
+    if (shouldRedirect) {
+      wrapComponent.onEnter = (store, nextState, replace) => {
+        const authData = authSelector(store.getState(), null, true)
+        const redirectPath = typeof failureRedirectPath === 'function' ? failureRedirectPath(store.getState(), null) : failureRedirectPath
 
-      if (!isAuthorized(authData)) {
-        createRedirect(nextState.location, replace, redirectPath)
+        if (!isAuthorized(authData)) {
+          createRedirect(nextState.location, replace, redirectPath)
+        }
       }
     }
 
