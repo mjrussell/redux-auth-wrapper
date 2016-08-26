@@ -96,7 +96,7 @@ export default function factory(React, empty) {
           const wasAuthorized = isAuthorized(this.props.authData)
           const wasAuthenticating = this.props.isAuthenticating
 
-          // Don't bather to redirect if:
+          // Don't bother to redirect if:
           // 1. currently authenticating or FailureComponent is set
           if (willbeAuthenticating || !shouldRedirect)
             return
