@@ -238,14 +238,14 @@ describe('UserAuthWrapper', () => {
     expect(comp.props().location.pathname).to.equal('/alwaysAuth')
   })
 
-  it('renders the default component when authenticating without children and extra props', () => {
+  it('renders nothing while authenticating and no LoadingComponent set', () => {
     const { history, wrapper } = setupTest()
 
     history.push('/alwaysAuthDef')
 
-    const comp = wrapper.find('div').last()
-    // expect no properties to be passed down
-    expect(comp.props()).to.deep.equal({})
+    const comp = wrapper.find(App)
+    // There is a child here. It is connect but it should render no html
+    expect(comp.childAt(0).html()).to.be.null
   })
 
   it('renders the failure component when prop is set', () => {
