@@ -97,6 +97,19 @@ const AlwaysAuthenticatingDefault = UserAuthWrapper({
   wrapperDisplayName: 'AlwaysAuthenticating'
 })
 
+function FailureComponent(props) {
+  return (
+    <div>No Access for user: {props.authData.email}</div>
+  )
+}
+
+const ElevatedAccess = UserAuthWrapper({
+  authSelector: userSelector,
+  predicate: () => false,
+  FailureComponent,
+  wrapperDisplayName: 'ElevatedAccess'
+})
+
 class App extends Component {
   static propTypes = {
     children: PropTypes.node
@@ -149,6 +162,7 @@ const defaultRoutes = (
     <Route path="alwaysAuthDef" component={AlwaysAuthenticatingDefault(UnprotectedComponent)} />
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
+    <Route path="elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
     <Route path="testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
     <Route path="parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
@@ -234,6 +248,17 @@ describe('UserAuthWrapper', () => {
     expect(comp.props()).to.deep.equal({})
   })
 
+  it('renders the failure component when prop is set', () => {
+    const { history, store, wrapper } = setupTest()
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/elevatedAccess')
+
+    const comp = wrapper.find(FailureComponent).last()
+    expect(comp.props().authData.email).to.equal('test@test.com')
+  })
+
   it('preserves query params on redirect', () => {
     const { history, store } = setupTest()
 
@@ -263,6 +288,18 @@ describe('UserAuthWrapper', () => {
 
     store.dispatch({ type: USER_LOGGED_OUT })
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+  })
+
+  it('doesn\'t redirects on no longer authorized if FailureComponent is set', () => {
+    const { history, store } = setupTest()
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/elevatedAccess')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/elevatedAccess')
+
+    store.dispatch({ type: USER_LOGGED_OUT })
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/elevatedAccess')
   })
 
   it('redirects if no longer authenticating', () => {
@@ -400,6 +437,15 @@ describe('UserAuthWrapper', () => {
     history.push('/onEnter')
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FonEnter')
+  })
+
+  it('it doesn\'t provide an onEnter static function if FailureComponent prop is set', () => {
+    const AuthWrapper = UserAuthWrapper({
+      authSelector: () => false,
+      FailureComponent: null
+    })
+
+    expect(AuthWrapper.onEnter).to.not.exist
   })
 
   it('passes ownProps for auth selector', () => {
