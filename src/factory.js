@@ -131,7 +131,7 @@ export default function factory(React, empty) {
           if (isAuthorized(authData)) {
             return <DecoratedComponent authData={authData} {...otherProps} />
           } else if(isAuthenticating) {
-            return <LoadingComponent {...otherProps} />
+            return <LoadingComponent authData={authData} {...otherProps} />
           } else if(shouldRedirect) {
             // Don't need to display anything because the user will be redirected
             return React.createElement(empty)
