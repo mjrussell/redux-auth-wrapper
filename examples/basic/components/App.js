@@ -2,6 +2,9 @@ import React from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { logout } from '../actions/user'
+import { VisibleOnlyAdmin } from '../util/wrappers'
+
+const OnlyAdminLink = VisibleOnlyAdmin(() => <Link to="/admin">{'Admin'}</Link>)
 
 function App({ children, logout }) {
   return (
@@ -13,7 +16,7 @@ function App({ children, logout }) {
         {' '}
         <Link to="/foo">{'Foo (Login Required)'}</Link>
         {' '}
-        <Link to="/admin">{'Admin'}</Link>
+        <OnlyAdminLink />
         {' '}
         <Link to="/login">Login</Link>
         {' '}

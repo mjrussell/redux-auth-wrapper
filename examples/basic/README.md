@@ -15,5 +15,5 @@ This example uses React-Router 2.x and React-Router-Redux 4.x.
 4. `Browse to http://localhost:8080`
 
 Login as any user to access the protected page `foo`.
-Login with the admin box check to access the admin section.
+Login with the admin box check to access the admin section. (Link is hidden until logging in as admin)
 Logout from any protected page to get redirect back to the login page.
