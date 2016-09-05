@@ -187,11 +187,11 @@ after entering their credentials.
 
 #### Hiding Components
 
-The auth wrappers can be used for more than just redirection. You can use the `FailureComponent` parameter to hide
-components or display alternative components when the user is not authorized. Keep in mind that wrappers which use
+The auth wrappers can be used for more than redirection. You can use the `FailureComponent` parameter to hide a
+component or display an alternative component when the user is not authorized. Keep in mind that wrappers that use
 `FailureComponent` will not redirect users.
 
-Here is an example that hides a link from a non-admin user. The wrapper is applied to a function component:
+Here is an example that hides a link from a non-admin user.
 ```js
 const VisibleOnlyAdmin = UserAuthWrapper({
   authSelector: state => state.user,
@@ -200,6 +200,7 @@ const VisibleOnlyAdmin = UserAuthWrapper({
   FailureComponent: null
 })
 
+// Applying to a function component for simplicity but could be Class or createClass component
 const AdminOnlyLink = VisibleOnlyAdmin(() => <Link to='/admin'>Admin Section</Link>)
 ```
 
@@ -342,5 +343,8 @@ const UserIsAuthenticated = UserAuthWrapper({
 ```
 
 ## Examples
+* [Basic Example](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/basic)
+* [Loading Component Example](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/loading)
+* [Local Storage Example](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/localStorage)
 * [Redux-Router and React-Router 1.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
 * [React-Router-Redux and React-Router 2.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/react-router-redux)
