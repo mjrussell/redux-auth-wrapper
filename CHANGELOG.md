@@ -22,7 +22,8 @@ to be redirect, return `null` so React will omit it instead of an empty `div`.
 - **BugFix:** Adds safeguard to prevent infinite redirects from the wrapper [#45](https://github.com/mjrussell/redux-auth-wrapper/pull/45)
 
 ## [0.5](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.4.0...v0.5.0)
-- **Feature:** Adds `isAuthenticating` selector and `LoadingComponent` [#35](https://github.com/mjrussell/redux-auth-wrapper/pull/35)
+- **Feature:** Adds `isAuthenticating` selector and `LoadingComponent`
+[#35](https://github.com/mjrussell/redux-auth-wrapper/pull/35). (Contributed by @cab)
 
 ## [0.4](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.3.0...v0.4.0)
 - **Feature:** Adds React Native support [#33](https://github.com/mjrussell/redux-auth-wrapper/pull/33)
