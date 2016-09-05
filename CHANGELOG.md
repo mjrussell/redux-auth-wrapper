@@ -1,18 +1,18 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.7.0...master)
 
 ## [0.7.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.6.0...v0.7.0)
-- **Bugfix** Dont render subroutes as children in default LoadingComponent [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
-- **Bugfix/Breaking Change** Change defaut LoadingComponent to a `div` and use the React native default empty element [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
+- **Bugfix:** Don't render subroutes as children in default LoadingComponent [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
+- **Bugfix/Breaking Change:** Change default LoadingComponent to a `div` and use the React native default empty element [#63](https://github.com/mjrussell/redux-auth-wrapper/pull/63)
 
 ## [0.6.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.2...v0.6.0)
-- **Feature** `failureRedirectPath` can be a function of state and props [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
-- **Feature** option to change the query param name with `redirectQueryParamName` [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
+- **Feature:** `failureRedirectPath` can be a function of state and props [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
+- **Feature:** option to change the query param name with `redirectQueryParamName` [#57](https://github.com/mjrussell/redux-auth-wrapper/pull/57)
 
 ## [0.5.2](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.1...v0.5.2)
-- **BugFix** Fixes bug introduced in v0.5.1 that prevented redirection when only isAuthenticating changed [#49](https://github.com/mjrussell/redux-auth-wrapper/issues/49)
+- **BugFix:** Fixes bug introduced in v0.5.1 that prevented redirection when only isAuthenticating changed [#49](https://github.com/mjrussell/redux-auth-wrapper/issues/49)
 
 ## [0.5.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.5.0...v0.5.1)
-- **BugFix** Adds safeguard to prevent infinite redirects from the wrapper [#45](https://github.com/mjrussell/redux-auth-wrapper/pull/45)
+- **BugFix:** Adds safeguard to prevent infinite redirects from the wrapper [#45](https://github.com/mjrussell/redux-auth-wrapper/pull/45)
 
 ## [0.5](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.4.0...v0.5.0)
 - **Feature:** Adds `isAuthenticating` selector and `LoadingComponent` [#35](https://github.com/mjrussell/redux-auth-wrapper/pull/35)
@@ -29,7 +29,7 @@
 - router context is only required if no redirectAction
 
 ## [0.2.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.1.1...v0.2.0)
-- **Feature:** new redirectAction config arg, removes dependency on a redux-routing impl [#13](https://github.com/mjrussell/redux-auth-wrapper/issues/13)
+- **Feature:** new redirectAction config arg, removes dependency on a redux-routing implementation [#13](https://github.com/mjrussell/redux-auth-wrapper/issues/13)
 - **Feature:** New config object syntax for AuthWrapper [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
 - **Deprecation:** Deprecates AuthWrapper args syntax [#12](https://github.com/mjrussell/redux-auth-wrapper/issues/12)
 - **Feature:** Hoists wrapped component's statics up to the returned component
