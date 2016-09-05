@@ -11,7 +11,7 @@
 `npm install --save redux-auth-wrapper`
 
 **Versioning Note:** This project adheres to [semver](http://semver.org/). Before version 1.0 there may be breaking versions between
-minor versions (e.g. 0.4 -> 0.5). There will never be any breaking changes for bug version upgrades (e.g. 0.4.0 -> 0.4.1). Please view the [Changelog](/Changelog.md) for release notes.
+minor versions (e.g. 0.4 -> 0.5). There will never be any breaking changes for bug version upgrades (e.g. 0.4.0 -> 0.4.1). Please view the [Changelog](/CHANGELOG.md) for release notes.
 
 ## Contents
 * [Motivation](#motivation)
