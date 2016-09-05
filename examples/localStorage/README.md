@@ -4,7 +4,7 @@ redux-auth-wrapper localstorage example
 This is an example that demonstrates using localStorage with
 redux-auth-wrapper in order to persist login state.
 
-This is for example purposes only, a real production application 
+This is for example purposes only, a real production application
 should validate the token and use a token retrieved from a server.
 
 This example uses React-Router 2.x and React-Router-Redux 4.x.
@@ -17,5 +17,5 @@ This example uses React-Router 2.x and React-Router-Redux 4.x.
 4. `Browse to http://localhost:8080`
 
 Login as any user to access the protected page `foo`.
-Try refreshing the page and see that youre still logged in.
+Try refreshing the page and see that you're still logged in.
 Logout from any protected page to get redirect back to the login page.
