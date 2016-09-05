@@ -1,4 +1,6 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.7.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.8.0...master)
+
+## [0.8.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.7.0...v0.8.0)
 - **Feature:** FailureComponent to not redirect and either hide or show a different component on auth failure [#61](https://github.com/mjrussell/redux-auth-wrapper/pull/61). (Contributed by @mehiel)
 - **Feature:** Pass auth data as props to Loading Component [#75](https://github.com/mjrussell/redux-auth-wrapper/issues/75)
 - **Breaking Change:** When rendering an "empty" component such as the default LoadingComponent and when the user is about
