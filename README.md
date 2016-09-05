@@ -332,18 +332,10 @@ const getRoutes = (store) => {
 ```
 
 ## React Native
-Usage as above except include the react-native implementation
 
+This library can be used with React Native `>= 0.25.0` without any changes.
 
-```js
-import { UserAuthWrapper } from 'redux-auth-wrapper/lib/native';
-
-const UserIsAuthenticated = UserAuthWrapper({
-  authSelector: state => state.user,
-  redirectAction: routerActions.replace,
-  wrapperDisplayName: 'UserIsAuthenticated'
-})
-```
+Using React Native and redux-auth-wrapper? Please help create an example for others to get started!
 
 ## Examples
 * [Basic Example](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/basic)
