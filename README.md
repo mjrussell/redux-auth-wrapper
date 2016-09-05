@@ -15,6 +15,7 @@
 * [Tutorial](#tutorial)
 * [API](#api)
 * [Authorization & Advanced Usage](#authorization--advanced-usage)
+* [Hiding and Alternate Components](#hiding-and-alternate-components)
 * [Where to define & apply the wrappers](#where-to-define--apply-the-wrappers)
 * [Protecting Multiple Routes](#protecting-multiple-routes)
 * [Dispatching an Additional Redux Action on Redirect](#dispatching-an-additional-redux-action-on-redirect)
@@ -122,6 +123,8 @@ ownProps will be null if isOnEnter is true because onEnter hooks cannot receive 
 * `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading.
 * `LoadingComponent` \(*Component*): A React component to render while `authenticatingSelector` is `true`. If not present, will be a `<span/>`. Will be passed
 all properties passed into the wrapped component, including `children`.
+* `FailureComponent` \(*Component*): A React component to render when `authenticatingSelector` is `false`. If specified, the wrapper will
+**not** redirect. Can be set to `null` to display nothing when the user is not authenticated/authorized.
 * `[failureRedirectPath]` \(*String | (state, [ownProps]): String*): Optional path to redirect the browser to on a failed check. Defaults to `/login`. Can also be a function of state and ownProps that returns a string.
 * `[redirectQueryParamName]` \(*String*): Optional name of the query parameter added when `allowRedirectBack` is true. Defaults to `redirect`.
 * `[redirectAction]` \(*Function*): Optional redux action creator for redirecting the user. If not present, will use React-Router's router context to perform the transition.
@@ -180,6 +183,39 @@ means that logged out admins will be redirected to `/login` before checking if t
 Otherwise admins would be sent to `/app` if they weren't logged in and then redirected to `/login`, only to find themselves at `/app`
 after entering their credentials.
 
+## Hiding and Alternate Components
+
+The auth wrappers can be used for more than just redirection. You can use the `FailureComponent` parameter to hide
+components or display alternative components when the user is not authorized. Keep in mind that wrappers which use
+`FailureComponent` will not redirect users.
+
+Here is an example that hides a link from a non-admin user. The wrapper is applied to a function component:
+```js
+const VisibleOnlyAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  wrapperDisplayName: 'VisibleOnlyAdmin',
+  predicate: user => user.isAdmin,
+  FailureComponent: null
+})
+
+const AdminOnlyLink = VisibleOnlyAdmin(() => <Link to='/admin'>Admin Section</Link>)
+```
+
+Alternatively, you can specify a FailureComponent to display an alternative component, in this example we specify a new
+function for our returned HOC to make it more flexible to apply across the app.
+
+```js
+const AdminOrElse = (Component, FailureComponent) => UserAuthWrapper({
+  authSelector: state => state.user,
+  wrapperDisplayName: 'AdminOrElse',
+  predicate: user => user.isAdmin,
+  FailureComponent
+})(Component)
+
+// Show Admin dashboard to admins and user dashboard to regular users
+<Route path='/dashboard' component={AdminOrElse(AdminDashboard, UserDashboard)} />
+```
+
 ## Where to define & apply the wrappers
 
 One benefit of the beginning example is that it is clear from looking at the Routes where the
@@ -204,8 +240,8 @@ export default UserIsAuthenticated(MyComponent)
 ```
 
 ## Protecting Multiple Routes
-Because routes in React Router are not required to have paths, you can use nesting to protect mutliple routes without applying
-the wrapper mutliple times.
+Because routes in React Router are not required to have paths, you can use nesting to protect multiple routes without applying
+the wrapper multiple times.
 ```js
 const Authenticated = UserIsAuthenticated((props) => props.children);
 
@@ -220,7 +256,7 @@ const Authenticated = UserIsAuthenticated((props) => props.children);
 ```
 
 ## Dispatching an Additional Redux Action on Redirect
-You may want to dispatch an additonal redux action when a redirect occurs. One example of this is to display a notification message
+You may want to dispatch an additional redux action when a redirect occurs. One example of this is to display a notification message
 that the user is being redirected or don't have access to that protected resource. To do this, you can chain the `redirectAction`
 parameter using `redux-thunk` middleware. It depends slightly on if you are using a redux + routing solution or just React Router.
 
