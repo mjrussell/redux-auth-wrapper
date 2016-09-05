@@ -185,6 +185,8 @@ after entering their credentials.
 
 ## Hiding and Alternate Components
 
+#### Hiding Components
+
 The auth wrappers can be used for more than just redirection. You can use the `FailureComponent` parameter to hide
 components or display alternative components when the user is not authorized. Keep in mind that wrappers which use
 `FailureComponent` will not redirect users.
@@ -200,6 +202,10 @@ const VisibleOnlyAdmin = UserAuthWrapper({
 
 const AdminOnlyLink = VisibleOnlyAdmin(() => <Link to='/admin'>Admin Section</Link>)
 ```
+
+You can see an example of hiding links in the basic example.
+
+#### Alternate Components
 
 Alternatively, you can specify a FailureComponent to display an alternative component, in this example we specify a new
 function for our returned HOC to make it more flexible to apply across the app.
