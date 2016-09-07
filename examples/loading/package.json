@@ -7,7 +7,8 @@
     "react-redux": "4.4.5",
     "react-router": "2.7.0",
     "react-router-redux": "4.0.5",
-    "redux": "3.6.0"
+    "redux": "3.6.0",
+    "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
     "babel-core": "6.14.0",

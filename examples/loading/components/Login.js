@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import { login } from '../actions/user'
 
-export default class LoginContainer extends Component {
+export class LoginContainer extends Component {
 
     static propTypes = {
       login: PropTypes.func.isRequired
