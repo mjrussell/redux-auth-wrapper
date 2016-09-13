@@ -115,6 +115,9 @@ When the user navigates to `/foo`, one of the following occurs:
 
 Any time the user data changes, the UserAuthWrapper will re-check for authentication.
 
+**Note:** You still need to provide a mechanism for redirecting the user from the login page back to your component. You can
+also do that with redux-auth-wrapper! See the [loading example](https://github.com/mjrussell/redux-auth-wrapper/blob/master/examples/loading/app.js) for further details.
+
 ## API
 
 `UserAuthWrapper(configObject)(DecoratedComponent)`
