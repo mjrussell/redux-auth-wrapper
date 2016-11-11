@@ -1,6 +1,8 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.8.0...master)
 - **Bugfix:** Don't pass down auth wrapper props besides authData [#81](https://github.com/mjrussell/redux-auth-wrapper/issues/81)
 - **Feature:** Add propMapper function to restrict passed through props [#28](https://github.com/mjrussell/redux-auth-wrapper/issues/28)
+- **Bugfix/Breaking Change:** onEnter now checks isAuthenticating for redirection [#89](https://github.com/mjrussell/redux-auth-wrapper/issues/89)
+- **Feature:** onEnter selectors receive nextState as the second argument instead of null [#90](https://github.com/mjrussell/redux-auth-wrapper/issues/90)
 
 ## [0.8.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.7.0...v0.8.0)
 - **Feature:** FailureComponent to not redirect and either hide or show a different component on auth failure [#61](https://github.com/mjrussell/redux-auth-wrapper/pull/61). (Contributed by @mehiel)

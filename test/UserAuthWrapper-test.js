@@ -7,6 +7,7 @@ import { mount } from 'enzyme'
 import sinon from 'sinon'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
+import _ from 'lodash'
 
 import { UserAuthWrapper } from '../src'
 
@@ -16,7 +17,7 @@ const USER_LOGGING_IN = 'USER_LOGGING_IN'
 
 const userReducerInitialState = {
   userData: {},
-  isAuthenticating: false
+  is: false
 }
 const userReducer = (state = {}, { type, payload }) => {
   if (type === USER_LOGGED_IN) {
@@ -434,20 +435,55 @@ describe('UserAuthWrapper', () => {
   it('provides an onEnter static function', () => {
     let store
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
+    const authSelectorSpy = sinon.spy(userSelector)
+    const authenticatingSelectorSpy = sinon.spy(state => state.user.isAuthenticating)
+    const failureRedirectSpy = sinon.spy(() => '/login')
+
+    const UserIsAuthenticatedOnEnter = UserAuthWrapper({
+      authSelector: authSelectorSpy,
+      authenticatingSelector: authenticatingSelectorSpy,
+      failureRedirectPath: failureRedirectSpy,
+      redirectAction: routerActions.replace,
+      wrapperDisplayName: 'UserIsAuthenticated'
+    })
+
 
     const routesOnEnter = (
       <Route path="/" component={App} >
         <Route path="login" component={UnprotectedComponent} />
-        <Route path="onEnter" component={UnprotectedComponent} onEnter={connect(UserIsAuthenticated.onEnter)} />
+        <Route path="onEnter" component={UnprotectedComponent} onEnter={connect(UserIsAuthenticatedOnEnter.onEnter)} />
       </Route>
     )
 
-    const { history, store: createdStore } = setupTest(routesOnEnter)
+    const { history, store: createdStore, wrapper } = setupTest(routesOnEnter)
     store = createdStore
 
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+
+    // Supports isAuthenticating
+    store.dispatch({ type: USER_LOGGING_IN })
     history.push('/onEnter')
+    const nextState = _.pick(wrapper.find(App).props(), [ 'location', 'params', 'routes' ])
+    const storeState = store.getState()
+    expect(authSelectorSpy.calledOnce).to.be.true
+    // Passes store and nextState down to selectors and failureRedirectPath
+    expect(authSelectorSpy.calledOnce).to.be.true
+    expect(authSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
+    expect(authenticatingSelectorSpy.calledOnce).to.be.true
+    expect(authenticatingSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/onEnter')
+
+    // Redirects when not authorized
+    store.dispatch({ type: USER_LOGGED_OUT })
+    // Have to force re-check because wont recheck with store changes
+    history.push('/')
+    history.push('/onEnter')
+    expect(authenticatingSelectorSpy.calledTwice).to.be.true
+    expect(authSelectorSpy.calledTwice).to.be.true
+    expect(failureRedirectSpy.calledOnce).to.be.true
+    expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare locaiton because its changed
+    expect(Object.keys(failureRedirectSpy.firstCall.args[1])).to.deep.equal([ 'routes', 'params', 'location' ]) // cant compare locaiton because its changed
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FonEnter')
   })

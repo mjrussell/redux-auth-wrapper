@@ -124,7 +124,7 @@ also do that with redux-auth-wrapper! See the [loading example](https://github.c
 
 #### Config Object Keys
 
-* `authSelector(state, [ownProps], [isOnEnter]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`.
+* `authSelector(state, [ownProps]): authData` \(*Function*): A state selector for the auth data. Just like `mapToStateProps`.
 ownProps will be null if isOnEnter is true because onEnter hooks cannot receive the component properties. Can be ignored when not using onEnter.
 * `authenticatingSelector(state, [ownProps]): Bool` \(*Function*): A state selector indicating if the user is currently authenticating. Just like `mapToStateProps`. Useful for async session loading.
 * `LoadingComponent` \(*Component*): A React component to render while `authenticatingSelector` is `true`. Will be passed
@@ -312,7 +312,10 @@ const UserIsAdmin = UserAuthWrapper({
 
 ## Server Side Rendering
 In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
-of a `<Route>`. You can access the `onEnter` method of the `UserAuthWrapper` after applying the config parameters:
+of a `<Route>`. During onEnter, selectors such as `authSelector`, `authenticatingSelector`, and `failureRedirectPath` (if you are using)
+the function variation, will receive react-router's `nextState` as their second argument instead of the component props.
+
+You can access the `onEnter` method of the `UserAuthWrapper` after applying the config parameters:
 ```js
 import { UserAuthWrapper } from 'redux-auth-wrapper';
 

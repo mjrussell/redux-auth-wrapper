@@ -59,7 +59,7 @@ export const UserAuthWrapper = (args) => {
     @connect(
       (state, ownProps) => {
         return {
-          authData: authSelector(state, ownProps, false),
+          authData: authSelector(state, ownProps),
           failureRedirectPath: typeof failureRedirectPath === 'function' ? failureRedirectPath(state, ownProps) : failureRedirectPath,
           isAuthenticating: authenticatingSelector(state, ownProps)
         }
@@ -144,10 +144,11 @@ export const UserAuthWrapper = (args) => {
 
   if (shouldRedirect) {
     wrapComponent.onEnter = (store, nextState, replace) => {
-      const authData = authSelector(store.getState(), null, true)
-      const redirectPath = typeof failureRedirectPath === 'function' ? failureRedirectPath(store.getState(), null) : failureRedirectPath
+      const authData = authSelector(store.getState(), nextState)
+      const isAuthenticating = authenticatingSelector(store.getState(), nextState)
 
-      if (!isAuthorized(authData)) {
+      if (!isAuthorized(authData) && !isAuthenticating) {
+        const redirectPath = typeof failureRedirectPath === 'function' ? failureRedirectPath(store.getState(), nextState) : failureRedirectPath
         createRedirect(nextState.location, replace, redirectPath)
       }
     }
