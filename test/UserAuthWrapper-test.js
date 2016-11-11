@@ -49,6 +49,14 @@ const UserIsAuthenticated = UserAuthWrapper({
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
+const UserIsAuthenticatedNoProps = UserAuthWrapper({
+  authSelector: userSelector,
+  authenticatingSelector: state => state.user.isAuthenticating,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'UserIsAuthenticated',
+  propMapper: () => ({})
+})
+
 const HiddenNoRedir = UserAuthWrapper({
   authSelector: userSelector,
   redirectAction: routerActions.replace,
@@ -161,6 +169,7 @@ const defaultRoutes = (
     <Route path="alwaysAuth" component={AlwaysAuthenticating(UnprotectedComponent)} />
     <Route path="alwaysAuthDef" component={AlwaysAuthenticatingDefault(UnprotectedComponent)} />
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
+    <Route path="authNoProps" component={UserIsAuthenticatedNoProps(UnprotectedComponent)} />
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
     <Route path="elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
@@ -604,5 +613,17 @@ describe('UserAuthWrapper', () => {
 
     store.dispatch(userLoggedIn())
     expect(redirectAction.calledOnce).to.equal(true)
+  })
+
+  it('uses propMapper to prevent passing down props', () => {
+    const { history, store, wrapper } = setupTest()
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/authNoProps')
+
+    const comp = wrapper.find(UnprotectedComponent)
+    // Props from React-Router
+    expect(comp.props()).to.deep.equal({})
   })
 })

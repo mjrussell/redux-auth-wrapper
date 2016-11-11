@@ -11,12 +11,13 @@ const defaults = {
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
   authenticatingSelector: () => false,
-  allowRedirectBack: true
+  allowRedirectBack: true,
+  propMapper: ({ redirect, authData, isAuthenticating, failureRedirectPath, ...otherProps }) => ({ authData, ...otherProps }) // eslint-disable-line no-unused-vars
 }
 
 export const UserAuthWrapper = (args) => {
   const { authSelector, authenticatingSelector, LoadingComponent, failureRedirectPath, FailureComponent,
-    wrapperDisplayName, predicate, allowRedirectBack, redirectAction, redirectQueryParamName } = {
+    wrapperDisplayName, predicate, allowRedirectBack, redirectAction, redirectQueryParamName, propMapper } = {
       ...defaults,
       ...args
     }
@@ -124,16 +125,16 @@ export const UserAuthWrapper = (args) => {
       render() {
         // Allow everything but the replace aciton creator to be passed down
         // Includes route props from React-Router and authData
-        const { redirect, authData, isAuthenticating, failureRedirectPath, ...otherProps } = this.props // eslint-disable-line no-unused-vars
+        const { authData, isAuthenticating } = this.props
         if (isAuthorized(authData)) {
-          return <DecoratedComponent authData={authData} {...otherProps} />
+          return <DecoratedComponent {...propMapper(this.props)} />
         } else if(isAuthenticating) {
-          return <LoadingComponent authData={authData} {...otherProps} />
+          return <LoadingComponent {...propMapper(this.props)} />
         } else {
           // Display FailureComponent or nothing if FailureComponent is null
           // If FailureComponent is undefined user will never see this because
           // they will be redirected to failureRedirectPath
-          return FailureComponent ? <FailureComponent authData={authData} {...otherProps} /> : null
+          return FailureComponent ? <FailureComponent {...propMapper(this.props)} /> : null
         }
       }
     }
