@@ -124,7 +124,7 @@ export const UserAuthWrapper = (args) => {
       render() {
         // Allow everything but the replace aciton creator to be passed down
         // Includes route props from React-Router and authData
-        const { redirect, authData, isAuthenticating, ...otherProps } = this.props // eslint-disable-line no-unused-vars
+        const { redirect, authData, isAuthenticating, failureRedirectPath, ...otherProps } = this.props // eslint-disable-line no-unused-vars
         if (isAuthorized(authData)) {
           return <DecoratedComponent authData={authData} {...otherProps} />
         } else if(isAuthenticating) {

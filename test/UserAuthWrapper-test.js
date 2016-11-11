@@ -399,6 +399,10 @@ describe('UserAuthWrapper', () => {
     })
     // Props from parent
     expect(comp.props().testProp).to.equal(true)
+    // No extra wrapper props
+    expect(Object.keys(wrapper.find(UnprotectedComponent).props()).sort()).to.deep.equal([
+      'authData', 'children', 'history', 'location', 'params', 'route', 'routeParams', 'routes', 'testProp'
+    ])
   })
 
   it('hoists statics to the wrapper', () => {
