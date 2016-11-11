@@ -1,4 +1,6 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.8.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.9.0...master)
+
+## [0.9.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.8.0...v0.9.0)
 - **Bugfix:** Don't pass down auth wrapper props besides authData [#81](https://github.com/mjrussell/redux-auth-wrapper/issues/81)
 - **Feature:** Add propMapper function to restrict passed through props [#28](https://github.com/mjrussell/redux-auth-wrapper/issues/28)
 - **Bugfix/Breaking Change:** onEnter now checks isAuthenticating for redirection [#89](https://github.com/mjrussell/redux-auth-wrapper/issues/89)
