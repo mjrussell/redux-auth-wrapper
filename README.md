@@ -311,8 +311,10 @@ const UserIsAdmin = UserAuthWrapper({
 
 
 ## Server Side Rendering
-In order to perform authentication and authorization checks for Server Side Rendering, you may need to use the `onEnter` property
-of a `<Route>`. During onEnter, selectors such as `authSelector`, `authenticatingSelector`, and `failureRedirectPath` (if you are using)
+If your `UserAuthWrapper` uses redirection, then you may need to use the `onEnter` property
+of a `<Route>` to perform authentication and authorization checks for Server Side Rendering. (Note: If you are only using `FailureComponent` and not redirecting in your `UserAuthWrapper`, then you do not need to use `onEnter` option described below.) 
+
+During onEnter, selectors such as `authSelector`, `authenticatingSelector`, and `failureRedirectPath` (if you are using)
 the function variation, will receive react-router's `nextState` as their second argument instead of the component props.
 
 You can access the `onEnter` method of the `UserAuthWrapper` after applying the config parameters:
