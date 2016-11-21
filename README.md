@@ -180,7 +180,7 @@ const UserIsAdmin = UserAuthWrapper({
   allowRedirectBack: false
 })
 
-// Now to secure the component:
+// Now to secure the component: first check if the user is authenticated, and then check if the user is an admin
 <Route path="foo" component={UserIsAuthenticated(UserIsAdmin(Admin))}/>
 ```
 
@@ -311,7 +311,7 @@ const UserIsAdmin = UserAuthWrapper({
 
 ## Server Side Rendering
 If your `UserAuthWrapper` uses redirection, then you may need to use the `onEnter` property
-of a `<Route>` to perform authentication and authorization checks for Server Side Rendering. (Note: If you are only using `FailureComponent` and not redirecting in your `UserAuthWrapper`, then you do not need to use `onEnter` option described below.) 
+of a `<Route>` to perform authentication and authorization checks for Server Side Rendering. (Note: If you are only using `FailureComponent` and not redirecting in your `UserAuthWrapper`, then you do not need to use `onEnter` option described below.)
 
 During onEnter, selectors such as `authSelector`, `authenticatingSelector`, and `failureRedirectPath` (if you are using)
 the function variation, will receive react-router's `nextState` as their second argument instead of the component props.
@@ -338,6 +338,51 @@ const getRoutes = (store) => {
     </Route>
   );
 };
+```
+
+#### Server Side Rendering (SSR) with nested auth wrappers
+To implement SSR with nested wrappers, you will have to provide a function to chain `onEnter` functions of each wrapper. To illustrate this, we can modify the example provided in the [Authorization & Advanced Usage](#authorization--advanced-usage) section above, wherein `UserIsAuthenticated` is the parent wrapper and `UserIsAdmin` is the child wrapper.
+
+```js
+import { UserAuthWrapper } from 'redux-auth-wrapper';
+
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
+
+// Admin Authorization, redirects non-admins to /app and don't send a redirect param
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: user => user.isAdmin,
+  allowRedirectBack: false
+})
+
+const getRoutes = (store) => {
+  const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
+
+  //This executes the parent onEnter first, going from left to right.
+  const onEnterChain = (...listOfOnEnters) => (store, nextState, replace) => {
+    listOfOnEnters.forEach(onEnter => onEnter(store, nextState, replace));
+  };
+
+
+  return (
+    <Route>
+      <Route path="/" component={App}>
+        <Route path="login" component={Login}/>
+        <Route path="foo"
+          component={UserIsAuthenticated(UserIsAdmin(Admin))}
+          onEnter={connect(onEnterChain(UserIsAuthenticated.onEnter, UserIsAdmin.onEnter))} />
+      </Route>
+    </Route>
+  );
+};
+
 ```
 
 ## React Native
