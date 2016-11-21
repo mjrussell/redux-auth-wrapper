@@ -138,9 +138,8 @@ all properties passed into the wrapped component, including `children`.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `authSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered. By default, it returns false if `authData` is {} or null.
-* `[allowRedirectBack]` \(*Bool | (location, redirectPath): Bool* ): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`. Defaults to `true`. Can also be a function of location and the computed `failureRedirectPath` passed above, that must return a boolean value.
-* `[propMapper]` \(*Function*): Optional function that takes the props passed into the wrapped component and returns those props to pass to the
-DecoratedComponent, The LoadingComponent, and the FailureComponent.
+* `[allowRedirectBack]` \(*Bool | (location, redirectPath): Bool* ): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`. Can also be a function of location and the computed `failureRedirectPath` passed above, that must return a boolean value. Defaults to `true`.
+* `[propMapper]` \(*Function*): Optional function that takes the props passed into the wrapped component and returns those props to pass to the DecoratedComponent, The LoadingComponent, and the FailureComponent.
 
 #### Returns
 After applying the configObject, `UserAuthWrapper` returns a function which can applied to a Component to wrap in authentication and
