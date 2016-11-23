@@ -26,8 +26,9 @@ export const UserAuthWrapper = (args) => {
 
   const createRedirect = (location, redirect, redirectPath) => {
     let query
-    allowRedirectBack = typeof allowRedirectBack === 'function' ? allowRedirectBack(location, redirectPath) : allowRedirectBack
-    if (allowRedirectBack) {
+    const canRedirect = typeof allowRedirectBack === 'function' ? allowRedirectBack(location, redirectPath) : allowRedirectBack
+
+    if (canRedirect) {
       query = { [redirectQueryParamName]: `${location.pathname}${location.search}` }
     } else {
       query = {}
