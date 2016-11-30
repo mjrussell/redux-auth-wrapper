@@ -138,9 +138,8 @@ all properties passed into the wrapped component, including `children`.
 It will display in React-devtools. Defaults to `UserAuthWrapper`
 * `[predicate(authData): Bool]` \(*Function*): Optional function to be passed the result of the `authSelector` param.
 If it evaluates to false the browser will be redirected to `failureRedirectPath`, otherwise `DecoratedComponent` will be rendered. By default, it returns false if `authData` is {} or null.
-* `[allowRedirectBack]` \(*Bool*): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`. Defaults to `true`.
-* `[propMapper]` \(*Function*): Optional function that takes the props passed into the wrapped component and returns those props to pass to the
-DecoratedComponent, The LoadingComponent, and the FailureComponent.
+* `[allowRedirectBack]` \(*Bool | (location, redirectPath): Bool* ): Optional bool on whether to pass a `redirect` query parameter to the `failureRedirectPath`. Can also be a function of location and the computed `failureRedirectPath` passed above, that must return a boolean value. Defaults to `true`.
+* `[propMapper]` \(*Function*): Optional function that takes the props passed into the wrapped component and returns those props to pass to the DecoratedComponent, The LoadingComponent, and the FailureComponent.
 
 #### Returns
 After applying the configObject, `UserAuthWrapper` returns a function which can applied to a Component to wrap in authentication and
@@ -181,7 +180,7 @@ const UserIsAdmin = UserAuthWrapper({
   allowRedirectBack: false
 })
 
-// Now to secure the component:
+// Now to secure the component: first check if the user is authenticated, and then check if the user is an admin
 <Route path="foo" component={UserIsAuthenticated(UserIsAdmin(Admin))}/>
 ```
 
@@ -312,7 +311,7 @@ const UserIsAdmin = UserAuthWrapper({
 
 ## Server Side Rendering
 If your `UserAuthWrapper` uses redirection, then you may need to use the `onEnter` property
-of a `<Route>` to perform authentication and authorization checks for Server Side Rendering. (Note: If you are only using `FailureComponent` and not redirecting in your `UserAuthWrapper`, then you do not need to use `onEnter` option described below.) 
+of a `<Route>` to perform authentication and authorization checks for Server Side Rendering. (Note: If you are only using `FailureComponent` and not redirecting in your `UserAuthWrapper`, then you do not need to use `onEnter` option described below.)
 
 During onEnter, selectors such as `authSelector`, `authenticatingSelector`, and `failureRedirectPath` (if you are using)
 the function variation, will receive react-router's `nextState` as their second argument instead of the component props.
@@ -339,6 +338,51 @@ const getRoutes = (store) => {
     </Route>
   );
 };
+```
+
+#### Server Side Rendering (SSR) with nested auth wrappers
+To implement SSR with nested wrappers, you will have to provide a function to chain `onEnter` functions of each wrapper. To illustrate this, we can modify the example provided in the [Authorization & Advanced Usage](#authorization--advanced-usage) section above, wherein `UserIsAuthenticated` is the parent wrapper and `UserIsAdmin` is the child wrapper.
+
+```js
+import { UserAuthWrapper } from 'redux-auth-wrapper';
+
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
+
+// Admin Authorization, redirects non-admins to /app and don't send a redirect param
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: user => user.isAdmin,
+  allowRedirectBack: false
+})
+
+const getRoutes = (store) => {
+  const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
+
+  //This executes the parent onEnter first, going from left to right.
+  const onEnterChain = (...listOfOnEnters) => (store, nextState, replace) => {
+    listOfOnEnters.forEach(onEnter => onEnter(store, nextState, replace));
+  };
+
+
+  return (
+    <Route>
+      <Route path="/" component={App}>
+        <Route path="login" component={Login}/>
+        <Route path="foo"
+          component={UserIsAuthenticated(UserIsAdmin(Admin))}
+          onEnter={connect(onEnterChain(UserIsAuthenticated.onEnter, UserIsAdmin.onEnter))} />
+      </Route>
+    </Route>
+  );
+};
+
 ```
 
 ## React Native
