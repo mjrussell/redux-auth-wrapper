@@ -67,6 +67,15 @@ const HiddenNoRedir = UserAuthWrapper({
   allowRedirectBack: false
 })
 
+const HiddenNoRedirectFunction = UserAuthWrapper({
+  authSelector: userSelector,
+  redirectAction: routerActions.replace,
+  failureRedirectPath: '/',
+  wrapperDisplayName: 'HiddenNoRedirFunction',
+  predicate: () => false,
+  allowRedirectBack: (location, redirectPath) => redirectPath == '/'
+})
+
 const UserIsOnlyTest = UserAuthWrapper({
   authSelector: userSelector,
   redirectAction: routerActions.replace,
@@ -172,6 +181,7 @@ const defaultRoutes = (
     <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
     <Route path="authNoProps" component={UserIsAuthenticatedNoProps(UnprotectedComponent)} />
     <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
+    <Route path="hiddenNoRedirectFunction" component={HiddenNoRedirectFunction(UnprotectedComponent)} />
     <Route path="elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
     <Route path="testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
@@ -349,6 +359,16 @@ describe('UserAuthWrapper', () => {
     history.push('/hidden')
     expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+  })
+
+  it('optionally prevents redirection from a function result', () => {
+    const { history, store } = setupTest()
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/hiddenNoRedirectFunction')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FhiddenNoRedirectFunction')
   })
 
   it('can be nested', () => {
