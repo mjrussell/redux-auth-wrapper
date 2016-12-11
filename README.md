@@ -366,10 +366,20 @@ const getRoutes = (store) => {
   const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState);
 
   //This executes the parent onEnter first, going from left to right.
+  // `replace` has to be wrapped because we want to stop executing `onEnter` hooks
+  // after the first call to `replace`.
   const onEnterChain = (...listOfOnEnters) => (store, nextState, replace) => {
-    listOfOnEnters.forEach(onEnter => onEnter(store, nextState, replace));
+    let redirected = false;
+    const wrappedReplace = (...args) => {
+      replace(...args);
+      redirected = true;
+    };
+    listOfOnEnters.forEach((onEnter) => {
+      if (!redirected) {
+        onEnter(store, nextState, wrappedReplace);
+      }
+    });
   };
-
 
   return (
     <Route>
