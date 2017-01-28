@@ -34,10 +34,19 @@ export const UserAuthWrapper = (args) => {
       query = {}
     }
 
-    redirect({
-      pathname: redirectPath,
-      query
-    })
+    if ( ! canRedirect ) {
+      // This is coming off the /login and redirecting to the ?redirect=xxx path.
+      // This path (xxx) may include query parameters, so parse them out and
+      // redirect properly
+      var loc = require( 'url' ).parse( redirectPath );
+      redirect({ pathname: loc.pathname, search: loc.search });
+    }
+    else {
+      redirect({
+        pathname: redirectPath,
+        query: query
+      });
+    }
   }
 
   const shouldRedirect = FailureComponent === undefined
