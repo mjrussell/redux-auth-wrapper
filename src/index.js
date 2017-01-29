@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
+import url from 'url'
 
 const defaults = {
   LoadingComponent: () => null, // dont render anything while authenticating
@@ -25,6 +26,8 @@ export const UserAuthWrapper = (args) => {
   const isAuthorized = (authData) => predicate(authData)
 
   const createRedirect = (location, redirect, redirectPath) => {
+    const redirectLoc = url.parse(redirectPath, true)
+
     let query
     const canRedirect = typeof allowRedirectBack === 'function' ? allowRedirectBack(location, redirectPath) : allowRedirectBack
 
@@ -34,8 +37,13 @@ export const UserAuthWrapper = (args) => {
       query = {}
     }
 
+    query = {
+      ...query,
+      ...redirectLoc.query
+    }
+
     redirect({
-      pathname: redirectPath,
+      pathname: redirectLoc.pathname,
       query
     })
   }
