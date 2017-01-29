@@ -1,4 +1,6 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.10.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.0.0...master)
+
+## [1.0.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.10.0...v1.0.0)
 - **Bugfix:** Redirection preserves query params in the redirect path. [#111](https://github.com/mjrussell/redux-auth-wrapper/pull/111)
 
 ## [0.10.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.9.0...v0.10.0)
