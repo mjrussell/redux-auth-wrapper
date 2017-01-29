@@ -1,7 +1,8 @@
 ## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.10.0...master)
+- **Bugfix:** Redirection preserves query params in the redirect path. [#111](https://github.com/mjrussell/redux-auth-wrapper/pull/111)
 
 ## [0.10.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.9.0...v0.10.0)
-- **Feature:** `allowRedirectBack` can also take a selector function that returns a bool instead of a bool. [#93](https://github.com/mjrussell/redux-auth-wrapper/pull/93)
+- **Feature:** `allowRedirectBack` can also take a selector function that returns a bool instead of a bool. [#93](https://github.com/mjrussell/redux-auth-wrapper/pull/93) (Contributed by @oyeanuj)
 
 ## [0.9.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v0.8.0...v0.9.0)
 - **Bugfix:** Don't pass down auth wrapper props besides authData [#81](https://github.com/mjrussell/redux-auth-wrapper/issues/81)
