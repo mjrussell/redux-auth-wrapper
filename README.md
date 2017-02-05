@@ -256,7 +256,7 @@ export default UserIsAuthenticated(MyComponent)
 Because routes in React Router are not required to have paths, you can use nesting to protect multiple routes without applying
 the wrapper multiple times.
 ```js
-const Authenticated = UserIsAuthenticated((props) => props.children);
+const Authenticated = UserIsAuthenticated((props) => React.cloneElement(props.children, props));
 
 <Route path='/' component={App}>
    <IndexRedirect to="/login" />
