@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
 import isEmpty from 'lodash.isempty'
 import url from 'url'
+import { stringify } from 'query-string'
 
 const defaults = {
   LoadingComponent: () => null, // dont render anything while authenticating
@@ -44,6 +45,7 @@ export const UserAuthWrapper = (args) => {
 
     redirect({
       pathname: redirectLoc.pathname,
+      search: stringify(query),
       query
     })
   }
@@ -89,7 +91,7 @@ export const UserAuthWrapper = (args) => {
 
       static contextTypes = {
         // Only used if no redirectAction specified
-        router: PropTypes.object
+        history: PropTypes.object
       };
 
       componentWillMount() {
@@ -123,11 +125,12 @@ export const UserAuthWrapper = (args) => {
         if (redirect) {
           return redirect
         } else {
-          if (!this.context.router.replace) {
+          const { replace } = this.context.history
+          if (!replace) {
             /* istanbul ignore next sanity */
-            throw new Error(`You must provide a router context (or use React-Router 2.x) if not passing a redirectAction to ${wrapperDisplayName}`)
+            throw new Error(`You must provide a history (React Router v4.x) if not passing a redirectAction to ${wrapperDisplayName}`)
           } else {
-            return this.context.router.replace
+            return replace
           }
         }
       };
