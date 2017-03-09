@@ -5,8 +5,8 @@ import { Provider } from 'react-redux'
 import {  createStore, combineReducers, applyMiddleware } from 'redux'
 import { mount } from 'enzyme'
 import sinon from 'sinon'
-import createMemoryHistory from 'react-router/lib/createMemoryHistory'
-import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
+import createMemoryHistory from 'history/createMemoryHistory'
+import { routerActions, routerMiddleware } from 'react-router-redux'
 import _ from 'lodash'
 
 import { UserAuthWrapper } from '../src'
@@ -37,7 +37,6 @@ const userReducer = (state = {}, { type, payload }) => {
 }
 
 const rootReducer = combineReducers({
-  routing: routerReducer,
   user: userReducer
 })
 
@@ -174,22 +173,23 @@ class UnprotectedParentComponent extends Component {
 }
 
 const defaultRoutes = (
-  <Route path="/" component={App} >
-    <Route path="login" component={UnprotectedComponent} />
-    <Route path="alwaysAuth" component={AlwaysAuthenticating(UnprotectedComponent)} />
-    <Route path="alwaysAuthDef" component={AlwaysAuthenticatingDefault(UnprotectedComponent)} />
-    <Route path="auth" component={UserIsAuthenticated(UnprotectedComponent)} />
-    <Route path="authNoProps" component={UserIsAuthenticatedNoProps(UnprotectedComponent)} />
-    <Route path="hidden" component={HiddenNoRedir(UnprotectedComponent)} />
-    <Route path="hiddenNoRedirectFunction" component={HiddenNoRedirectFunction(UnprotectedComponent)} />
-    <Route path="elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
-    <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
-    <Route path="testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
-    <Route path="parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
-      <Route path="child" component={UserIsAuthenticated(UnprotectedComponent)} />
+  <div>
+    <Route exact path="/" component={App} />
+    <Route path="/login" component={UnprotectedComponent} />
+    <Route path="/alwaysAuth" component={AlwaysAuthenticating(UnprotectedComponent)} />
+    <Route path="/alwaysAuthDef" component={AlwaysAuthenticatingDefault(UnprotectedComponent)} />
+    <Route path="/auth" component={UserIsAuthenticated(UnprotectedComponent)} />
+    <Route path="/authNoProps" component={UserIsAuthenticatedNoProps(UnprotectedComponent)} />
+    <Route path="/hidden" component={HiddenNoRedir(UnprotectedComponent)} />
+    <Route path="/hiddenNoRedirectFunction" component={HiddenNoRedirectFunction(UnprotectedComponent)} />
+    <Route path="/elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
+    <Route path="/testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
+    <Route path="/testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
+    <Route path="/parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
+      <Route path="/child" component={UserIsAuthenticated(UnprotectedComponent)} />
     </Route>
-    <Route path="prop" component={PropParentComponent} />
-  </Route>
+    <Route path="/prop" component={PropParentComponent} />
+  </div>
 )
 
 const userLoggedIn = (firstName = 'Test', lastName = 'McDuderson') => {
@@ -203,14 +203,15 @@ const userLoggedIn = (firstName = 'Test', lastName = 'McDuderson') => {
   }
 }
 
-const setupTest = (routes = defaultRoutes) => {
-  const baseHistory = createMemoryHistory()
-  const middleware = routerMiddleware(baseHistory)
+const setupTest = (
+  routes = defaultRoutes,
+  history = createMemoryHistory()
+) => {
+  const middleware = routerMiddleware(history)
   const store = createStore(
     rootReducer,
     applyMiddleware(middleware)
   )
-  const history = syncHistoryWithStore(baseHistory, store)
 
   const wrapper = mount(
     <Provider store={store}>
@@ -229,23 +230,23 @@ const setupTest = (routes = defaultRoutes) => {
 
 describe('UserAuthWrapper', () => {
   it('redirects unauthenticated', () => {
-    const { history, store } = setupTest()
+    const { history } = setupTest()
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
     history.push('/auth')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fauth')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2Fauth')
   })
 
   it('does not redirect if authenticating', () => {
-    const { history, store } = setupTest()
+    const { history } = setupTest()
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
     history.push('/alwaysAuth')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/alwaysAuth')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/alwaysAuth')
+    expect(history.location.search).to.equal('')
   })
 
   it('renders the specified component when authenticating', () => {
@@ -263,7 +264,7 @@ describe('UserAuthWrapper', () => {
 
     history.push('/alwaysAuthDef')
 
-    const comp = wrapper.find(App)
+    const comp = wrapper.find('div')
     // There is a child here. It is connect but it should render no html
     expect(comp.childAt(0).html()).to.be.null
   })
@@ -280,13 +281,14 @@ describe('UserAuthWrapper', () => {
   })
 
   it('preserves query params on redirect', () => {
-    const { history, store } = setupTest()
+    const { history, wrapper } = setupTest()
+    const props = wrapper.find('Router').props()
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(props.history.location.pathname).to.equal('/')
+    expect(props.history.location.search).to.equal('')
     history.push('/auth?test=foo')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fauth%3Ftest%3Dfoo')
+    expect(props.history.location.pathname).to.equal('/login')
+    expect(props.history.location.search).to.equal('?redirect=%2Fauth%3Ftest%3Dfoo')
   })
 
   it('allows authenticated users', () => {
@@ -295,7 +297,7 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/auth')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
+    expect(history.location.pathname).to.equal('/auth')
   })
 
   it('redirects on no longer authorized', () => {
@@ -304,10 +306,10 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/auth')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
+    expect(history.location.pathname).to.equal('/auth')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(history.location.pathname).to.equal('/login')
   })
 
   it('doesn\'t redirects on no longer authorized if FailureComponent is set', () => {
@@ -316,10 +318,10 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/elevatedAccess')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/elevatedAccess')
+    expect(history.location.pathname).to.equal('/elevatedAccess')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/elevatedAccess')
+    expect(history.location.pathname).to.equal('/elevatedAccess')
   })
 
   it('redirects if no longer authenticating', () => {
@@ -328,10 +330,10 @@ describe('UserAuthWrapper', () => {
     store.dispatch({ type: USER_LOGGING_IN })
 
     history.push('/auth')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/auth')
+    expect(history.location.pathname).to.equal('/auth')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
+    expect(history.location.pathname).to.equal('/login')
   })
 
   it('allows predicate authorization', () => {
@@ -340,14 +342,14 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn('NotTest'))
 
     history.push('/testOnly')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestOnly')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('?redirect=%2FtestOnly')
 
     store.dispatch(userLoggedIn())
 
     history.push('/testOnly')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/testOnly')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/testOnly')
+    expect(history.location.search).to.equal('')
   })
 
 
@@ -357,8 +359,8 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/hidden')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
   })
 
   it('optionally prevents redirection from a function result', () => {
@@ -367,8 +369,8 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn())
 
     history.push('/hiddenNoRedirectFunction')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FhiddenNoRedirectFunction')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('?redirect=%2FhiddenNoRedirectFunction')
   })
 
   it('can be nested', () => {
@@ -377,38 +379,38 @@ describe('UserAuthWrapper', () => {
     store.dispatch(userLoggedIn('NotTest'))
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnly')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('?redirect=%2FtestMcDudersonOnly')
 
     store.dispatch(userLoggedIn('Test', 'NotMcDuderson'))
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnly')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('?redirect=%2FtestMcDudersonOnly')
 
     store.dispatch(userLoggedIn())
 
     history.push('/testMcDudersonOnly')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/testMcDudersonOnly')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/testMcDudersonOnly')
+    expect(history.location.search).to.equal('')
   })
 
   it('supports nested routes', () => {
     const { history, store } = setupTest()
 
     history.push('/parent/child')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fparent%2Fchild')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2Fparent%2Fchild')
 
     store.dispatch(userLoggedIn())
 
     history.push('/parent/child')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/parent/child')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/parent/child')
+    expect(history.location.search).to.equal('')
 
     store.dispatch({ type: USER_LOGGED_OUT })
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fparent%2Fchild')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2Fparent%2Fchild')
   })
 
   it('passes props to authed components', () => {
@@ -431,9 +433,10 @@ describe('UserAuthWrapper', () => {
     expect(comp.props().testProp).to.equal(true)
     // No extra wrapper props
     expect(Object.keys(wrapper.find(UnprotectedComponent).props()).sort()).to.deep.equal([
-      'authData', 'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'testProp'
+      'authData', 'children', 'history', 'location', 'match', 'params', 'testProp'
     ])
   })
+
 
   it('hoists statics to the wrapper', () => {
     class WithStatic extends Component {
@@ -478,8 +481,8 @@ describe('UserAuthWrapper', () => {
     const { history, store: createdStore, wrapper } = setupTest(routesOnEnter)
     store = createdStore
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     // Supports isAuthenticating
     store.dispatch({ type: USER_LOGGING_IN })
@@ -492,7 +495,7 @@ describe('UserAuthWrapper', () => {
     expect(authSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
     expect(authenticatingSelectorSpy.calledOnce).to.be.true
     expect(authenticatingSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/onEnter')
+    expect(history.location.pathname).to.equal('/onEnter')
 
     // Redirects when not authorized
     store.dispatch({ type: USER_LOGGED_OUT })
@@ -504,8 +507,8 @@ describe('UserAuthWrapper', () => {
     expect(failureRedirectSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare locaiton because its changed
     expect(Object.keys(failureRedirectSpy.firstCall.args[1])).to.deep.equal([ 'routes', 'params', 'location' ]) // cant compare locaiton because its changed
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FonEnter')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2FonEnter')
   })
 
   it('it doesn\'t provide an onEnter static function if FailureComponent prop is set', () => {
@@ -522,7 +525,7 @@ describe('UserAuthWrapper', () => {
       if (!isOnEnter) {
         return {
           ...userSelector(state),
-          ...ownProps.routeParams // from React-Router
+          ...ownProps.match.params // from React-Router
         }
       } else {
         return {}
@@ -537,26 +540,27 @@ describe('UserAuthWrapper', () => {
     })
 
     const routes = (
-      <Route path="/" component={App} >
-        <Route path="login" component={UnprotectedComponent} />
-        <Route path="ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
-      </Route>
+      <div>
+        <Route exact path="/" component={App} />
+        <Route path="/login" component={UnprotectedComponent} />
+        <Route path="/ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
+      </div>
     )
 
     const { history, store } = setupTest(routes)
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     store.dispatch(userLoggedIn())
 
     history.push('/ownProps/1')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/ownProps/1')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/ownProps/1')
+    expect(history.location.search).to.equal('')
 
     history.push('/ownProps/2')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2FownProps%2F2')
   })
 
   it('can override query param name', () => {
@@ -567,25 +571,26 @@ describe('UserAuthWrapper', () => {
     })
 
     const routes = (
-      <Route path="/" component={App} >
-        <Route path="login" component={UnprotectedComponent} />
-        <Route path="protected" component={UserIsAuthenticatedQueryParam(UnprotectedComponent)} />
-      </Route>
+      <div>
+        <Route exact path="/" component={App} />
+        <Route path="/login" component={UnprotectedComponent} />
+        <Route path="/protected" component={UserIsAuthenticatedQueryParam(UnprotectedComponent)} />
+      </div>
     )
 
-    const { history, store } = setupTest(routes)
+    const { history } = setupTest(routes)
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     history.push('/protected')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?customRedirect=%2Fprotected')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?customRedirect=%2Fprotected')
   })
 
   it('can pass a selector for failureRedirectPath', () => {
     const failureRedirectFn = (state, ownProps) => {
-      if (userSelector(state) === undefined && ownProps.routeParams.id === '1') {
+      if (userSelector(state) === undefined && ownProps.match.params.id === '1') {
         return '/login/1'
       } else {
         return '/login/0'
@@ -600,24 +605,25 @@ describe('UserAuthWrapper', () => {
     })
 
     const routes = (
-      <Route path="/" component={App} >
-        <Route path="login/:id" component={UnprotectedComponent} />
-        <Route path="ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
-      </Route>
+      <div>
+        <Route exact path="/" component={App} />
+        <Route path="/login/:id" component={UnprotectedComponent} />
+        <Route path="/ownProps/:id" component={UserIsAuthenticatedProps(UnprotectedComponent)} />
+      </div>
     )
 
-    const { history, store } = setupTest(routes)
+    const { history } = setupTest(routes)
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     history.push('/ownProps/1')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login/1')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F1')
+    expect(history.location.pathname).to.equal('/login/1')
+    expect(history.location.search).to.equal('?redirect=%2FownProps%2F1')
 
     history.push('/ownProps/2')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login/0')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FownProps%2F2')
+    expect(history.location.pathname).to.equal('/login/0')
+    expect(history.location.search).to.equal('?redirect=%2FownProps%2F2')
   })
 
   it('uses router for redirect if no redirectAction specified', () => {
@@ -628,20 +634,21 @@ describe('UserAuthWrapper', () => {
     })
 
     const routes = (
-      <Route path="/" component={App} >
-        <Route path="login" component={UnprotectedComponent} />
-        <Route path="noaction" component={UserIsAuthenticatedNoAction(UnprotectedComponent)} />
-      </Route>
+      <div>
+        <Route exact path="/" component={App} />
+        <Route path="/login" component={UnprotectedComponent} />
+        <Route path="/noaction" component={UserIsAuthenticatedNoAction(UnprotectedComponent)} />
+      </div>
     )
 
-    const { history, store } = setupTest(routes)
+    const { history } = setupTest(routes)
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     history.push('/noaction')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fnoaction')
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2Fnoaction')
   })
 
   it('only redirects once when props change but authentication is constant', () => {
@@ -694,25 +701,26 @@ describe('UserAuthWrapper', () => {
     })
 
     const routes = (
-      <Route path="/" component={App} >
-        <Route path="login" component={LoginWrapper(UnprotectedComponent)} />
-        <Route path="protected" component={UserIsAuthenticated(UnprotectedComponent)} />
-      </Route>
+      <div>
+        <Route path="/" component={App} />
+        <Route path="/login" component={LoginWrapper(UnprotectedComponent)} />
+        <Route path="/protected" component={UserIsAuthenticated(UnprotectedComponent)} />
+      </div>
     )
 
     const { history, store } = setupTest(routes)
 
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+    expect(history.location.pathname).to.equal('/')
+    expect(history.location.search).to.equal('')
 
     history.push('/protected?param=foo')
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/login')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2Fprotected%3Fparam%3Dfoo')
-    expect(store.getState().routing.locationBeforeTransitions.query).to.deep.equal({ redirect: '/protected?param=foo' })
+    expect(history.location.pathname).to.equal('/login')
+    expect(history.location.search).to.equal('?redirect=%2Fprotected%3Fparam%3Dfoo')
+    expect(history.location.query).to.deep.equal({ redirect: '/protected?param=foo' })
 
     store.dispatch(userLoggedIn())
-    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/protected')
-    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?param=foo')
-    expect(store.getState().routing.locationBeforeTransitions.query).to.deep.equal({ param: 'foo' })
+    expect(history.location.pathname).to.equal('/protected')
+    expect(history.location.search).to.equal('?param=foo')
+    expect(history.location.query).to.deep.equal({ param: 'foo' })
   })
 })
