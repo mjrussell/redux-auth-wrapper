@@ -232,24 +232,94 @@ const AdminOrElse = (Component, FailureComponent) => UserAuthWrapper({
 ## Where to define & apply the wrappers
 
 One benefit of the beginning example is that it is clear from looking at the Routes where the
-authentication & authorization logic is applied.
+authentication & authorization logic is applied. There are a variety of other places to apply redux-auth-wrapper. Please
+review this section first to avoid incorrectly applying the HOC and causing bugs in your code.
 
-If you are using `getComponent` in React Router you should **not** apply the auth-wrapper inside `getComponent`. This will cause
-React Router to create a new component each time the route changes.
+#### Safe to Apply
 
-An alternative choice might be to use es7 decorators (after turning on the proper presets) in your component:
-
+Directly inside ReactDOM.render:
 ```js
-import { UserIsAuthenticated } from '<projectpath>/auth/authWrappers';
+ReactDOM.render(
+  <Provider store={store}>
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <Route path="auth" component={UserIsAuthenticated(Foo)}/>
+        ...
+      </Route>
+    </Router>
+  </Provider>,
+  document.getElementById('mount')
+)
+```
 
+Separate route config file:
+```js
+const routes = (
+  <Route path="/" component={App}>
+    <Route path="auth" component={UserIsAuthenticated(Foo)}/>
+    ...
+  </Route>
+)
+
+ReactDOM.render(  
+  <Provider store={store}>
+    <Router history={history}>
+      {routes}
+    </Router>
+  </Provider>,
+  document.getElementById('mount')
+)
+```
+
+Applied in the component file (es7):
+```js
 @UserIsAuthenticated
-class MyComponent extends Component {
+export default class MyComponent extends Component {
+  ...
 }
 ```
 
-Or with standard ES5/ES6 apply it inside the component file:
+Applied in the component file (es6):
 ```js
+class MyComponent extends Component {
+  ...
+}
 export default UserIsAuthenticated(MyComponent)
+```
+
+Applied outside the component file:
+```js
+import MyComponent from './component/mycomponent.js'
+
+const MyAuthComponent = UserIsAuthenticated(MyComponent)
+```
+
+#### Not Safe to Apply
+
+The following are all not safe because they create a new component over and over again, preventing react from considering these the "same" component and causing mounting/unmounting loops.
+
+Inside of render:
+```js
+import MyComponent from './component/MyComponent.js'
+
+class MyParentComponent extends Component {
+  render() {
+    const MyAuthComponent = UserIsAuthenticated(MyComponent)
+    return <MyAuthComponent />
+  }
+}
+```
+
+Inside of any `getComponent`:
+```js
+const routes = (
+  <Route path="/" component={App}>
+    <Route path="auth" getComponent={(nextState, cb) => {
+      cb(null, UserIsAuthenticated(Foo))
+     }} />
+     ...
+  </Route>
+)
 ```
 
 ## Protecting Multiple Routes
