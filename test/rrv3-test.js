@@ -1,5 +1,5 @@
 /* eslint-env node, mocha, jasmine */
-import React from 'react'
+import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routerMiddleware, syncHistoryWithStore, routerActions, routerReducer } from 'react-router-redux'
@@ -11,13 +11,32 @@ import { mount } from 'enzyme'
 
 import { UserAuthWrapper } from '../src'
 
-import { userLoggedOut, userLoggingIn, authSelector, userReducer, App, UnprotectedComponent, defaultConfig } from './helpers'
+import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
 import baseTests from './base-test'
 
-const setupReactRouter3Test = (routes) => {
+class App extends Component {
+  static propTypes = {
+    children: PropTypes.node
+  };
+
+  render() {
+    return (
+      <div id="testRoot">
+        {this.props.children}
+      </div>
+    )
+  }
+}
+
+const setupReactRouter3Test = (testRoutes) => {
   const history = createMemoryHistory()
   const rootReducer = combineReducers({ user: userReducer })
   const store = createStore(rootReducer)
+  const routes = (
+    <Route path="/" component={App}>
+      {testRoutes.map((route, i) => <Route key={i} {...route} />)}
+    </Route>
+  )
 
   const wrapper = mount(
     <Provider store={store}>
@@ -37,10 +56,15 @@ const setupReactRouter3Test = (routes) => {
   }
 }
 
-const setupReactRouterReduxTest = (routes) => {
+const setupReactRouterReduxTest = (testRoutes) => {
   const baseHistory = createMemoryHistory()
   const middleware = routerMiddleware(baseHistory)
   const rootReducer = combineReducers({ user: userReducer, routing: routerReducer })
+  const routes = (
+    <Route path="/" component={App}>
+      {testRoutes.map((route, i) => <Route key={i} {...route} />)}
+    </Route>
+  )
 
   const store = createStore(
     rootReducer,
@@ -66,7 +90,9 @@ const setupReactRouterReduxTest = (routes) => {
   }
 }
 
-baseTests(setupReactRouter3Test, 'React Router V3')
+const getRouteParams = (ownProps) => ownProps.routeParams
+
+baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams)
 
 describe('UserAuthWrapper React Router V3 Additions', () => {
 
@@ -83,12 +109,10 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
       failureRedirectPath: failureRedirectSpy
     })
 
-    const routesOnEnter = (
-      <Route path="/" component={App} >
-        <Route path="login" component={UnprotectedComponent} />
-        <Route path="onEnter" component={UnprotectedComponent} onEnter={connect(UserIsAuthenticatedOnEnter.onEnter)} />
-      </Route>
-    )
+    const routesOnEnter = [
+      { path: 'login', component: UnprotectedComponent },
+      { path: 'onEnter', component: UnprotectedComponent, onEnter: connect(UserIsAuthenticatedOnEnter.onEnter) }
+    ]
 
     const { history, store: createdStore, wrapper, getLocation } = setupReactRouter3Test(routesOnEnter)
     store = createdStore
@@ -123,17 +147,42 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
     expect(getLocation().search).to.equal('?redirect=%2FonEnter')
   })
 
+  it('supports nested routes', () => {
+    const auth = UserAuthWrapper(defaultConfig)
+
+    const routes = [
+      { path: 'login', component: UnprotectedComponent },
+      { path: 'parent', component: auth(UnprotectedParentComponent), childRoutes: [
+          { path: 'child', component: auth(UnprotectedComponent) }
+      ] }
+    ]
+
+    const { history, store, getLocation } = setupReactRouter3Test(routes)
+
+    history.push('/parent/child')
+    expect(getLocation().pathname).to.equal('/login')
+    expect(getLocation().search).to.equal('?redirect=%2Fparent%2Fchild')
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/parent/child')
+    expect(getLocation().pathname).to.equal('/parent/child')
+    expect(getLocation().query).to.be.empty
+
+    store.dispatch(userLoggedOut())
+    expect(getLocation().pathname).to.equal('/login')
+    expect(getLocation().search).to.equal('?redirect=%2Fparent%2Fchild')
+  })
+
   it('redirects with react router redux', () => {
     const auth = UserAuthWrapper({
       ...defaultConfig,
       redirectAction: routerActions.replace
     })
-    const routes = (
-      <Route path="/" component={App} >
-        <Route path="login" component={UnprotectedComponent} />
-        <Route path="auth" component={auth(UnprotectedComponent)} />
-      </Route>
-    )
+    const routes = [
+      { path: 'login', component: UnprotectedComponent },
+      { path: 'auth', component: auth(UnprotectedComponent) }
+    ]
 
     const { history, getLocation } = setupReactRouterReduxTest(routes)
 

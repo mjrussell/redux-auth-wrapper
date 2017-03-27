@@ -67,20 +67,6 @@ export function FailureComponent(props) {
   )
 }
 
-export class App extends Component {
-  static propTypes = {
-    children: PropTypes.node
-  };
-
-  render() {
-    return (
-      <div>
-        {this.props.children}
-      </div>
-    )
-  }
-}
-
 export class UnprotectedComponent extends Component {
   render() {
     return (
