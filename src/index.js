@@ -121,6 +121,8 @@ export const UserAuthWrapper = (args) => {
       }
 
       getRedirectFunc = ({ redirect }) => {
+        // Its silly to test both RR4 and RR3 branches in one test suite, so ignore it
+        /* istanbul ignore else sanity */
         if (redirect) {
           return redirect
         } else if (this.context.router) {

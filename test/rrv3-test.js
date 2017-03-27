@@ -193,5 +193,3 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
     expect(getLocation().search).to.equal('?redirect=%2Fauth')
   })
 })
-
-// TODO add redirectAction test
