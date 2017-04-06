@@ -41,6 +41,7 @@ Redux-auth-wrapper provides higher-order components for easy to read and apply a
 
 ## Tutorial
 
+### React Router
 Usage with [React-Router-Redux](https://github.com/rackt/react-router-redux) (Version 4.0)
 
 ```js
@@ -116,6 +117,149 @@ Any time the user data changes, the UserAuthWrapper will re-check for authentica
 
 **Note:** You still need to provide a mechanism for redirecting the user from the login page back to your component. You can
 also do that with redux-auth-wrapper! See the [loading example](https://github.com/mjrussell/redux-auth-wrapper/blob/master/examples/loading/app.js) for further details.
+
+### Other routers or no router
+This repo is kind of too close with `react-router`, but we can still use this with other routers.
+Thanks for `redirectAction` and `onEnter` we can do some tricks. 
+Use `universal-router` as example:
+1. add a special `redirectAction` to remove dependency of `react-router`
+```
+// store/modules/auth.js
+export const REDIRECT_BUT_NOTHING_WILL_HAPPEN_UNLESS_PARAMS_ARE_PASSED_IN = 
+'REDIRECT_BUT_NOTHING_WILL_HAPPEN_UNLESS_PARAMS_ARE_PASSED_IN';
+
+export const redirect = ({ doRedirect, path }) => {
+  if (doRedirect && path) {
+    doRedirect(path);
+  }
+  return {
+    type: REDIRECT_BUT_NOTHING_WILL_HAPPEN_UNLESS_PARAMS_ARE_PASSED_IN,
+  };
+};
+
+// routes/withUserAuthenticated.js
+import { UserAuthWrapper } from 'redux-auth-wrapper';
+import { redirect } from 'store/modules/auth';
+import queryString from 'query-string';
+
+export const pathFromReactRouterLocation = loc => `${loc.pathname}?${queryString.stringify(loc.query)}`;
+
+export default ({ doRedirect }) => UserAuthWrapper({
+  authSelector: state => state.user, // how to get the auth state
+  wrapperDisplayName: 'withUserAuthenticated', // a nice name for this auth check
+  redirectAction: loc => redirect({
+    doRedirect,
+    path: pathFromReactRouterLocation(loc),
+  }), // the redux action to dispatch for redirect
+});
+```
+
+2. add a protected route
+```
+// routes/protected.js
+import Component from './Component';
+
+export default {
+  path: '/protected',
+  async action() {
+    return {
+      protected: true,
+      Component,
+    };
+  },
+};
+
+```
+3. add authCheck in rootRoute of `universal-router`
+
+```
+// routes/index.js
+import withUserAuthenticated, { pathFromReactRouterLocation } from './withUserAuthenticated';
+
+export default {
+  path: '/',
+  children: [require('./protected').default],
+
+  async action({ next, location, doRedirect }) {
+    // Execute each child route until one of them return the result
+    const route = await next();
+    
+    if (route.protected) {
+      const authHoc = withUserAuthenticated({ doRedirect });
+      route.componentProps = { ...route.componentProps, location };
+    }
+    return route;
+  },
+
+};
+```
+
+4. provide location and doRedirect for redux-auth-wrapper
+```
+// client.js
+onLocationChange(location) {
+  const route = await UniversalRouter.resolve(routes, {
+    ...
+    // For redux-auth-wrapper
+    location,
+    doRedirect: history.replace,
+  });
+}
+```
+
+#### Server render
+If you want to check auth on server side, it's more complicated:
+
+1. add server-side auto check in rootRoute:
+```
+// routes/index.js
+
+export default {
+  path: '/',
+  children: [require('./protected').default],
+
+  async action({ next, location, doRedirect }) {
+    const authHoc = withUserAuthenticated({ doRedirect });
+    // Execute each child route until one of them return the result
+    const route = await next();
+    
+    if (route.protected) {
+      // Add auth wrapper for protected routes
+      const authHoc = withUserAuthenticated({ doRedirect });
+      if (isServer) {
+        let redirect = '';
+        const doRedirectWithFlag = (loc) => {
+          redirect = pathFromReactRouterLocation(loc);
+        };
+
+        authHoc.onEnter(store, { location }, doRedirectWithFlag);
+        if (redirect) {
+          return { redirect };
+        }
+      } else {
+        route.Component = authHoc(route.Component);
+        route.componentProps = { ...route.componentProps, location };
+      }
+    }
+    
+    return route;
+  },
+}
+```
+
+2. provide location and doRedirect for redux-auth-wrapper
+```
+// server.js
+(req, res, next) => {
+  const route = await UniversalRouter.resolve(routes, {
+    ...
+    // For redux-auth-wrapper
+    location: { pathname: req.path, search: queryString.stringify(req.query) },
+    doRedirect: redirect => res.redirect(302, redirect),
+    isServer: true,
+  });
+}
+```
 
 ## API
 
