@@ -1,21 +1,23 @@
-import redirectHelperBuilder from 'redux-auth-wrapper/history4'
+import { connect } from 'react-redux'
+import redirectHelperBuilder from 'redux-auth-wrapper/history3'
 import Redirect from 'redux-auth-wrapper/redirect'
 import authWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
-import { withProps } from 'recompose'
+import { routerActions } from 'react-router-redux'
 
-import Loading from './components/Loading'
+import { Loading } from './components'
 
 const redirectHelper = redirectHelperBuilder({})
 
-const createRedirect = (allowRedirectBack, history) => (...args) => {
-  const redirectLoc = redirectHelper.createRedirect(allowRedirectBack)(...args)
-  history.replace(redirectLoc)
-}
+const createRedirect = allowRedirectBack => dispatch => ({
+  redirect: (...args) => {
+    const redirectLoc = redirectHelper.createRedirect(allowRedirectBack)(...args)
+    dispatch(routerActions.replace(redirectLoc))
+  }
+})
 
-const AuthFailureRedirect = withProps((props) => ({
-  redirectPath: '/login',
-  redirect: createRedirect(true, props.history)
-}))(Redirect)
+const AuthFailureRedirect = connect(() => ({
+  redirectPath: '/login'
+}), createRedirect(true))(Redirect)
 
 export const userIsAuthenticated = authWrapper({
   authSelector: state => state.user.data,
@@ -25,10 +27,9 @@ export const userIsAuthenticated = authWrapper({
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
-const AdminFailureRedirect = withProps((props) => ({
-  redirectPath: '/',
-  redirect: createRedirect(false, props.history)
-}))(Redirect)
+const AdminFailureRedirect = connect(() => ({
+  redirectPath: '/'
+}), createRedirect(false))(Redirect)
 
 export const userIsAdmin = authWrapper({
   authSelector: state => state.user.data,
@@ -37,10 +38,9 @@ export const userIsAdmin = authWrapper({
   wrapperDisplayName: 'UserIsAdmin'
 })
 
-const LoggedInRedirect = withProps((props) => ({
-  redirectPath: redirectHelper.getRedirect(props) || '/foo',
-  redirect: createRedirect(false, props.history)
-}))(Redirect)
+const LoggedInRedirect = connect((state, ownProps) => ({
+  redirectPath: redirectHelper.getRedirect(ownProps) || '/foo'
+}), createRedirect(false))(Redirect)
 
 export const userIsNotAuthenticated = authWrapper({
   authSelector: state => state.user,

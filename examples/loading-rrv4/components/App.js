@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { logout } from '../actions/user'
-import { UserIsAuthenticated, UserIsNotAuthenticated, UserIsAdmin } from '../auth'
+import { userIsAuthenticated, userIsNotAuthenticated, userIsAdmin } from '../auth'
 
 import AdminComponent from './Admin'
 import FooComponent from './Foo'
@@ -11,9 +11,9 @@ import LoginComponent from './Login'
 import Home from './Home'
 
 // Need to apply the hocs here to avoid applying them inside the render method
-const Login = UserIsNotAuthenticated(LoginComponent)
-const Foo = UserIsAuthenticated(FooComponent)
-const Admin = UserIsAuthenticated(UserIsAdmin(AdminComponent))
+const Login = userIsNotAuthenticated(LoginComponent)
+const Foo = userIsAuthenticated(FooComponent)
+const Admin = userIsAuthenticated(userIsAdmin(AdminComponent))
 
 function App({ logout }) {
   return (
