@@ -1,4 +1,6 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.0.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...master)
+
+## [1.1.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.0.0...v1.1.0)
 - **Feature:** Support hash fragments in building the redirect location [#121](https://github.com/mjrussell/redux-auth-wrapper/issues/121)
 - **Feature:** Upgrade to proptypes package after React 15.5 deprecation [#147](https://github.com/mjrussell/redux-auth-wrapper/pull/147) (Contributed by @jruhland)
 
