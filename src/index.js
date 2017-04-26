@@ -122,16 +122,19 @@ export const UserAuthWrapper = (args) => {
       }
 
       getRedirectFunc = ({ redirect }) => {
+        // Its silly to test both RR4 and RR3 branches in one test suite, so ignore it
+        /* istanbul ignore else sanity */
         if (redirect) {
           return redirect
-        } else {
-          if (!this.context.router.replace) {
-            /* istanbul ignore next sanity */
-            throw new Error(`You must provide a router context (or use React-Router 2.x) if not passing a redirectAction to ${wrapperDisplayName}`)
-          } else {
+        } else if (this.context.router) {
+          if (this.context.router.history && this.context.router.history.replace) { // React Router 4
+            return this.context.router.history.replace
+          } else if (this.context.router.replace) { // React Router 3
             return this.context.router.replace
           }
         }
+        /* istanbul ignore next sanity */
+        throw new Error(`You must render redux-auth-wrapper inside a <Router> if not passing a redirectAction to ${wrapperDisplayName}`)
       };
 
       render() {
