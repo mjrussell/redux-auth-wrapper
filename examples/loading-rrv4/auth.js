@@ -1,51 +1,31 @@
-import redirectHelperBuilder from 'redux-auth-wrapper/history4'
-import Redirect from 'redux-auth-wrapper/redirect'
-import authWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
-import { withProps } from 'recompose'
+import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
 
 import Loading from './components/Loading'
 
-const redirectHelper = redirectHelperBuilder({})
+const locationHelper = locationHelperBuilder({})
 
-const createRedirect = (allowRedirectBack, history) => (...args) => {
-  const redirectLoc = redirectHelper.createRedirect(allowRedirectBack)(...args)
-  history.replace(redirectLoc)
-}
-
-const AuthFailureRedirect = withProps((props) => ({
+export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
-  redirect: createRedirect(true, props.history)
-}))(Redirect)
-
-export const userIsAuthenticated = authWrapper({
   authSelector: state => state.user.data,
   authenticatingSelector: state => state.user.isLoading,
   AuthenticatingComponent: Loading,
-  FailureComponent: AuthFailureRedirect,
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
-const AdminFailureRedirect = withProps((props) => ({
+export const userIsAdmin = connectedRouterRedirect({
   redirectPath: '/',
-  redirect: createRedirect(false, props.history)
-}))(Redirect)
-
-export const userIsAdmin = authWrapper({
+  allowRedirectBack: false,
   authSelector: state => state.user.data,
-  FailureComponent: AdminFailureRedirect,
   predicate: user => user.isAdmin,
   wrapperDisplayName: 'UserIsAdmin'
 })
 
-const LoggedInRedirect = withProps((props) => ({
-  redirectPath: redirectHelper.getRedirect(props) || '/foo',
-  redirect: createRedirect(false, props.history)
-}))(Redirect)
-
-export const userIsNotAuthenticated = authWrapper({
+export const userIsNotAuthenticated = connectedRouterRedirect({
+  redirectPath: (state, ownProps) => locationHelper.getRedirectQuery(ownProps) || '/foo',
+  allowRedirectBack: false,
   authSelector: state => state.user,
-  wrapperDisplayName: 'UserIsNotAuthenticated',
   // Want to redirect the user when they are done loading and authenticated
   predicate: user => user.data === null && user.isLoading === false,
-  FailureComponent: LoggedInRedirect
+  wrapperDisplayName: 'UserIsNotAuthenticated'
 })

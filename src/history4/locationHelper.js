@@ -12,13 +12,13 @@ export default (args) => {
     ...args
   }
 
-  const getRedirect = (props) => {
+  const getRedirectQuery = (props) => {
     const location = locationSelector(props)
     const query = parse(location.search)
     return query[redirectQueryParamName]
   }
 
-  const createRedirect = allowRedirectBack => (props, redirectPath) => {
+  const createRedirectLoc = allowRedirectBack => (props, redirectPath) => {
     const location = locationSelector(props)
     const redirectLoc = url.parse(redirectPath, true)
 
@@ -44,7 +44,7 @@ export default (args) => {
   }
 
   return {
-    getRedirect,
-    createRedirect
+    getRedirectQuery,
+    createRedirectLoc
   }
 }
