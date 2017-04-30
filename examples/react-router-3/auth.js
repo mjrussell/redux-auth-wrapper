@@ -1,12 +1,12 @@
 import locationHelperBuilder from 'redux-auth-wrapper/history3/locationHelper'
-import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
 import { routerActions } from 'react-router-redux'
 
 import { Loading } from './components'
 
 const locationHelper = locationHelperBuilder({})
 
-export const userIsAuthenticated = connectedReduxRedirect({
+export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
   authSelector: state => state.user.data,
   authenticatingSelector: state => state.user.isLoading,
@@ -15,7 +15,7 @@ export const userIsAuthenticated = connectedReduxRedirect({
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
-export const userIsAdmin = connectedReduxRedirect({
+export const userIsAdmin = connectedRouterRedirect({
   redirectPath: '/',
   allowRedirectBack: false,
   authSelector: state => state.user.data,
@@ -24,7 +24,7 @@ export const userIsAdmin = connectedReduxRedirect({
   wrapperDisplayName: 'UserIsAdmin'
 })
 
-export const userIsNotAuthenticated = connectedReduxRedirect({
+export const userIsNotAuthenticated = connectedRouterRedirect({
   redirectPath: (state, ownProps) => locationHelper.getRedirectQuery(ownProps) || '/foo',
   allowRedirectBack: false,
   authSelector: state => state.user,
