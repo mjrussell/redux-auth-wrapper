@@ -10,7 +10,7 @@ const connectedDefaults = {
   FailureComponent: Redirect
 }
 
-export default ({ createRedirectLoc }) => {
+export default ({ createRedirectLoc, getRouterRedirect }) => {
 
   const connectedRouterRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
@@ -25,14 +25,14 @@ export default ({ createRedirectLoc }) => {
       invariant(false, 'redirectPath must be either a string or a function')
     }
 
-    const redirect = (history) => (...args) => history.replace(createRedirectLoc(allowRedirectBack)(...args))
+    const redirect = (replace) => (...args) => replace(createRedirectLoc(allowRedirectBack)(...args))
 
     return (DecoratedComponent) =>
       connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
         authData: authSelector(state, ownProps),
         isAuthenticating: authenticatingSelector(state, ownProps),
-        redirect: redirect(ownProps.history)
+        redirect: redirect(getRouterRedirect(ownProps))
       }))(authWrapper(allArgs)(DecoratedComponent))
   }
 

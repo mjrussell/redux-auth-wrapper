@@ -4,5 +4,6 @@ import redirectUtil from '../helper/redirect'
 const { createRedirectLoc } = locationHelperBuilder({})
 
 export const { connectedRouterRedirect, connectedReduxRedirect } = redirectUtil({
-  createRedirectLoc
+  createRedirectLoc,
+  getRouterRedirect: ({ history }) => history.replace
 })
