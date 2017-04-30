@@ -8,7 +8,7 @@ const defaults = {
   FailureComponent: undefined,
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x),
-  propMapper: ({ ...props }) => ({ ...props }) // eslint-disable-line no-unused-vars
+  propMapper: props => props
 }
 
 export default (args) => {
@@ -17,12 +17,9 @@ export default (args) => {
     ...args
   }
 
-  const isAuthorized = (authData) => predicate(authData)
-
   // Wraps the component that needs the auth enforcement
   function wrapComponent(DecoratedComponent) {
     const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
-
 
     class UserAuthWrapper extends Component {
 
@@ -41,7 +38,7 @@ export default (args) => {
         // Allow everything but the replace aciton creator to be passed down
         // Includes route props from React-Router and authData
         const { authData, isAuthenticating } = this.props
-        if (isAuthorized(authData)) {
+        if (predicate(authData)) {
           return <DecoratedComponent {...propMapper(this.props)} />
         } else if(isAuthenticating) {
           return <AuthenticatingComponent {...propMapper(this.props)} />
