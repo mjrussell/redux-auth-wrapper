@@ -1,25 +1,25 @@
-import { UserAuthWrapper } from 'redux-auth-wrapper'
-import { routerActions } from 'react-router-redux'
+import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
+import authWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
 
-export const UserIsAuthenticated = UserAuthWrapper({
+const locationHelper = locationHelperBuilder({})
+
+export const UserIsAuthenticated = connectedRouterRedirect({
   authSelector: state => state.user,
-  redirectAction: routerActions.replace,
+  redirectPath: (state, ownProps) => locationHelper.getRedirectQuery(ownProps) || '/login',
   wrapperDisplayName: 'UserIsAuthenticated'
-
 })
 
-export const UserIsAdmin = UserAuthWrapper({
+export const UserIsAdmin = connectedRouterRedirect({
   authSelector: state => state.user,
-  redirectAction: routerActions.replace,
-  failureRedirectPath: '/',
+  redirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',
   predicate: user => user.isAdmin,
   allowRedirectBack: false
 })
 
-export const VisibleOnlyAdmin = UserAuthWrapper({
+export const VisibleOnlyAdmin = authWrapper({
   authSelector: state => state.user,
   wrapperDisplayName: 'VisibleOnlyAdmin',
-  predicate: user => user.isAdmin,
-  FailureComponent: null
+  predicate: user => user.isAdmin
 })

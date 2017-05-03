@@ -1,20 +1,16 @@
-import 'url-search-params-polyfill'
-
 import React, { Component, PropTypes } from 'react'
 import { routerActions } from 'react-router-redux'
 import { connect } from 'react-redux'
+import { parse } from 'query-string'
 
 import { login } from '../actions/user'
 
 function select(state, ownProps) {
   const isAuthenticated = state.user.name || false
-  // https://github.com/mjrussell/redux-auth-wrapper/issues/127
-  // https://github.com/ReactTraining/react-router/issues/4410
-  const query = new URLSearchParams(ownProps.location.search)
-  const redirect = query.get('redirect') || '/'
+  const query = parse(ownProps.location.search)
   return {
     isAuthenticated,
-    redirect
+    redirect: query.redirect || '/',
   }
 }
 
