@@ -9,10 +9,10 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
 
-import { UserAuthWrapper } from '../src'
-
 import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
 import baseTests from './base-test'
+
+import { connectedRouterRedirect, connectedReduxRedirect } from '../src/history3/redirect'
 
 class App extends Component {
   static propTypes = {
@@ -91,11 +91,13 @@ const setupReactRouterReduxTest = (testRoutes) => {
 }
 
 const getRouteParams = (ownProps) => ownProps.routeParams
+const getQueryParams = (location) => location.query
 
-baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams)
+baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams, getQueryParams, connectedRouterRedirect)
 
 describe('UserAuthWrapper React Router V3 Additions', () => {
 
+  /**
   it('provides an onEnter static function', () => {
     let store
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
@@ -146,9 +148,10 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
     expect(getLocation().pathname).to.equal('/login')
     expect(getLocation().search).to.equal('?redirect=%2FonEnter')
   })
+  **/
 
   it('supports nested routes', () => {
-    const auth = UserAuthWrapper(defaultConfig)
+    const auth = connectedRouterRedirect(defaultConfig)
 
     const routes = [
       { path: 'login', component: UnprotectedComponent },
@@ -175,7 +178,7 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
   })
 
   it('redirects with react router redux', () => {
-    const auth = UserAuthWrapper({
+    const auth = connectedReduxRedirect({
       ...defaultConfig,
       redirectAction: routerActions.replace
     })
