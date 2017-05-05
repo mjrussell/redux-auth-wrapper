@@ -5,9 +5,12 @@ import { Router, Route, Switch } from 'react-router'
 import { Provider } from 'react-redux'
 import { createStore, combineReducers } from 'redux'
 import { mount } from 'enzyme'
+import { parse } from 'query-string'
 
 import { userReducer } from './helpers'
 import baseTests from './base-test'
+
+import { connectedRouterRedirect } from '../src/history4/redirect'
 
 const setupReactRouter4Test = (testRoutes) => {
   const history = createMemoryHistory()
@@ -37,5 +40,6 @@ const setupReactRouter4Test = (testRoutes) => {
 }
 
 const getRouteParams = (ownProps) => ownProps.match.params
+const getQueryParams = (location) => parse(location.search)
 
-baseTests(setupReactRouter4Test, 'React Router V4', getRouteParams)
+baseTests(setupReactRouter4Test, 'React Router V4', getRouteParams, getQueryParams, connectedRouterRedirect)

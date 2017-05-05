@@ -1,22 +1,18 @@
 /* eslint-env node, mocha, jasmine */
 import React, { Component } from 'react'
-import { Provider } from 'react-redux'
-import { createStore, combineReducers } from 'redux'
-import { mount } from 'enzyme'
 import sinon from 'sinon'
 import _ from 'lodash'
 
-import { UserAuthWrapper } from '../src'
+import Redirect from '../src/redirect'
+import { userLoggedIn, userLoggedOut, userLoggingIn, authSelector, defaultConfig,
+         UnprotectedComponent, AuthenticatingComponent, FailureComponent } from './helpers'
 
-import { userLoggedIn, userLoggedOut, userLoggingIn, authSelector, userReducer, defaultConfig,
-         UnprotectedComponent, LoadingComponent, FailureComponent } from './helpers'
+export default (setupTest, versionName, getRouteParams, getQueryParams, authWrapper) => {
 
-export default (setupTest, versionName, getRouteParams) => {
-
-  describe(`UserAuthWrapper ${versionName} Base`, () => {
+  describe(`wrapper ${versionName} Base`, () => {
 
     it('redirects unauthenticated', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -25,17 +21,17 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
     })
 
     it('does not redirect if authenticating', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         authenticatingSelector: () => true,
-        LoadingComponent: LoadingComponent
+        AuthenticatingComponent: AuthenticatingComponent
       })
       const routes = [
         { path: 'auth', component: auth(UnprotectedComponent) }
@@ -44,14 +40,14 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/auth')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
     })
 
     it('by default ignores authenticating', () => {
-      const auth = UserAuthWrapper({ authSelector })
+      const auth = authWrapper({ authSelector, redirectPath: '/login' })
 
       const routes = [
         { path: '/login', component: UnprotectedComponent },
@@ -61,17 +57,17 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
     })
 
     it('renders the specified component when authenticating', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         authenticatingSelector: () => true,
-        LoadingComponent: LoadingComponent
+        AuthenticatingComponent: AuthenticatingComponent
       })
       const routes = [
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -81,13 +77,13 @@ export default (setupTest, versionName, getRouteParams) => {
 
       history.push('/auth')
 
-      const comp = wrapper.find(LoadingComponent)
+      const comp = wrapper.find(AuthenticatingComponent)
       // Props from React-Router
       expect(comp.props().location.pathname).to.equal('/auth')
     })
 
-    it('renders nothing while authenticating and no LoadingComponent set', () => {
-      const auth = UserAuthWrapper({
+    it('renders nothing while authenticating and no AuthenticatingComponent set', () => {
+      const auth = authWrapper({
         ...defaultConfig,
         authenticatingSelector: () => true
       })
@@ -105,7 +101,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('renders the failure component when prop is set', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         predicate: () => false,
         FailureComponent
@@ -125,7 +121,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('preserves query params on redirect', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -134,14 +130,14 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
       history.push('/auth?test=foo')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth?test=foo' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth?test=foo' })
     })
 
     it('allows authenticated users', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -156,7 +152,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('redirects on no longer authorized', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -174,7 +170,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('doesn\'t redirects on no longer authorized if FailureComponent is set', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         predicate: () => false,
         FailureComponent
@@ -195,7 +191,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('redirects if no longer authenticating', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
@@ -213,7 +209,7 @@ export default (setupTest, versionName, getRouteParams) => {
     })
 
     it('allows predicate authorization', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         predicate: user => user.firstName === 'Test'
       })
@@ -228,17 +224,17 @@ export default (setupTest, versionName, getRouteParams) => {
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
 
       store.dispatch(userLoggedIn())
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/auth')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
     })
 
     it('optionally prevents redirection', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         predicate: () => false,
         allowRedirectBack: false
@@ -254,14 +250,14 @@ export default (setupTest, versionName, getRouteParams) => {
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({})
+      expect(getQueryParams(getLocation())).to.deep.equal({})
     })
 
     it('optionally prevents redirection from a function result', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         predicate: () => false,
-        allowRedirectBack: (location, redirectPath) => location.pathname === '/auth' && redirectPath === '/login'
+        allowRedirectBack: ({ location }, redirectPath) => location.pathname === '/auth' && redirectPath === '/login'
       })
       const routes = [
         { path: '/login', component: UnprotectedComponent },
@@ -274,21 +270,19 @@ export default (setupTest, versionName, getRouteParams) => {
       store.dispatch(userLoggedIn())
 
       history.push('/auth')
-      expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
 
       history.push('/authNoRedir')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({})
+      expect(getQueryParams(getLocation())).to.deep.equal({})
     })
 
     it('can be nested', () => {
-      const firstNameAuth = UserAuthWrapper({
+      const firstNameAuth = authWrapper({
         ...defaultConfig,
         predicate: user => user.firstName === 'Test'
       })
 
-      const lastNameAuth = UserAuthWrapper({
+      const lastNameAuth = authWrapper({
         ...defaultConfig,
         predicate: user => user.lastName === 'McDuderson'
       })
@@ -304,23 +298,23 @@ export default (setupTest, versionName, getRouteParams) => {
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
 
       store.dispatch(userLoggedIn('Test', 'NotMcDuderson'))
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
 
       store.dispatch(userLoggedIn())
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/auth')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
     })
 
     it('passes props to authed components', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
       const Child = auth(UnprotectedComponent)
 
       class PropParentComponent extends Component {
@@ -353,14 +347,14 @@ export default (setupTest, versionName, getRouteParams) => {
       expect(comp.props().testProp).to.equal(true)
       // No extra wrapper props
       expect(Object.keys(_.omit(wrapper.find(UnprotectedComponent).props(), [
-        'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext'
+        'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext', 'dispatch'
       ])).sort()).to.deep.equal([
-        'authData', 'testProp'
+        'authData', 'isAuthenticating', 'redirect', 'redirectPath', 'testProp'
       ])
     })
 
     it('hoists statics to the wrapper', () => {
-      const auth = UserAuthWrapper(defaultConfig)
+      const auth = authWrapper(defaultConfig)
 
       class WithStatic extends Component {
         static staticProp = true;
@@ -378,17 +372,8 @@ export default (setupTest, versionName, getRouteParams) => {
       expect(authed.staticFun()).to.equal('auth')
     })
 
-    it('it doesn\'t provide an onEnter static function if FailureComponent prop is set', () => {
-      const auth = UserAuthWrapper({
-        authSelector: () => false,
-        FailureComponent: null
-      })
-
-      expect(auth.onEnter).to.not.exist
-    })
-
     it('passes ownProps for auth selector', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         authSelector: (state, ownProps) => ({
           ...authSelector(state),
@@ -405,21 +390,21 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, store, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       store.dispatch(userLoggedIn())
 
       history.push('/auth/1')
       expect(getLocation().pathname).to.equal('/auth/1')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       history.push('/auth/2')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth/2' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/2' })
     })
 
     it('can override query param name', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
         redirectQueryParamName: 'customRedirect'
       })
@@ -431,17 +416,17 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       history.push('/auth')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ customRedirect: '/auth' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ customRedirect: '/auth' })
     })
 
     it('can pass a selector for failureRedirectPath', () => {
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
-        failureRedirectPath: (state, ownProps) => {
+        redirectPath: (state, ownProps) => {
           if (authSelector(state) === undefined && getRouteParams(ownProps).id === '1') {
             return '/login/1'
           } else {
@@ -457,71 +442,47 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       history.push('/auth/1')
       expect(getLocation().pathname).to.equal('/login/1')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth/1' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/1' })
 
       history.push('/auth/2')
       expect(getLocation().pathname).to.equal('/login/0')
-      expect(getLocation().query).to.deep.equal({ redirect: '/auth/2' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/2' })
     })
 
     it('only redirects once when props change but authentication is constant', () => {
 
-      const redirectAction = sinon.stub().returns({ type: 'NO_REDIRECT' })
+      const redirect = sinon.stub().returns({ type: 'NO_REDIRECT' })
 
-      const auth = UserAuthWrapper({
+      const auth = authWrapper({
         ...defaultConfig,
-        redirectAction,
+        FailureComponent: (props) => <Redirect {...props} redirect={redirect} />,
         predicate: () => false
       })
 
-      const Component = auth(UnprotectedComponent)
-
-      // No routing middleware to handle redirects
-      const rootReducer = combineReducers({ user: userReducer })
-      const store = createStore(rootReducer)
-      mount(
-        <Provider store={store}>
-          <Component location={{ pathname: '/', query: {}, search: '' }}/>
-        </Provider>
-      )
-
-      expect(redirectAction.calledOnce).to.equal(true)
-
-      store.dispatch(userLoggedIn())
-      expect(redirectAction.calledOnce).to.equal(true)
-    })
-
-    it('uses propMapper to prevent passing down props', () => {
-      const auth = UserAuthWrapper({
-        ...defaultConfig,
-        propMapper: () => ({})
-      })
       const routes = [
         { path: '/login', component: UnprotectedComponent },
         { path: '/auth', component: auth(UnprotectedComponent) }
       ]
 
-      const { store, history, wrapper } = setupTest(routes)
-
-      store.dispatch(userLoggedIn())
+      const { history, store } = setupTest(routes)
 
       history.push('/auth')
+      expect(redirect.calledOnce).to.equal(true)
 
-      const comp = wrapper.find(UnprotectedComponent)
-      // Props from React-Router
-      expect(comp.props()).to.deep.equal({})
+      store.dispatch(userLoggedIn())
+      expect(redirect.calledOnce).to.equal(true)
     })
 
     it('redirection preserves query params', () => {
-      const auth = UserAuthWrapper(defaultConfig)
-      const login = UserAuthWrapper({
+      const auth = authWrapper(defaultConfig)
+      const login = authWrapper({
         ...defaultConfig,
         predicate: _.isEmpty,
-        failureRedirectPath: (state, ownProps) => ownProps.location.query.redirect || '/',
+        redirectPath: (state, ownProps) => getQueryParams(ownProps.location).redirect || '/',
         allowRedirectBack: false
       })
       const routes = [
@@ -532,23 +493,23 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, store, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       history.push('/protected?param=foo')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/protected?param=foo' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/protected?param=foo' })
 
       store.dispatch(userLoggedIn())
       expect(getLocation().pathname).to.equal('/protected')
-      expect(getLocation().query).to.deep.equal({ param: 'foo' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ param: 'foo' })
     })
 
     it('redirection preserves hash fragment', () => {
-      const auth = UserAuthWrapper(defaultConfig)
-      const login = UserAuthWrapper({
+      const auth = authWrapper(defaultConfig)
+      const login = authWrapper({
         ...defaultConfig,
         predicate: _.isEmpty,
-        failureRedirectPath: (state, ownProps) => ownProps.location.query.redirect || '/',
+        redirectPath: (state, ownProps) => getQueryParams(ownProps.location).redirect || '/',
         allowRedirectBack: false
       })
       const routes = [
@@ -559,16 +520,16 @@ export default (setupTest, versionName, getRouteParams) => {
       const { history, store, getLocation } = setupTest(routes)
 
       expect(getLocation().pathname).to.equal('/')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
 
       history.push('/protected#foo')
       expect(getLocation().pathname).to.equal('/login')
-      expect(getLocation().query).to.deep.equal({ redirect: '/protected#foo' })
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/protected#foo' })
 
       store.dispatch(userLoggedIn())
       expect(getLocation().pathname).to.equal('/protected')
       expect(getLocation().hash).to.equal('#foo')
-      expect(getLocation().query).to.be.empty
+      expect(getQueryParams(getLocation())).to.be.empty
     })
   })
 }

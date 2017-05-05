@@ -48,12 +48,13 @@ export const userLoggingIn = () => ({
 })
 
 export const defaultConfig = {
+  redirectPath: '/login',
   authSelector,
   authenticatingSelector,
   wrapperDisplayName: 'UserIsAuthenticated'
 }
 
-export class LoadingComponent extends Component {
+export class AuthenticatingComponent extends Component {
   render() {
     return (
       <div>Loading!</div>
