@@ -10,11 +10,15 @@ const connectedDefaults = {
   FailureComponent: Redirect
 }
 
-export default ({ createRedirectLoc, getRouterRedirect }) => {
+export default ({ locationHelperBuilder, getRouterRedirect }) => {
 
   const connectedRouterRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack } = allArgs
+    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack, redirectQueryParamName } = allArgs
+
+    const { createRedirectLoc } = locationHelperBuilder({
+      redirectQueryParamName: redirectQueryParamName || 'redirect'
+    })
 
     let redirectPathSelector
     if (typeof redirectPath === 'string') {
@@ -25,7 +29,17 @@ export default ({ createRedirectLoc, getRouterRedirect }) => {
       invariant(false, 'redirectPath must be either a string or a function')
     }
 
-    const redirect = (replace) => (...args) => replace(createRedirectLoc(allowRedirectBack)(...args))
+    let allowRedirectBackFn
+    if (typeof allowRedirectBack === 'boolean') {
+      allowRedirectBackFn = () => allowRedirectBack
+    } else if (typeof allowRedirectBack === 'function') {
+      allowRedirectBackFn = allowRedirectBack
+    } else {
+      invariant(false, 'redirectPath must be either a boolean or a fiwnction')
+    }
+
+    const redirect = (replace) => (props, path) =>
+      replace(createRedirectLoc(allowRedirectBackFn(props, path))(props, path))
 
     return (DecoratedComponent) =>
       connect((state, ownProps) => ({
@@ -38,7 +52,11 @@ export default ({ createRedirectLoc, getRouterRedirect }) => {
 
   const connectedReduxRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack, redirectAction } = allArgs
+    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack, redirectAction, redirectQueryParamName } = allArgs
+
+    const { createRedirectLoc } = locationHelperBuilder({
+      redirectQueryParamName: redirectQueryParamName || 'redirect'
+    })
 
     let redirectPathSelector
     if (typeof redirectPath === 'string') {
@@ -49,8 +67,17 @@ export default ({ createRedirectLoc, getRouterRedirect }) => {
       invariant(false, 'redirectPath must be either a string or a function')
     }
 
+    let allowRedirectBackFn
+    if (typeof allowRedirectBack === 'boolean') {
+      allowRedirectBackFn = () => allowRedirectBack
+    } else if (typeof allowRedirectBack === 'function') {
+      allowRedirectBackFn = allowRedirectBack
+    } else {
+      invariant(false, 'redirectPath must be either a boolean or a fiwnction')
+    }
+
     const createRedirect = (dispatch) => ({
-      redirect: (...args) => dispatch(redirectAction(createRedirectLoc(allowRedirectBack)(...args)))
+      redirect: (props, path) => dispatch(redirectAction(createRedirectLoc(allowRedirectBackFn(props, path))(props, path)))
     })
 
     return (DecoratedComponent) =>
