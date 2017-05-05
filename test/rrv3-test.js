@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-env node, mocha, jasmine */
 import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
