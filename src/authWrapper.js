@@ -7,12 +7,11 @@ const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
   FailureComponent: undefined,
   wrapperDisplayName: 'AuthWrapper',
-  predicate: x => !isEmpty(x),
-  propMapper: props => props
+  predicate: x => !isEmpty(x)
 }
 
 export default (args) => {
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, predicate, propMapper } = {
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, predicate } = {
     ...defaults,
     ...args
   }
@@ -35,15 +34,13 @@ export default (args) => {
       }
 
       render() {
-        // Allow everything but the replace aciton creator to be passed down
-        // Includes route props from React-Router and authData
         const { authData, isAuthenticating } = this.props
         if (predicate(authData)) {
-          return <DecoratedComponent {...propMapper(this.props)} />
+          return <DecoratedComponent {...this.props} />
         } else if(isAuthenticating) {
-          return <AuthenticatingComponent {...propMapper(this.props)} />
+          return <AuthenticatingComponent {...this.props} />
         } else {
-          return FailureComponent ? <FailureComponent {...propMapper(this.props)} /> : null
+          return FailureComponent ? <FailureComponent {...this.props} /> : null
         }
       }
     }
