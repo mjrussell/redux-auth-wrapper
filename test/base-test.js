@@ -7,7 +7,7 @@ import Redirect from '../src/redirect'
 import { userLoggedIn, userLoggedOut, userLoggingIn, authSelector, defaultConfig,
          UnprotectedComponent, AuthenticatingComponent, FailureComponent } from './helpers'
 
-export default (setupTest, versionName, getRouteParams, getQueryParams, authWrapper) => {
+export default (setupTest, versionName, getRouteParams, getQueryParams, getRedirectQueryParam, authWrapper) => {
 
   describe(`wrapper ${versionName} Base`, () => {
 
@@ -482,7 +482,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, authWrap
       const login = authWrapper({
         ...defaultConfig,
         predicate: _.isEmpty,
-        redirectPath: (state, ownProps) => getQueryParams(ownProps.location).redirect || '/',
+        redirectPath: (state, ownProps) => getRedirectQueryParam(ownProps) || '/',
         allowRedirectBack: false
       })
       const routes = [
@@ -509,7 +509,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, authWrap
       const login = authWrapper({
         ...defaultConfig,
         predicate: _.isEmpty,
-        redirectPath: (state, ownProps) => getQueryParams(ownProps.location).redirect || '/',
+        redirectPath: (state, ownProps) => getRedirectQueryParam(ownProps) || '/',
         allowRedirectBack: false
       })
       const routes = [
@@ -530,6 +530,20 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, authWrap
       expect(getLocation().pathname).to.equal('/protected')
       expect(getLocation().hash).to.equal('#foo')
       expect(getQueryParams(getLocation())).to.be.empty
+    })
+
+    it('Throws invariant when redirectpath is not a function or string', () => {
+      expect(() => authWrapper({ ...defaultConfig, redirectPath: true })).to.throw(/redirectPath must be either a string or a function/)
+      expect(() => authWrapper({ ...defaultConfig, redirectPath: 1 })).to.throw(/redirectPath must be either a string or a function/)
+      expect(() => authWrapper({ ...defaultConfig, redirectPath: [] })).to.throw(/redirectPath must be either a string or a function/)
+      expect(() => authWrapper({ ...defaultConfig, redirectPath: {} })).to.throw(/redirectPath must be either a string or a function/)
+    })
+
+    it('Throws invariant when allowRedirectBack is not a function or boolean', () => {
+      expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: 'login' })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+      expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: 1 })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+      expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: [] })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+      expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: {} })).to.throw(/allowRedirectBack must be either a boolean or a function/)
     })
   })
 }

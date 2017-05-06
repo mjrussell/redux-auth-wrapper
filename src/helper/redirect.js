@@ -35,7 +35,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
     } else if (typeof allowRedirectBack === 'function') {
       allowRedirectBackFn = allowRedirectBack
     } else {
-      invariant(false, 'redirectPath must be either a boolean or a fiwnction')
+      invariant(false, 'allowRedirectBack must be either a boolean or a function')
     }
 
     const redirect = (replace) => (props, path) =>
@@ -73,7 +73,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
     } else if (typeof allowRedirectBack === 'function') {
       allowRedirectBackFn = allowRedirectBack
     } else {
-      invariant(false, 'redirectPath must be either a boolean or a fiwnction')
+      invariant(false, 'allowRedirectBack must be either a boolean or a function')
     }
 
     const createRedirect = (dispatch) => ({

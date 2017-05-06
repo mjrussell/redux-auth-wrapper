@@ -11,7 +11,7 @@ export default (args) => {
     ...args
   }
 
-  const getRedirectQuery = (props) => {
+  const getRedirectQueryParam = (props) => {
     const location = locationSelector(props)
     return location.query[redirectQueryParamName]
   }
@@ -42,7 +42,7 @@ export default (args) => {
   }
 
   return {
-    getRedirectQuery,
+    getRedirectQueryParam,
     createRedirectLoc
   }
 }

@@ -10,5 +10,6 @@ if [ "$REACT_ROUTER_VERSION" = "3" ]; then
 elif [ "$REACT_ROUTER_VERSION" = "4" ]; then
   npm install react-router@4.0.0
   npm install history@4.6.1
+  npm install react-router-redux@5.0.0-alpha.6
   npm run test:cov -- test/rrv4-test.js
 fi

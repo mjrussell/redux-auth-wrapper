@@ -14,6 +14,9 @@ import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, 
 import baseTests from './base-test'
 
 import { connectedRouterRedirect, connectedReduxRedirect } from '../src/history3/redirect'
+import locationHelperBuilder from '../src/history3/locationHelper'
+
+const locationHelper = locationHelperBuilder({})
 
 class App extends Component {
   static propTypes = {
@@ -94,9 +97,13 @@ const setupReactRouterReduxTest = (testRoutes) => {
 const getRouteParams = (ownProps) => ownProps.routeParams
 const getQueryParams = (location) => location.query
 
-baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams, getQueryParams, connectedRouterRedirect)
+baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams, getQueryParams,
+          locationHelper.getRedirectQueryParam, connectedRouterRedirect)
 
-describe('UserAuthWrapper React Router V3 Additions', () => {
+baseTests(setupReactRouterReduxTest, 'React Router V3 with react-router-redux', getRouteParams, getQueryParams,
+          locationHelper.getRedirectQueryParam, (config) => connectedReduxRedirect({ ...config, redirectAction: routerActions.replace }))
+
+describe('wrapper React Router V3 Additions', () => {
 
   /**
   it('provides an onEnter static function', () => {
@@ -176,24 +183,5 @@ describe('UserAuthWrapper React Router V3 Additions', () => {
     store.dispatch(userLoggedOut())
     expect(getLocation().pathname).to.equal('/login')
     expect(getLocation().search).to.equal('?redirect=%2Fparent%2Fchild')
-  })
-
-  it('redirects with react router redux', () => {
-    const auth = connectedReduxRedirect({
-      ...defaultConfig,
-      redirectAction: routerActions.replace
-    })
-    const routes = [
-      { path: 'login', component: UnprotectedComponent },
-      { path: 'auth', component: auth(UnprotectedComponent) }
-    ]
-
-    const { history, getLocation } = setupReactRouterReduxTest(routes)
-
-    expect(getLocation().pathname).to.equal('/')
-    expect(getLocation().search).to.equal('')
-    history.push('/auth')
-    expect(getLocation().pathname).to.equal('/login')
-    expect(getLocation().search).to.equal('?redirect=%2Fauth')
   })
 })
