@@ -50,8 +50,7 @@ export const userLoggingIn = () => ({
 export const defaultConfig = {
   redirectPath: '/login',
   authSelector,
-  authenticatingSelector,
-  wrapperDisplayName: 'UserIsAuthenticated'
+  authenticatingSelector
 }
 
 export class AuthenticatingComponent extends Component {
@@ -63,9 +62,11 @@ export class AuthenticatingComponent extends Component {
 }
 
 export function FailureComponent(props) {
-  return (
-    <div>No Access for user: {props.authData.email}</div>
-  )
+  if (props.authData) {
+    return <div>No Access for user: {props.authData.email}</div>
+  } else {
+    return <div>No Access</div>
+  }
 }
 
 export class UnprotectedComponent extends Component {

@@ -9,7 +9,7 @@ import { parse } from 'query-string'
 import { ConnectedRouter, routerReducer, routerMiddleware, replace } from 'react-router-redux'
 
 import { userReducer } from './helpers'
-import baseTests from './base-test'
+import baseTests from './redirectBase-test'
 
 import { connectedRouterRedirect, connectedReduxRedirect } from '../src/history4/redirect'
 import locationHelperBuilder from '../src/history4/locationHelper'

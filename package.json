@@ -12,9 +12,9 @@
     "build": "mkdir -p lib && babel ./src --out-dir ./lib",
     "lint": "eslint src test",
     "prepublish": "rm -rf lib && npm run build",
-    "test": "mocha --compilers js:babel-core/register --recursive --require test/init.js",
-    "test:cov": "babel-node --max-old-space-size=4076 $(npm bin)/babel-istanbul cover $(npm bin)/_mocha -- --require test/init.js",
-    "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w"
+    "test": "mocha --compilers js:babel-core/register --recursive --require test/init.js test/authWrapper-test.js",
+    "test:cov": "babel-node --max-old-space-size=4076 $(npm bin)/babel-istanbul cover $(npm bin)/_mocha -- --require test/init.js test/authWrapper-test.js",
+    "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w test/authWrapper-test.js"
   },
   "repository": {
     "type": "git",

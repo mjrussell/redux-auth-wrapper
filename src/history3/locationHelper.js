@@ -21,9 +21,8 @@ export default (args) => {
     const redirectLoc = url.parse(redirectPath, true)
 
     let query
-    const canRedirect = typeof allowRedirectBack === 'function' ? allowRedirectBack(location, redirectPath) : allowRedirectBack
 
-    if (canRedirect) {
+    if (allowRedirectBack) {
       query = { [redirectQueryParamName]: `${location.pathname}${location.search}${location.hash}` }
     } else {
       query = {}

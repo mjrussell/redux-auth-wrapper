@@ -334,25 +334,6 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       ])
     })
 
-    it('hoists statics to the wrapper', () => {
-      const auth = authWrapper(defaultConfig)
-
-      class WithStatic extends Component {
-        static staticProp = true;
-
-        render() {
-          return <div/>
-        }
-      }
-
-      WithStatic.staticFun = () => 'auth'
-
-      const authed = auth(WithStatic)
-      expect(authed.staticProp).to.equal(true)
-      expect(authed.staticFun).to.be.a('function')
-      expect(authed.staticFun()).to.equal('auth')
-    })
-
     it('passes ownProps for auth selector', () => {
       const auth = authWrapper({
         ...defaultConfig,

@@ -10,7 +10,7 @@ import sinon from 'sinon'
 import { mount } from 'enzyme'
 
 import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
-import baseTests from './base-test'
+import baseTests from './redirectBase-test'
 
 import { connectedRouterRedirect, connectedReduxRedirect, createOnEnter } from '../src/history3/redirect'
 import locationHelperBuilder from '../src/history3/locationHelper'
