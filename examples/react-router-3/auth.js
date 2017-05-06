@@ -25,7 +25,7 @@ export const userIsAdmin = connectedRouterRedirect({
 })
 
 export const userIsNotAuthenticated = connectedRouterRedirect({
-  redirectPath: (state, ownProps) => locationHelper.getRedirectQuery(ownProps) || '/foo',
+  redirectPath: (state, ownProps) => locationHelper.getRedirectQueryParam(ownProps) || '/foo',
   allowRedirectBack: false,
   authSelector: state => state.user,
   // Want to redirect the user when they are done loading and authenticated
