@@ -5,7 +5,7 @@ import isEmpty from 'lodash.isempty'
 
 const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
-  FailureComponent: undefined,
+  FailureComponent: () => null, // dont render anything on failure of the predicate
   wrapperDisplayName: 'AuthWrapper',
   predicate: x => !isEmpty(x)
 }
@@ -40,7 +40,7 @@ export default (args) => {
         } else if(isAuthenticating) {
           return <AuthenticatingComponent {...this.props} />
         } else {
-          return FailureComponent ? <FailureComponent {...this.props} /> : null
+          return <FailureComponent {...this.props} />
         }
       }
     }
