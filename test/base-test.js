@@ -169,27 +169,6 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(getLocation().pathname).to.equal('/login')
     })
 
-    it('doesn\'t redirects on no longer authorized if FailureComponent is set', () => {
-      const auth = authWrapper({
-        ...defaultConfig,
-        predicate: () => false,
-        FailureComponent
-      })
-      const routes = [
-        { path: '/auth', component: auth(UnprotectedComponent) }
-      ]
-
-      const { history, store, getLocation } = setupTest(routes)
-
-      store.dispatch(userLoggedIn())
-
-      history.push('/auth')
-      expect(getLocation().pathname).to.equal('/auth')
-
-      store.dispatch(userLoggedOut())
-      expect(getLocation().pathname).to.equal('/auth')
-    })
-
     it('redirects if no longer authenticating', () => {
       const auth = authWrapper(defaultConfig)
       const routes = [
@@ -270,6 +249,8 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       store.dispatch(userLoggedIn())
 
       history.push('/auth')
+      expect(getLocation().pathname).to.equal('/login')
+      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
 
       history.push('/authNoRedir')
       expect(getLocation().pathname).to.equal('/login')
@@ -423,7 +404,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(getQueryParams(getLocation())).to.deep.equal({ customRedirect: '/auth' })
     })
 
-    it('can pass a selector for failureRedirectPath', () => {
+    it('can pass a selector for redirectPath', () => {
       const auth = authWrapper({
         ...defaultConfig,
         redirectPath: (state, ownProps) => {

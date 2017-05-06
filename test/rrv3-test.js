@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* eslint-env node, mocha, jasmine */
 import React, { Component, PropTypes } from 'react'
 import _ from 'lodash'
@@ -13,7 +12,7 @@ import { mount } from 'enzyme'
 import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
 import baseTests from './base-test'
 
-import { connectedRouterRedirect, connectedReduxRedirect } from '../src/history3/redirect'
+import { connectedRouterRedirect, connectedReduxRedirect, createOnEnter } from '../src/history3/redirect'
 import locationHelperBuilder from '../src/history3/locationHelper'
 
 const locationHelper = locationHelperBuilder({})
@@ -103,25 +102,60 @@ baseTests(setupReactRouter3Test, 'React Router V3', getRouteParams, getQueryPara
 baseTests(setupReactRouterReduxTest, 'React Router V3 with react-router-redux', getRouteParams, getQueryParams,
           locationHelper.getRedirectQueryParam, (config) => connectedReduxRedirect({ ...config, redirectAction: routerActions.replace }))
 
-describe('wrapper React Router V3 Additions', () => {
-
-  /**
+describe('React Router V3 onEnter', () => {
   it('provides an onEnter static function', () => {
+    let store
+    const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
+    const authSelectorSpy = sinon.spy(authSelector)
+    const failureRedirectSpy = sinon.spy(() => '/login')
+
+    const onEnter = createOnEnter({
+      redirectPath: failureRedirectSpy,
+      predicate: (x) => !_.isEmpty(x),
+      authSelector: authSelectorSpy
+    })
+
+    const routesOnEnter = [
+      { path: 'login', component: UnprotectedComponent },
+      { path: 'onEnter', component: UnprotectedComponent, onEnter: connect(onEnter) }
+    ]
+
+    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    store = createdStore
+
+    expect(getLocation().pathname).to.equal('/')
+    expect(getLocation().search).to.equal('')
+
+    // Redirects when not authorized
+    store.dispatch(userLoggedOut())
+    // Have to force re-check because wont recheck with store changes
+    history.push('/')
+    history.push('/onEnter')
+    expect(authSelectorSpy.calledOnce).to.be.true
+    expect(failureRedirectSpy.calledOnce).to.be.true
+    expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare location because its changed
+    expect(Object.keys(failureRedirectSpy.firstCall.args[1])).to.deep.equal([ 'routes', 'params', 'location' ]) // cant compare location because its changed
+    expect(getLocation().pathname).to.equal('/login')
+    expect(getLocation().search).to.equal('?redirect=%2FonEnter')
+  })
+
+  it('supports isAuthenticating', () => {
     let store
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
     const authSelectorSpy = sinon.spy(authSelector)
     const authenticatingSelectorSpy = sinon.spy(state => state.user.isAuthenticating)
     const failureRedirectSpy = sinon.spy(() => '/login')
 
-    const UserIsAuthenticatedOnEnter = UserAuthWrapper({
+    const onEnter = createOnEnter({
+      redirectPath: failureRedirectSpy,
+      predicate: (x) => !_.isEmpty(x),
       authSelector: authSelectorSpy,
-      authenticatingSelector: authenticatingSelectorSpy,
-      failureRedirectPath: failureRedirectSpy
+      authenticatingSelector: authenticatingSelectorSpy
     })
 
     const routesOnEnter = [
       { path: 'login', component: UnprotectedComponent },
-      { path: 'onEnter', component: UnprotectedComponent, onEnter: connect(UserIsAuthenticatedOnEnter.onEnter) }
+      { path: 'onEnter', component: UnprotectedComponent, onEnter: connect(onEnter) }
     ]
 
     const { history, store: createdStore, wrapper, getLocation } = setupReactRouter3Test(routesOnEnter)
@@ -136,7 +170,7 @@ describe('wrapper React Router V3 Additions', () => {
     const nextState = _.pick(wrapper.find(App).props(), [ 'location', 'params', 'routes' ])
     const storeState = store.getState()
     expect(authSelectorSpy.calledOnce).to.be.true
-    // Passes store and nextState down to selectors and failureRedirectPath
+    // Passes store and nextState down to selectors and redirectPath
     expect(authSelectorSpy.calledOnce).to.be.true
     expect(authSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
     expect(authenticatingSelectorSpy.calledOnce).to.be.true
@@ -156,7 +190,88 @@ describe('wrapper React Router V3 Additions', () => {
     expect(getLocation().pathname).to.equal('/login')
     expect(getLocation().search).to.equal('?redirect=%2FonEnter')
   })
-  **/
+
+  it('optionally prevents redirection from a function result', () => {
+    let store
+    const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
+
+    const onEnter = createOnEnter({
+      ...defaultConfig,
+      predicate: () => false,
+      allowRedirectBack: ({ location }, redirectPath) => location.pathname === '/auth' && redirectPath === '/login'
+    })
+
+    const routesOnEnter = [
+      { path: '/login', component: UnprotectedComponent },
+      { path: '/auth', component: UnprotectedComponent, onEnter: connect(onEnter) },
+      { path: '/authNoRedir', component: UnprotectedComponent, onEnter: connect(onEnter) }
+    ]
+
+    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    store = createdStore
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/auth')
+    expect(getLocation().pathname).to.equal('/login')
+    expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
+
+    history.push('/authNoRedir')
+    expect(getLocation().pathname).to.equal('/login')
+    expect(getQueryParams(getLocation())).to.deep.equal({})
+  })
+
+  it('can pass a selector for redirectPath', () => {
+    let store
+    const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
+
+    const onEnter = createOnEnter({
+      predicate: (x) => !_.isEmpty(x),
+      ...defaultConfig,
+      redirectPath: (state, routerNextState) => {
+        if (authSelector(state) === undefined && routerNextState.params.id === '1') {
+          return '/login/1'
+        } else {
+          return '/login/0'
+        }
+      }
+    })
+    const routesOnEnter = [
+      { path: '/login/:id', component: UnprotectedComponent },
+      { path: '/auth/:id', component: UnprotectedComponent, onEnter: connect(onEnter) }
+    ]
+
+    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    store = createdStore
+
+    expect(getLocation().pathname).to.equal('/')
+    expect(getQueryParams(getLocation())).to.be.empty
+
+    history.push('/auth/1')
+    expect(getLocation().pathname).to.equal('/login/1')
+    expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/1' })
+
+    history.push('/auth/2')
+    expect(getLocation().pathname).to.equal('/login/0')
+    expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/2' })
+  })
+
+  it('Throws invariant when redirectpath is not a function or string', () => {
+    expect(() => createOnEnter({ ...defaultConfig, redirectPath: true })).to.throw(/redirectPath must be either a string or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, redirectPath: 1 })).to.throw(/redirectPath must be either a string or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, redirectPath: [] })).to.throw(/redirectPath must be either a string or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, redirectPath: {} })).to.throw(/redirectPath must be either a string or a function/)
+  })
+
+  it('Throws invariant when allowRedirectBack is not a function or boolean', () => {
+    expect(() => createOnEnter({ ...defaultConfig, allowRedirectBack: 'login' })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, allowRedirectBack: 1 })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, allowRedirectBack: [] })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+    expect(() => createOnEnter({ ...defaultConfig, allowRedirectBack: {} })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+  })
+})
+
+describe('wrapper React Router V3 Additions', () => {
 
   it('supports nested routes', () => {
     const auth = connectedRouterRedirect(defaultConfig)
