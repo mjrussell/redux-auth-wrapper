@@ -86,7 +86,7 @@ export const UserAuthWrapper = (args) => {
         failureRedirectPath: PropTypes.string.isRequired,
         location: shouldRedirect ? locationShape.isRequired : locationShape,
         redirect: PropTypes.func,
-        authData: PropTypes.object
+        authData: PropTypes.any
       };
 
       static contextTypes = {
