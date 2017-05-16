@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import hoistStatics from 'hoist-non-react-statics'
+import isBoolean from 'lodash.isboolean'
 import isEmpty from 'lodash.isempty'
 import url from 'url'
 
@@ -11,7 +12,7 @@ const defaults = {
   FailureComponent: undefined,
   redirectQueryParamName: 'redirect',
   wrapperDisplayName: 'AuthWrapper',
-  predicate: x => !isEmpty(x),
+  predicate: x => isBoolean(x) ? x : !isEmpty(x),
   authenticatingSelector: () => false,
   allowRedirectBack: true,
   propMapper: ({ redirect, authData, isAuthenticating, failureRedirectPath, ...otherProps }) => ({ authData, ...otherProps }) // eslint-disable-line no-unused-vars
@@ -86,7 +87,7 @@ export const UserAuthWrapper = (args) => {
         failureRedirectPath: PropTypes.string.isRequired,
         location: shouldRedirect ? locationShape.isRequired : locationShape,
         redirect: PropTypes.func,
-        authData: PropTypes.object
+        authData: PropTypes.any
       };
 
       static contextTypes = {
