@@ -168,3 +168,9 @@ export const UserAuthWrapper = (args) => {
 
   return wrapComponent
 }
+
+export const chainUserAuthWrapper = (first,second)=>{
+    return function(DecoratedComponent){
+        return first(second(DecoratedComponent));
+    }
+}
