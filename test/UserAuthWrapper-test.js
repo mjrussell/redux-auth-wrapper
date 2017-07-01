@@ -9,7 +9,7 @@ import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routerReducer, syncHistoryWithStore, routerActions, routerMiddleware } from 'react-router-redux'
 import _ from 'lodash'
 
-import { UserAuthWrapper } from '../src'
+import { UserAuthWrapper,chainUserAuthWrapper } from '../src'
 
 const USER_LOGGED_IN = 'USER_LOGGED_IN'
 const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
@@ -91,6 +91,8 @@ const UserIsOnlyMcDuderson = UserAuthWrapper({
   wrapperDisplayName: 'UserIsOnlyMcDuderson',
   predicate: user => user.lastName === 'McDuderson'
 })
+
+const UserIsOnlyMcDudersonAndUserIsOnlyTest = chainUserAuthWrapper(UserIsOnlyMcDuderson,UserIsOnlyTest)
 
 class LoadingComponent extends Component {
   render() {
@@ -185,6 +187,7 @@ const defaultRoutes = (
     <Route path="elevatedAccess" component={ElevatedAccess(UnprotectedComponent)} />
     <Route path="testOnly" component={UserIsOnlyTest(UnprotectedComponent)} />
     <Route path="testMcDudersonOnly" component={UserIsOnlyMcDuderson(UserIsOnlyTest(UnprotectedComponent))} />
+    <Route path="testMcDudersonOnlyChained" component={UserIsOnlyMcDudersonAndUserIsOnlyTest(UnprotectedComponent)} />
     <Route path="parent" component={UserIsAuthenticated(UnprotectedParentComponent)}>
       <Route path="child" component={UserIsAuthenticated(UnprotectedComponent)} />
     </Route>
@@ -393,6 +396,28 @@ describe('UserAuthWrapper', () => {
     expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
   })
 
+  it('can be chained', () => {
+    const { history, store } = setupTest()
+
+    store.dispatch(userLoggedIn('NotTest'))
+
+    history.push('/testMcDudersonOnlyChained')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnlyChained')
+
+    store.dispatch(userLoggedIn('Test', 'NotMcDuderson'))
+
+    history.push('/testMcDudersonOnlyChained')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('?redirect=%2FtestMcDudersonOnlyChained')
+
+    store.dispatch(userLoggedIn())
+
+    history.push('/testMcDudersonOnlyChained')
+    expect(store.getState().routing.locationBeforeTransitions.pathname).to.equal('/testMcDudersonOnlyChained')
+    expect(store.getState().routing.locationBeforeTransitions.search).to.equal('')
+  })
+
   it('supports nested routes', () => {
     const { history, store } = setupTest()
 
@@ -434,6 +459,7 @@ describe('UserAuthWrapper', () => {
       'authData', 'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'testProp'
     ])
   })
+
 
   it('hoists statics to the wrapper', () => {
     class WithStatic extends Component {

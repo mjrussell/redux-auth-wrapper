@@ -189,6 +189,42 @@ means that logged out admins will be redirected to `/login` before checking if t
 Otherwise admins would be sent to `/app` if they weren't logged in and then redirected to `/login`, only to find themselves at `/app`
 after entering their credentials.
 
+## Chainging of AuthWrappers
+
+An alternative way to declare :
+```
+<Route path="foo" component={UserIsAuthenticated(UserIsAdmin(Admin))}/>
+```
+is to chain the authwrappers together, this can be done using the `chainUserAuthWrapper` function.
+
+```
+import {UserAuthWrapper,chainUserAuthWrapper} from 'redux-auth-wrapper';
+
+// Take the regular authentication & redirect to login from before
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  wrapperDisplayName: 'UserIsAuthenticated'
+})
+// Admin Authorization, redirects non-admins to /app and don't send a redirect param
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: state => state.user,
+  redirectAction: routerActions.replace,
+  failureRedirectPath: '/app',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: user => user.isAdmin,
+  allowRedirectBack: false
+})
+
+const AuthenticatedAndAdmin = chainUserAuthWrapper(UserIsAuthenticated,UserIsAdmin);
+```
+
+No you can declare:
+```
+<Route path="foo" component={AuthenticatedAndAdmin(Admin)}/>
+```
+
+
 ## Hiding and Alternate Components
 
 #### Hiding Components
