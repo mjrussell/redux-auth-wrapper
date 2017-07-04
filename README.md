@@ -12,7 +12,7 @@
 
 redux-auth-wrapper is a utility library for handling authentication and authorization in react + redux applications.
 
-Read the documentation at http://mjrussell.github.io/redux-auth-wrapper
+Read the documentation at https://mjrussell.github.io/redux-auth-wrapper
 
 ## Version 2
 
