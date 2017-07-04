@@ -1,9 +1,12 @@
 {
   "gitbook": "3.2.2",
-  "plugins": ["prism@1.0.0", "-highlight", "github", "github-edit", "heading-anchors"],
+  "plugins": ["prism@1.0.0", "-highlight", "github", "github-edit", "heading-anchors", "ga@1.0.1"],
   "pluginsConfig": {
     "github": {
       "url": "https://github.com/mjrussell/redux-auth-wrapper"
+    },
+    "ga": {
+      "token": "UA-102064405-1"
     },
     "github-edit": {
       "repo": "mjrussell/redux-auth-wrapper",
