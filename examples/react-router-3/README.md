@@ -1,17 +1,17 @@
-redux-auth-wrapper loading example
+redux-auth-wrapper react router 3 example
 =================================
 
-This is a more advanced example of redux-auth-wrapper that uses `authenticatingSelector` with `LoadingComponent`
+This is an example of redux-auth-wrapper that uses `authenticatingSelector` with `LoadingComponent`
 to show a loading screen while the user logs in. This example also demonstrates how to use the UserAuthWrapper for
 wrapping the Login Component in an HOC.
 
-This example uses React-Router 2.x and React-Router-Redux 4.x.
+This example uses React-Router 3.x and React-Router-Redux 4.x.
 
 **To run, follow these steps:**
 
-1. Install dependencies with `npm install` in this directory (make sure it creates a local node_modules)
-2. By default, it uses the local version from `src` of redux-auth-wrapper, so you need to run `npm install` from there first.
-3. `npm start`
+1. Go to the root of this project (up two folders) and run `npm install && npm build`
+2. In this folder, run `npm install`
+3. In this folder, `npm start`
 4. `Browse to http://localhost:8080`
 
 Login as any user to access the protected page `foo`.

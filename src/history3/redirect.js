@@ -9,11 +9,12 @@ export const { connectedRouterRedirect, connectedReduxRedirect } = redirectUtil(
 
 const onEnterDefaults = {
   allowRedirectBack: true,
-  authenticatingSelector: () => false
+  authenticatingSelector: () => false,
+  redirectQueryParamName: 'redirect'
 }
 
 export const createOnEnter = (config) => {
-  const { authSelector, authenticatingSelector, redirectPath, predicate, allowRedirectBack, redirectQueryParamName } = {
+  const { authenticatedSelector, authenticatingSelector, redirectPath, allowRedirectBack, redirectQueryParamName } = {
     ...onEnterDefaults,
     ...config
   }
@@ -39,10 +40,10 @@ export const createOnEnter = (config) => {
   return (store, nextState, replace) => {
 
     const { createRedirectLoc } = locationHelperBuilder({
-      redirectQueryParamName: redirectQueryParamName || 'redirect'
+      redirectQueryParamName
     })
 
-    const isAuthenticated = predicate(authSelector(store.getState(), nextState))
+    const isAuthenticated = authenticatedSelector(store.getState(), nextState)
     const isAuthenticating = authenticatingSelector(store.getState(), nextState)
 
     if (!isAuthenticated && !isAuthenticating) {

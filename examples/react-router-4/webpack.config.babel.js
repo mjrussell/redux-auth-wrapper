@@ -38,13 +38,19 @@ module.exports = {
 // This will make the redux-auth-wrapper module resolve to the
 // latest src instead of using it from npm. Remove this if running
 // outside of the source.
-const src = path.join(__dirname, '..', '..', 'src')
-if (fs.existsSync(src)) {
+const lib = path.join(__dirname, '..', '..', 'lib')
+if (fs.existsSync(lib)) {
   // Use the latest src
-  module.exports.resolve = { alias: { 'redux-auth-wrapper': src } }
-  module.exports.module.loaders.push({
-    test: /\.js$/,
-    loaders: [ 'babel' ],
-    include: src
-  })
+  module.exports.resolve = { alias: { 'redux-auth-wrapper': lib } }
+  // module.exports.module.loaders.push({
+  //   test: /\.js$/,
+  //   loaders: [ 'babel' ],
+  //   include: lib
+  // })
+} else {
+  throw ```
+    redux-auth-wrapper source not built. Run the following:
+      'pushd ../.. && rm -rf node_modules && npm install && npm run build && popd'
+    and then rerun 'npm start'
+    ```
 }

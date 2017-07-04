@@ -5,14 +5,14 @@ import { createStore, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
 import { mount } from 'enzyme'
 
-import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, authenticatingSelector, userReducer,
-         UnprotectedComponent, FailureComponent, AuthenticatingComponent } from './helpers'
+import { userLoggedOut, userLoggedIn, userLoggingIn, authenticatedSelector, authenticatingSelector, userReducer,
+         UnprotectedComponent, FailureComponent, AuthenticatingComponent, userDataSelector } from './helpers'
 
 import authWrapper from '../src/authWrapper'
 import connectedAuthWrapper from '../src/connectedAuthWrapper'
 
 const defaultConfig = {
-  authSelector
+  authenticatedSelector
 }
 
 describe('connectedAuthWrapper', () => {
@@ -97,10 +97,10 @@ describe('connectedAuthWrapper', () => {
     expect(wrapper.find(FailureComponent).length).to.equal(1)
   })
 
-  it('supports a custom predicate function', () => {
+  it('supports a custom authenticated function', () => {
     const auth = connectedAuthWrapper({
       ...defaultConfig,
-      predicate: (userData) => userData && userData.firstName === 'Matt'
+      authenticatedSelector: state => userDataSelector(state).firstName === 'Matt'
     })
 
     const rootReducer = combineReducers({ user: userReducer })
@@ -198,21 +198,21 @@ describe('connectedAuthWrapper', () => {
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
     expect(_.omit(wrapper.find(FailureComponent).props(), [ 'dispatch' ])).to.deep.equal({
-      authData: undefined, isAuthenticating: false, testProp: 'test'
+      isAuthenticated: false, isAuthenticating: false, testProp: 'test'
     })
 
     store.dispatch(userLoggingIn())
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
     expect(_.omit(wrapper.find(AuthenticatingComponent).props(), [ 'dispatch' ])).to.deep.equal({
-      authData: undefined, isAuthenticating: true, testProp: 'test'
+      isAuthenticated: false, isAuthenticating: true, testProp: 'test'
     })
 
     store.dispatch(userLoggedIn())
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
     expect(_.omit(wrapper.find(UnprotectedComponent).props(), [ 'dispatch' ])).to.deep.equal({
-      authData: store.getState().user.userData, isAuthenticating: false, testProp: 'test'
+      isAuthenticated: true, isAuthenticating: false, testProp: 'test'
     })
   })
 

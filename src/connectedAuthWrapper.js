@@ -7,14 +7,14 @@ const connectedDefaults = {
 }
 
 export default (args) => {
-  const { authSelector, authenticatingSelector } = {
+  const { authenticatedSelector, authenticatingSelector } = {
     ...connectedDefaults,
     ...args
   }
 
   return (DecoratedComponent) =>
     connect((state, ownProps) => ({
-      authData: authSelector(state, ownProps),
+      isAuthenticated: authenticatedSelector(state, ownProps),
       isAuthenticating: authenticatingSelector(state, ownProps)
     }))(authWrapper(args)(DecoratedComponent))
 }

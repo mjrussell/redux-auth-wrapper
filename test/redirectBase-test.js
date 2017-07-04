@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import _ from 'lodash'
 
 import Redirect from '../src/redirect'
-import { userLoggedIn, userLoggedOut, userLoggingIn, authSelector, defaultConfig,
+import { userLoggedIn, userLoggedOut, userLoggingIn, userDataSelector, authenticatedSelector, defaultConfig,
          UnprotectedComponent, AuthenticatingComponent, FailureComponent } from './helpers'
 
 export default (setupTest, versionName, getRouteParams, getQueryParams, getRedirectQueryParam, authWrapper) => {
@@ -47,7 +47,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
     })
 
     it('by default ignores authenticating', () => {
-      const auth = authWrapper({ authSelector, redirectPath: '/login' })
+      const auth = authWrapper({ authenticatedSelector, redirectPath: '/login' })
 
       const routes = [
         { path: '/login', component: UnprotectedComponent },
@@ -103,7 +103,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
     it('renders the failure component when prop is set', () => {
       const auth = authWrapper({
         ...defaultConfig,
-        predicate: () => false,
+        authenticatedSelector: () => false,
         FailureComponent
       })
       const routes = [
@@ -117,7 +117,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       history.push('/auth')
 
       const comp = wrapper.find(FailureComponent).last()
-      expect(comp.props().authData.email).to.equal('test@test.com')
+      expect(comp.props().isAuthenticated).to.be.false
     })
 
     it('preserves query params on redirect', () => {
@@ -187,35 +187,10 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(getLocation().pathname).to.equal('/login')
     })
 
-    it('allows predicate authorization', () => {
-      const auth = authWrapper({
-        ...defaultConfig,
-        predicate: user => user.firstName === 'Test'
-      })
-      const routes = [
-        { path: '/login', component: UnprotectedComponent },
-        { path: '/auth', component: auth(UnprotectedComponent) }
-      ]
-
-      const { store, history, getLocation } = setupTest(routes)
-
-      store.dispatch(userLoggedIn('NotTest'))
-
-      history.push('/auth')
-      expect(getLocation().pathname).to.equal('/login')
-      expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
-
-      store.dispatch(userLoggedIn())
-
-      history.push('/auth')
-      expect(getLocation().pathname).to.equal('/auth')
-      expect(getQueryParams(getLocation())).to.be.empty
-    })
-
     it('optionally prevents redirection', () => {
       const auth = authWrapper({
         ...defaultConfig,
-        predicate: () => false,
+        authenticatedSelector: () => false,
         allowRedirectBack: false
       })
       const routes = [
@@ -235,7 +210,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
     it('optionally prevents redirection from a function result', () => {
       const auth = authWrapper({
         ...defaultConfig,
-        predicate: () => false,
+        authenticatedSelector: () => false,
         allowRedirectBack: ({ location }, redirectPath) => location.pathname === '/auth' && redirectPath === '/login'
       })
       const routes = [
@@ -260,12 +235,12 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
     it('can be nested', () => {
       const firstNameAuth = authWrapper({
         ...defaultConfig,
-        predicate: user => user.firstName === 'Test'
+        authenticatedSelector: (state) => userDataSelector(state).firstName === 'Test'
       })
 
       const lastNameAuth = authWrapper({
         ...defaultConfig,
-        predicate: user => user.lastName === 'McDuderson'
+        authenticatedSelector: (state) => userDataSelector(state).lastName === 'McDuderson'
       })
 
       const routes = [
@@ -318,30 +293,24 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       const comp = wrapper.find(UnprotectedComponent)
       // Props from React-Router
       expect(comp.props().location.pathname).to.equal('/prop')
-      // Props from auth selector
-      expect(comp.props().authData).to.deep.equal({
-        email: 'test@test.com',
-        firstName: 'Test',
-        lastName: 'McDuderson'
-      })
       // Props from parent
       expect(comp.props().testProp).to.equal(true)
       // No extra wrapper props
       expect(Object.keys(_.omit(wrapper.find(UnprotectedComponent).props(), [
         'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext', 'dispatch'
       ])).sort()).to.deep.equal([
-        'authData', 'isAuthenticating', 'redirect', 'redirectPath', 'testProp'
+        'isAuthenticated', 'isAuthenticating', 'redirect', 'redirectPath', 'testProp'
       ])
     })
 
-    it('passes ownProps for auth selector', () => {
+    it('passes ownProps for authenticated selector', () => {
       const auth = authWrapper({
         ...defaultConfig,
-        authSelector: (state, ownProps) => ({
-          ...authSelector(state),
-          ...getRouteParams(ownProps) // from React-Router
-        }),
-        predicate: user => user.firstName === 'Test' && user.id === '1'
+        authenticatedSelector: (state, ownProps) => {
+          const user = userDataSelector(state)
+          const params = getRouteParams(ownProps) // from React-Router
+          return user.firstName === 'Test' && params.id === '1'
+        }
       })
 
       const routes = [
@@ -389,7 +358,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       const auth = authWrapper({
         ...defaultConfig,
         redirectPath: (state, ownProps) => {
-          if (authSelector(state) === undefined && getRouteParams(ownProps).id === '1') {
+          if (!authenticatedSelector(state) && getRouteParams(ownProps).id === '1') {
             return '/login/1'
           } else {
             return '/login/0'
@@ -422,7 +391,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       const auth = authWrapper({
         ...defaultConfig,
         FailureComponent: (props) => <Redirect {...props} redirect={redirect} />,
-        predicate: () => false
+        authenticatedSelector: () => false
       })
 
       const routes = [
@@ -443,7 +412,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       const auth = authWrapper(defaultConfig)
       const login = authWrapper({
         ...defaultConfig,
-        predicate: _.isEmpty,
+        authenticatedSelector: state => !authenticatedSelector(state),
         redirectPath: (state, ownProps) => getRedirectQueryParam(ownProps) || '/',
         allowRedirectBack: false
       })
@@ -470,7 +439,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       const auth = authWrapper(defaultConfig)
       const login = authWrapper({
         ...defaultConfig,
-        predicate: _.isEmpty,
+        authenticatedSelector: state => !authenticatedSelector(state),
         redirectPath: (state, ownProps) => getRedirectQueryParam(ownProps) || '/',
         allowRedirectBack: false
       })

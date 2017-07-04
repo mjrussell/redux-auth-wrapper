@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import _ from 'lodash'
 
 export const USER_LOGGED_IN = 'USER_LOGGED_IN'
 export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
@@ -9,7 +10,7 @@ export const userReducerInitialState = {
   isAuthenticating: false
 }
 
-export const userReducer = (state = {}, { type, payload }) => {
+export const userReducer = (state = userReducerInitialState, { type, payload }) => {
   if (type === USER_LOGGED_IN) {
     return {
       userData: payload,
@@ -26,7 +27,9 @@ export const userReducer = (state = {}, { type, payload }) => {
   return state
 }
 
-export const authSelector = state => state.user.userData
+export const userDataSelector = state => state.user.userData
+
+export const authenticatedSelector = state => !_.isEmpty(userDataSelector(state))
 
 export const authenticatingSelector = state => state.user.isAuthenticating
 
@@ -49,7 +52,7 @@ export const userLoggingIn = () => ({
 
 export const defaultConfig = {
   redirectPath: '/login',
-  authSelector,
+  authenticatedSelector,
   authenticatingSelector
 }
 

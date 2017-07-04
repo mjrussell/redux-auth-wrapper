@@ -1,17 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
-import isEmpty from 'lodash.isempty'
 
 const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
   FailureComponent: () => null, // dont render anything on failure of the predicate
-  wrapperDisplayName: 'AuthWrapper',
-  predicate: x => !isEmpty(x)
+  wrapperDisplayName: 'AuthWrapper'
 }
 
 export default (args) => {
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, predicate } = {
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName } = {
     ...defaults,
     ...args
   }
@@ -25,7 +23,7 @@ export default (args) => {
       static displayName = `${wrapperDisplayName}(${displayName})`;
 
       static propTypes = {
-        authData: PropTypes.any,
+        isAuthenticated: PropTypes.bool,
         isAuthenticating: PropTypes.bool
       };
 
@@ -34,8 +32,8 @@ export default (args) => {
       }
 
       render() {
-        const { authData, isAuthenticating } = this.props
-        if (predicate(authData)) {
+        const { isAuthenticated, isAuthenticating } = this.props
+        if (isAuthenticated) {
           return <DecoratedComponent {...this.props} />
         } else if(isAuthenticating) {
           return <AuthenticatingComponent {...this.props} />

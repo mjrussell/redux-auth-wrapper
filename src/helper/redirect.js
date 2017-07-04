@@ -7,17 +7,18 @@ import Redirect from '../redirect'
 const connectedDefaults = {
   authenticatingSelector: () => false,
   allowRedirectBack: true,
-  FailureComponent: Redirect
+  FailureComponent: Redirect,
+  redirectQueryParamName: 'redirect'
 }
 
 export default ({ locationHelperBuilder, getRouterRedirect }) => {
 
   const connectedRouterRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack, redirectQueryParamName } = allArgs
+    const { redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectQueryParamName } = allArgs
 
     const { createRedirectLoc } = locationHelperBuilder({
-      redirectQueryParamName: redirectQueryParamName || 'redirect'
+      redirectQueryParamName
     })
 
     let redirectPathSelector
@@ -44,7 +45,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
     return (DecoratedComponent) =>
       connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
-        authData: authSelector(state, ownProps),
+        isAuthenticated: authenticatedSelector(state, ownProps),
         isAuthenticating: authenticatingSelector(state, ownProps),
         redirect: redirect(getRouterRedirect(ownProps))
       }))(authWrapper(allArgs)(DecoratedComponent))
@@ -52,10 +53,10 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
 
   const connectedReduxRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { redirectPath, authSelector, authenticatingSelector, allowRedirectBack, redirectAction, redirectQueryParamName } = allArgs
+    const { redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectAction, redirectQueryParamName } = allArgs
 
     const { createRedirectLoc } = locationHelperBuilder({
-      redirectQueryParamName: redirectQueryParamName || 'redirect'
+      redirectQueryParamName
     })
 
     let redirectPathSelector
@@ -83,7 +84,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
     return (DecoratedComponent) =>
       connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
-        authData: authSelector(state, ownProps),
+        isAuthenticated: authenticatedSelector(state, ownProps),
         isAuthenticating: authenticatingSelector(state, ownProps)
       }), createRedirect)(authWrapper(allArgs)(DecoratedComponent))
   }

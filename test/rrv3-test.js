@@ -9,7 +9,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
 
-import { userLoggedOut, userLoggedIn, userLoggingIn, authSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
+import { userLoggedOut, userLoggedIn, userLoggingIn, authenticatedSelector, userReducer, UnprotectedComponent, UnprotectedParentComponent, defaultConfig } from './helpers'
 import baseTests from './redirectBase-test'
 
 import { connectedRouterRedirect, connectedReduxRedirect, createOnEnter } from '../src/history3/redirect'
@@ -106,13 +106,12 @@ describe('React Router V3 onEnter', () => {
   it('provides an onEnter static function', () => {
     let store
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
-    const authSelectorSpy = sinon.spy(authSelector)
+    const authenticatedSelectorSpy = sinon.spy(authenticatedSelector)
     const failureRedirectSpy = sinon.spy(() => '/login')
 
     const onEnter = createOnEnter({
       redirectPath: failureRedirectSpy,
-      predicate: (x) => !_.isEmpty(x),
-      authSelector: authSelectorSpy
+      authenticatedSelector: authenticatedSelectorSpy
     })
 
     const routesOnEnter = [
@@ -131,7 +130,7 @@ describe('React Router V3 onEnter', () => {
     // Have to force re-check because wont recheck with store changes
     history.push('/')
     history.push('/onEnter')
-    expect(authSelectorSpy.calledOnce).to.be.true
+    expect(authenticatedSelectorSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare location because its changed
     expect(Object.keys(failureRedirectSpy.firstCall.args[1])).to.deep.equal([ 'routes', 'params', 'location' ]) // cant compare location because its changed
@@ -142,14 +141,13 @@ describe('React Router V3 onEnter', () => {
   it('supports isAuthenticating', () => {
     let store
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
-    const authSelectorSpy = sinon.spy(authSelector)
+    const authenticatedSelectorSpy = sinon.spy(authenticatedSelector)
     const authenticatingSelectorSpy = sinon.spy(state => state.user.isAuthenticating)
     const failureRedirectSpy = sinon.spy(() => '/login')
 
     const onEnter = createOnEnter({
       redirectPath: failureRedirectSpy,
-      predicate: (x) => !_.isEmpty(x),
-      authSelector: authSelectorSpy,
+      authenticatedSelector: authenticatedSelectorSpy,
       authenticatingSelector: authenticatingSelectorSpy
     })
 
@@ -169,10 +167,10 @@ describe('React Router V3 onEnter', () => {
     history.push('/onEnter')
     const nextState = _.pick(wrapper.find(App).props(), [ 'location', 'params', 'routes' ])
     const storeState = store.getState()
-    expect(authSelectorSpy.calledOnce).to.be.true
+    expect(authenticatedSelectorSpy.calledOnce).to.be.true
     // Passes store and nextState down to selectors and redirectPath
-    expect(authSelectorSpy.calledOnce).to.be.true
-    expect(authSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
+    expect(authenticatedSelectorSpy.calledOnce).to.be.true
+    expect(authenticatedSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
     expect(authenticatingSelectorSpy.calledOnce).to.be.true
     expect(authenticatingSelectorSpy.firstCall.args).to.deep.equal([ storeState, nextState ])
     expect(getLocation().pathname).to.equal('/onEnter')
@@ -183,7 +181,7 @@ describe('React Router V3 onEnter', () => {
     history.push('/')
     history.push('/onEnter')
     expect(authenticatingSelectorSpy.calledTwice).to.be.true
-    expect(authSelectorSpy.calledTwice).to.be.true
+    expect(authenticatedSelectorSpy.calledTwice).to.be.true
     expect(failureRedirectSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare location because its changed
     expect(Object.keys(failureRedirectSpy.firstCall.args[1])).to.deep.equal([ 'routes', 'params', 'location' ]) // cant compare location because its changed
@@ -197,7 +195,7 @@ describe('React Router V3 onEnter', () => {
 
     const onEnter = createOnEnter({
       ...defaultConfig,
-      predicate: () => false,
+      authenticatedSelector: () => false,
       allowRedirectBack: ({ location }, redirectPath) => location.pathname === '/auth' && redirectPath === '/login'
     })
 
@@ -226,10 +224,9 @@ describe('React Router V3 onEnter', () => {
     const connect = (fn) => (nextState, replaceState) => fn(store, nextState, replaceState)
 
     const onEnter = createOnEnter({
-      predicate: (x) => !_.isEmpty(x),
       ...defaultConfig,
       redirectPath: (state, routerNextState) => {
-        if (authSelector(state) === undefined && routerNextState.params.id === '1') {
+        if (!authenticatedSelector(state) && routerNextState.params.id === '1') {
           return '/login/1'
         } else {
           return '/login/0'

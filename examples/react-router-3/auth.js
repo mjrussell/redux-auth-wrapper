@@ -8,7 +8,7 @@ const locationHelper = locationHelperBuilder({})
 
 export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
-  authSelector: state => state.user.data,
+  authenticatedSelector: state => state.user.data !== null,
   authenticatingSelector: state => state.user.isLoading,
   AuthenticatingComponent: Loading,
   redirectAction: routerActions.replace,
@@ -18,8 +18,7 @@ export const userIsAuthenticated = connectedRouterRedirect({
 export const userIsAdmin = connectedRouterRedirect({
   redirectPath: '/',
   allowRedirectBack: false,
-  authSelector: state => state.user.data,
-  predicate: user => user.isAdmin,
+  authenticatedSelector: state => state.user.data !== null && state.user.data.isAdmin,
   redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsAdmin'
 })
@@ -27,9 +26,8 @@ export const userIsAdmin = connectedRouterRedirect({
 export const userIsNotAuthenticated = connectedRouterRedirect({
   redirectPath: (state, ownProps) => locationHelper.getRedirectQueryParam(ownProps) || '/foo',
   allowRedirectBack: false,
-  authSelector: state => state.user,
   // Want to redirect the user when they are done loading and authenticated
-  predicate: user => user.data === null && user.isLoading === false,
+  authenticatedSelector: state => state.user.data === null && state.user.isLoading === false,
   redirectAction: routerActions.replace,
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
