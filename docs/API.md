@@ -58,6 +58,10 @@ createOnEnter({
 }): (store: Object, nextState: Object: replace: (location: Object => void))
 ```
 
+### `locationHelperBuilder`
+
+Documentation in progress!
+
 ## Redirection Helpers (React Router 4/History v4)
 
 ### `connectedRouterRedirect`
@@ -92,6 +96,10 @@ connectedRouterRedirect({
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
+
+### `locationHelperBuilder`
+
+Documentation in progress!
 
 ## Other Wrappers
 
