@@ -16,7 +16,7 @@ Read the documentation at http://mjrussell.github.io/redux-auth-wrapper
 
 ## Version 2
 
-Version 2.x is a big internal rewrite! It provides a massive increase in flexibility when using redux-auth-wrapper and also introduces some breaking changes. See the [Migration Guide](http://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html) for more details if coming from 1.x. Or check out the [Getting Started](https://mjrussell.github.io/redux-auth-wrapper/docs/Getting-Started/Overview.html) guide if you've never used redux-auth-wrapper before.
+Version 2.x is a big internal rewrite! It provides a massive increase in flexibility when using redux-auth-wrapper and also introduces some breaking changes. See the [Migration Guide](https://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html) for more details if coming from 1.x. Or check out the [Getting Started](https://mjrussell.github.io/redux-auth-wrapper/docs/Getting-Started/Overview.html) guide if you've never used redux-auth-wrapper before.
 
 Looking for Version 1.x? You can browse the 1.x README [here](https://github.com/mjrussell/redux-auth-wrapper/tree/1.x).
 
