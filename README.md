@@ -27,7 +27,7 @@
 
 ## Motivation
 
-At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/rackt/react-router/blob/master/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it?
+At first, handling authentication and authorization seems easy in React-Router and Redux. After all, we have a handy [onEnter](https://github.com/ReactTraining/react-router/blob/v3/docs/API.md#onenternextstate-replace-callback) method, shouldn't we use it?
 
 `onEnter` is great, and useful in certain situations. However, here are some common authentication and authorization problems `onEnter` does not solve:
 * Decide authentication/authorization from redux store data (there are some [workarounds](https://github.com/CrocoDillon/universal-react-redux-boilerplate/blob/master/src/routes.js#L8))
