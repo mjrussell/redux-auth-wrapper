@@ -13,6 +13,8 @@
 ### `connectedRouterRedirect`
 
 ```js
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
+
 connectedRouterRedirect({
   redirectPath: string | (state: Object, ownProps: Object) => string,
   authenticatedSelector: (state: Object, ownProps: Object) => boolean,
@@ -27,7 +29,9 @@ connectedRouterRedirect({
 ### `connectedReduxRedirect`
 
 ```js
-connectedRouterRedirect({
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
+
+connectedReduxRedirect({
   redirectPath: string | (state: Object, ownProps: Object) => string,
   authenticatedSelector: (state: Object, ownProps: Object) => boolean,
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
@@ -41,6 +45,8 @@ connectedRouterRedirect({
 ### `createOnEnter`
 
 ```js
+import { createOnEnter } from 'redux-auth-wrapper/history3/redirect'
+
 createOnEnter({
   redirectPath: string | (state: Object, nextState: Object) => string,
   authenticatedSelector: (state: Object, nextState: Object) => boolean,
@@ -57,6 +63,8 @@ createOnEnter({
 ### `connectedRouterRedirect`
 
 ```js
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
+
 connectedRouterRedirect({
   redirectPath: string | (state: Object, ownProps: Object) => string,
   authenticatedSelector: (state: Object, ownProps: Object) => boolean,
@@ -71,6 +79,8 @@ connectedRouterRedirect({
 ### `connectedReduxRedirect`
 
 ```js
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history4/redirect'
+
 connectedRouterRedirect({
   redirectPath: string | (state: Object, ownProps: Object) => string,
   redirectAction: (location: Object) => ReduxAction,
@@ -88,6 +98,8 @@ connectedRouterRedirect({
 ### `authWrapper`
 
 ```js
+import authWrapper from 'redux-auth-wrapper/authWrapper'
+
 authWrapper({
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?FailureComponent: ReactClass | ReactFunctionalComponent | string,
@@ -100,6 +112,8 @@ The returned Component after applying a Component to the HOC takes as props `isA
 ### `connectedAuthWrapper`
 
 ```js
+import connectedAuthWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
+
 connectedAuthWrapper({
   authenticatedSelector: (state: Object, ownProps: Object) => boolean,
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
