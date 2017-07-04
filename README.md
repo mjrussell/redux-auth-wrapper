@@ -20,7 +20,7 @@ Version 2.x is a big internal rewrite! It provides a massive increase in flexibi
 
 ## Submitting Issues
 
-Having trouble? First check out the [Troubleshooting](https://mjrussell.github.io/redux-auth-wrapper/docs/Troubleshooting.html) section of the documentation, and then search the issues, both open and closed for you problem. If you are still having trouble or have a question on using redux-auth-wrapper, please open an issue! You can also ask on the gitter channel.
+Having trouble? First check out the [Troubleshooting](https://mjrussell.github.io/redux-auth-wrapper/docs/Troubleshooting.html) section of the documentation, and then search the issues, both open and closed for your problem. If you are still having trouble or have a question on using redux-auth-wrapper, please open an issue! You can also ask on the gitter channel.
 
 ## Examples
 * [React Router 3](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/react-router-3)
