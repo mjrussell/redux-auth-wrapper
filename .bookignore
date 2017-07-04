@@ -1,0 +1,14 @@
+src/
+lib/
+coverage
+test/
+examples/
+package.json
+.babelrc
+.eslintrc
+.gitignore
+.travis.yml
+CHANGELOG.md
+LICENSE.txt
+runTests.sh
+.node-version

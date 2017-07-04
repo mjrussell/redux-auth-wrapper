@@ -1,0 +1,24 @@
+{
+  "gitbook": "3.2.2",
+  "plugins": ["prism@1.0.0", "-highlight", "github", "github-edit"],
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/mjrussell/redux-auth-wrapper"
+    },
+    "github-edit": {
+      "repo": "mjrussell/redux-auth-wrapper",
+      "branch": "rewrite-v2"
+    },
+    "sharing": {
+      "facebook": false,
+      "twitter": true,
+      "google": false,
+      "weibo": false,
+      "instapaper": false,
+      "vk": false
+    },
+    "theme-default": {
+      "styles": { }
+    }
+  }
+}
