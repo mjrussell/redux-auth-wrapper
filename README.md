@@ -14,11 +14,11 @@ redux-auth-wrapper is a utility library for handling authentication and authoriz
 
 ## Version 2
 
-Version 2.x is a big internal rewrite! It provides a massive increase in flexibility when using redux-auth-wrapper and also introduces some breaking changes. See the [Migration Guide](http://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html) for more details if coming from 1.x. Or check out the [Getting Started](http://mjrussell.github.io/redux-auth-wrapper/docs/Getting-Started/Overview.html) guide if you've never used redux-auth-wrapper before.
+Version 2.x is a big internal rewrite! It provides a massive increase in flexibility when using redux-auth-wrapper and also introduces some breaking changes. See the [Migration Guide](http://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html) for more details if coming from 1.x. Or check out the [Getting Started](https://mjrussell.github.io/redux-auth-wrapper/docs/Getting-Started/Overview.html) guide if you've never used redux-auth-wrapper before.
 
 ## Submitting Issues
 
-Having trouble? First check out the [Troubleshooting](http://mjrussell.github.io/redux-auth-wrapper/docs/Troubleshooting.html) section of the documentation, and then search the issues, both open and closed for you problem. If you are still having trouble or have a question on using redux-auth-wrapper, please open an issue! You can also ask on the gitter channel.
+Having trouble? First check out the [Troubleshooting](https://mjrussell.github.io/redux-auth-wrapper/docs/Troubleshooting.html) section of the documentation, and then search the issues, both open and closed for you problem. If you are still having trouble or have a question on using redux-auth-wrapper, please open an issue! You can also ask on the gitter channel.
 
 ## Examples
 * [React Router 3](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples/react-router-3)
