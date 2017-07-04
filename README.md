@@ -8,7 +8,7 @@
 
 **Decouple your Authentication and Authorization from your components!**
 
-`npm install --save redux-auth-wrapper`
+`npm install --save redux-auth-wrapper@2.0-beta`
 
 redux-auth-wrapper is a utility library for handling authentication and authorization in react + redux applications.
 
