@@ -24,7 +24,7 @@ const userIsAuthenticated = connectedRouterRedirect({
 })
 ```
 
-`userIsAuthenticated` is a Higher Order Component, so we can apply it to the component we want to protect. You can do this in many places, see [where to apply the wrappers]() for more details. In our case, we apply it directly in the route definition.
+`userIsAuthenticated` is a Higher Order Component, so we can apply it to the component we want to protect. You can do this in many places, see [where to apply the wrappers](Overview.md#where-to-apply) for more details. In our case, we apply it directly in the route definition.
 
 ```js
 <Route path="profile" component={userIsAuthenticated(Profile)}/>

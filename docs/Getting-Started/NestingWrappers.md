@@ -42,8 +42,9 @@ Since Higher Order Components are functions, they can easily be chained together
 ```js
 import { compose } from 'redux'
 
+// userIsAuthenticated and userIsAdmin from above
 const userIsAdminChain = compose(userIsAuthenticated, userIsAdmin)
 
 // Now to secure the component, you don't have to think which order to apply!
-<Route path="admin" component={userIsAdminChain(Admin))}/>
+<Route path="admin" component={userIsAdminChain(Admin)}/>
 ```

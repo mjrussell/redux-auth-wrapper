@@ -28,7 +28,7 @@ const userIsAuthenticated = connectedRouterRedirect({
 })
 ```
 
-`userIsAuthenticated` is a Higher Order Component, so we can apply it to the component we want to protect. You can do this in many places, see [where to apply the wrappers](/Overview.md#where-to-apply) for more details. In our case, we apply it directly in the route definition.
+`userIsAuthenticated` is a Higher Order Component, so we can apply it to the component we want to protect. You can do this in many places, see [where to apply the wrappers](Overview.md#where-to-apply) for more details. In our case, we apply it directly in the route definition.
 
 ```js
 <Route path="profile" component={userIsAuthenticated(Profile)}/>
@@ -106,4 +106,4 @@ const userIsAuthenticated = connectedReduxRedirect({
 
 ## Next Steps
 
-Check out the [examples]() or browse the [API documentation](). If you are using server side rendering (SSR) with React Router 3, you should also check out the [Server Side Rendering](/AdvancedUsage/ServerSideRender.md) documentation.
+Check out the [examples](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples) or browse the [API documentation](). If you are using server side rendering (SSR) with React Router 3, you should also check out the [Server Side Rendering](/docs/AdvancedUsage/ReactRouter3.md) documentation.

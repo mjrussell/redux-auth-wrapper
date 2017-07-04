@@ -106,7 +106,6 @@ const routes = (
 
 * [React Router 3 Tutorial](ReactRouter3.md)
 * [React Router 4 Tutorial](ReactRouter4.md)
+* [React Native Tutorial](ReactNative.md)
 * [Hiding and Alternative Components](HidingAlternate.md)
 * [Nesting Wrappers](NestingWrappers.md)
-* [React Native Tutorial](ReactNative.md)
-* [Troubleshooting](Troubleshooting.md)

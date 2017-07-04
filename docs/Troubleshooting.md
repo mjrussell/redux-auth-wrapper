@@ -4,7 +4,7 @@ Having trouble with redux-auth-wrapper? Check out the following common issues.
 
 #### Applying the HOC
 
-Make sure that when using the helpers from redux-auth-wrapper that you are applying the HOC to your component and in the right location. Most imports from this library are HOC builders, requiring first a configuration object. For instance you shouldn't be applying the `connectedRouterRedirect` directly to a component:
+Make sure that when using the helpers from redux-auth-wrapper that you are applying the HOC to your component and in the right location (see [where to apply the wrappers](Overview.md#where-to-apply) for more details). Most imports from this library are HOC builders, requiring first a configuration object. For instance you shouldn't be applying the `connectedRouterRedirect` directly to a component:
 
 Incorrect:
 ```js
