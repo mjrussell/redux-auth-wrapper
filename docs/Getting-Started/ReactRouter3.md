@@ -88,7 +88,7 @@ You can also add an `authenticatingSelector` and `AuthenticatingComponent`
 
 ## Integrating with redux-based routing
 
-If you want to dispatch a redux action to perform navigation instead of interacting directly with the history/router object then you can pass the redux-action to `redirectAction`. Note that using `redirectAction` is not required if you use redux-based or redux-integrated routing, it only changes how the route change is triggered in the client.
+If you want to dispatch a redux action to perform navigation instead of interacting directly with the history/router object then you can pass the redux action creator to `redirectAction`. Note that using `redirectAction` is not required if you use redux-based or redux-integrated routing, it only changes how the route change is triggered in the client.
 
 To do this, swap out the import of `connectedRouterRedirect` for `connectedReduxRedirect` and pass the `redirectAction` parameter to the config object:
 
