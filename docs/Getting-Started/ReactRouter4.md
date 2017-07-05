@@ -6,7 +6,7 @@ Using redux-auth-wrapper with React Router 4 is very similar to React Router 3 w
 
 ## Securing a Route
 
-To add redirection to your app with React Router 3, import the following helper:
+To add redirection to your app with React Router 4, import the following helper:
 ```js
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
 ```
