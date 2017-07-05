@@ -38,7 +38,7 @@ const UserIsAuthenticated = UserAuthWrapper({
 v2.x:
 ```js
 // NOTE: use history3 because coming from React Router 2/3. If planning to upgrade to React Router 4 use history4
-import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
 
 export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
@@ -49,6 +49,8 @@ export const userIsAuthenticated = connectedRouterRedirect({
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 ```
+
+**Note:** If not using `redirectAction`, import `connectedRouterRedirect` instead.
 
 ## Migrating failure and alternative components
 
