@@ -96,7 +96,7 @@ import { routerActions } from 'react-router-redux'
 const userIsAuthenticated = connectedReduxRedirect({
   redirectPath: '/login',
   authenticatedSelector: state => state.user !== null,
-  wrapperDisplayName: 'UserIsAuthenticated'
+  wrapperDisplayName: 'UserIsAuthenticated',
   // This should be a redux action creator
   redirectAction: routerActions.replace,
 })
