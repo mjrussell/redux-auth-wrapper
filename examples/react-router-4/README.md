@@ -1,4 +1,4 @@
-redux-auth-wrapper react router 3 example
+redux-auth-wrapper react router 4 example
 =================================
 
 This is an example of redux-auth-wrapper that uses `authenticatingSelector` with `LoadingComponent`
