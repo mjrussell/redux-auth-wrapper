@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { logout } from '../actions/user'
-import { userIsAuthenticated, userIsNotAuthenticated, userIsAdmin } from '../auth'
+import { userIsAuthenticatedMap, userIsNotAuthenticated, userIsAdmin } from '../auth'
 
 import AdminComponent from './Admin'
 import FooComponent from './Foo'
@@ -12,8 +12,14 @@ import Home from './Home'
 
 // Need to apply the hocs here to avoid applying them inside the render method
 const Login = userIsNotAuthenticated(LoginComponent)
-const Foo = userIsAuthenticated(FooComponent)
-const Admin = userIsAuthenticated(userIsAdmin(AdminComponent))
+
+const [
+  Foo,
+  Admin
+] = userIsAuthenticatedMap([
+  FooComponent,
+  userIsAdmin(AdminComponent)
+])
 
 function App({ logout }) {
   return (

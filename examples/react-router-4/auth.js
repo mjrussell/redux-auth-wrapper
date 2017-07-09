@@ -13,6 +13,8 @@ export const userIsAuthenticated = connectedRouterRedirect({
   wrapperDisplayName: 'UserIsAuthenticated'
 })
 
+export const userIsAuthenticatedMap = (components) => components.map(userIsAuthenticated)
+
 export const userIsAdmin = connectedRouterRedirect({
   redirectPath: '/',
   allowRedirectBack: false,
