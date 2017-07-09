@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import { logout } from '../actions/user'
+import User from '../reducers/user'
 import { userIsAuthenticatedMap, userIsNotAuthenticated, userIsAdmin } from '../auth'
 
 import AdminComponent from './Admin'
@@ -21,7 +22,7 @@ const [
   userIsAdmin(AdminComponent)
 ])
 
-function App({ logout }) {
+function App({ logout, user }) {
   return (
     <Router>
       <div>
@@ -34,9 +35,10 @@ function App({ logout }) {
           {' '}
           <Link to="/admin">{'Admin'}</Link>
           {' '}
-          <Link to="/login">Login</Link>
-          {' '}
-          <button onClick={() => logout()}>Logout</button>
+          {user.data ?
+            <button onClick={() => logout()}>Logout</button> :
+            <Link to="/login">Login</Link>
+          }
         </header>
         <div style={{ marginTop: '1.5em' }}>
           <Route exact path="/" component={Home}/>
@@ -49,4 +51,4 @@ function App({ logout }) {
   )
 }
 
-export default connect(false, { logout })(App)
+export default connect(User, { logout })(App)
