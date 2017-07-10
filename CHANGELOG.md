@@ -1,5 +1,8 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...master)
-**BREAKING CHANGES** Version 2.0 is almost out! See https://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html for migrating from 1.x
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.0...HEAD)
+Nothing yet
+
+## [2.0.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...v2.0.0)
+**BREAKING CHANGES** Version 2.0 include several new changes! See https://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html for migrating from 1.x
 
 ## [1.1.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.0.0...v1.1.0)
 - **Feature:** Support hash fragments in building the redirect location [#121](https://github.com/mjrussell/redux-auth-wrapper/issues/121)
