@@ -78,7 +78,7 @@ const AdminOnlyLink = VisibleOnlyAdmin(() => <Link to='/admin'>Admin Section</Li
 
 v2.x
 ```js
-import authWrapper from 'redux-auth-wrapper/authWrapper'
+import connectedAuthWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
 
 const visibleOnlyAdmin = authWrapper({
   authenticatedSelector: state => state.user !== null && state.user.isAdmin,
@@ -107,9 +107,12 @@ v2.x
 ```js
 import connectedAuthWrapper from 'redux-auth-wrapper/connectedAuthWrapper'
 
-const AdminOrElse = (Component, FailureComponent) => connectedAuthWrapper({
+const adminOrElse = (Component, FailureComponent) => connectedAuthWrapper({
   authenticatedSelector: state => state.user !== null && state.user.isAdmin,
   wrapperDisplayName: 'AdminOrElse',
   FailureComponent
 })(Component)
+
+// Show Admin dashboard to admins and user dashboard to regular users
+<Route path='/dashboard' component={adminOrElse(AdminDashboard, UserDashboard)} />
 ```
