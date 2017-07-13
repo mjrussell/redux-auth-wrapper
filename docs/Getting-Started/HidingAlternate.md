@@ -39,14 +39,14 @@ const AdminOnlyLink = visibleOnlyAdmin(() => <Link to='/admin'>Admin Section</Li
 You can also easily wrap the call to `authWrapper` in a function to make it more flexible to apply throughout your code:
 
 ```js
-const AdminOrElse = (Component, FailureComponent) => connectedAuthWrapper({
+const adminOrElse = (Component, FailureComponent) => connectedAuthWrapper({
   authenticatedSelector: state => state.user !== null && state.user.isAdmin,
   wrapperDisplayName: 'AdminOrElse',
   FailureComponent
 })(Component)
 
 // Show Admin dashboard to admins and user dashboard to regular users
-<Route path='/dashboard' component={AdminOrElse(AdminDashboard, UserDashboard)} />
+<Route path='/dashboard' component={adminOrElse(AdminDashboard, UserDashboard)} />
 ```
 
 ## Unconnected Wrapper
