@@ -1,5 +1,8 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.0...HEAD)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.1...HEAD)
 Nothing yet
+
+## [2.0.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.0...v2.0.1)
+- **Bugfix:** Adds empty main with indx.js for webpack ddl support (Contributed by @victorouse)
 
 ## [2.0.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...v2.0.0)
 **BREAKING CHANGES** Version 2.0 include several new changes! See https://mjrussell.github.io/redux-auth-wrapper/docs/Migrating.html for migrating from 1.x
