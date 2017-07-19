@@ -9,7 +9,7 @@ This example uses React-Router 3.x and React-Router-Redux 4.x.
 
 **To run, follow these steps:**
 
-1. Go to the root of this project (up two folders) and run `npm install && npm build`
+1. Go to the root of this project (up two folders) and run `npm install && npm run build`
 2. In this folder, run `npm install`
 3. In this folder, `npm start`
 4. `Browse to http://localhost:8080`
