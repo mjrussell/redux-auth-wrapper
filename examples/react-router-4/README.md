@@ -14,6 +14,6 @@ This example uses React-Router 4.x
 3. In this folder, `npm start`
 4. `Browse to http://localhost:8080`
 
-Login as any user to access the protected page `foo`.
+Login as any user to access the protected page `protected`.
 Login with the admin box check to access the admin section.
 Logout from any protected page to get redirect back to the login page.

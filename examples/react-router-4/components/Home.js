@@ -3,9 +3,9 @@ import React from 'react'
 export default function Home() {
   return (
     <div>
-      <h4>{"Welcome! Why dont you login and check out Foo? Or log in as an admin and click Admin"}</h4>
-      <h4>{"Or just try to navigate there and you will be redirected"}</h4>
-      <h4>{"Dont forget to try logging out on any page!"}</h4>
+      <h4>{"This demo serves as an example on how to use redux-auth-wrapper with react-router-4"}</h4>
+      <h4>{"Notice that Protected and Admin routes are protected and you will have to log in to see them."}</h4>
+      <h4>{"The Admin page required you to be logged in as an admin. Click Login to begin the demo."}</h4>
     </div>
   )
 }
