@@ -20,12 +20,19 @@ module.exports = {
     }
   },
   module: {
-    loaders: [ {
-      test: /\.js$/,
-      loaders: [ 'babel' ],
-      exclude: /node_modules/,
-      include: __dirname
-    } ]
+    loaders: [
+      {
+        test: /\.js$/,
+        loaders: [ 'babel' ],
+        exclude: /node_modules/,
+        include: __dirname
+      },
+      {
+        test: /\.css$/,
+        loader: "style-loader!css-loader?module=true&importLoaders=1&localIdentName=[name]_[local]_[hash:base64:5]",
+        exclude: /semantic/
+      }
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
