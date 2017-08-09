@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-
+import styles from './App.css'
 import { login } from '../actions/user'
 
 export class LoginContainer extends Component {
@@ -19,14 +19,10 @@ export class LoginContainer extends Component {
 
   render() {
     return (
-      <div>
-        <h2>Enter your name</h2>
-        <input type="text" ref="name" />
-        <br/>
-        {'Admin?'}
-        <input type="checkbox" ref="admin" />
-        <br/>
-        <button onClick={this.onClick}>Login</button>
+      <div className={styles.login}>
+        <div><input className={styles.username} type="text" ref="name" placeholder="Enter your username" /></div>
+        <label className={styles.checkbox}><input type="checkbox" ref="admin" />Are you an Administrator?</label>
+        <div><button className={styles.button} onClick={this.onClick}>Login</button></div>
       </div>
     )
   }
