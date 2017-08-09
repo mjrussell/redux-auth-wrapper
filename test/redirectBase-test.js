@@ -1,5 +1,5 @@
 /* eslint-env node, mocha, jasmine */
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import sinon from 'sinon'
 import _ from 'lodash'
 
@@ -299,7 +299,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(Object.keys(_.omit(wrapper.find(UnprotectedComponent).props(), [
         'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext', 'dispatch'
       ])).sort()).to.deep.equal([
-        'isAuthenticated', 'isAuthenticating', 'redirect', 'redirectPath', 'testProp'
+        'testProp'
       ])
     })
 
@@ -475,6 +475,37 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: 1 })).to.throw(/allowRedirectBack must be either a boolean or a function/)
       expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: [] })).to.throw(/allowRedirectBack must be either a boolean or a function/)
       expect(() => authWrapper({ ...defaultConfig, allowRedirectBack: {} })).to.throw(/allowRedirectBack must be either a boolean or a function/)
+    })
+
+    it("Doesn't cause re-render when store changes", () => {
+      const updatespy = sinon.spy()
+
+      // Have to use pure component because the props object changes, just not the values
+      class UpdateComponent extends PureComponent {
+        componentDidUpdate() {
+          updatespy()
+        }
+
+        render() {
+          return <div />
+        }
+      }
+
+      const auth = authWrapper(defaultConfig)
+      const routes = [
+        { path: '/auth', component: auth(UpdateComponent) }
+      ]
+
+      const { history, store, getLocation } = setupTest(routes)
+
+      store.dispatch(userLoggedIn())
+      history.push('/auth')
+
+      expect(getLocation().pathname).to.equal('/auth')
+
+      expect(updatespy.called).to.be.false
+      store.dispatch(userLoggedIn())
+      expect(updatespy.called).to.be.false
     })
   })
 }

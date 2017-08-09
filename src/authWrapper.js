@@ -5,11 +5,12 @@ import hoistStatics from 'hoist-non-react-statics'
 const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
   FailureComponent: () => null, // dont render anything on failure of the predicate
+  propMapper: props => props,
   wrapperDisplayName: 'AuthWrapper'
 }
 
 export default (args) => {
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName } = {
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, propMapper } = {
     ...defaults,
     ...args
   }
@@ -34,11 +35,11 @@ export default (args) => {
       render() {
         const { isAuthenticated, isAuthenticating } = this.props
         if (isAuthenticated) {
-          return <DecoratedComponent {...this.props} />
-        } else if(isAuthenticating) {
-          return <AuthenticatingComponent {...this.props} />
+          return <DecoratedComponent {...propMapper(this.props)} />
+        } else if (isAuthenticating) {
+          return <AuthenticatingComponent {...propMapper(this.props)} />
         } else {
-          return <FailureComponent {...this.props} />
+          return <FailureComponent {...propMapper(this.props)} />
         }
       }
     }

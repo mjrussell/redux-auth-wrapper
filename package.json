@@ -62,7 +62,7 @@
   "dependencies": {
     "hoist-non-react-statics": "1.2.0",
     "invariant": "2.2.2",
-    "lodash.isempty": "4.4.0",
+    "lodash.omit": "4.4.0",
     "prop-types": "15.5.8",
     "query-string": "4.3.4"
   }
