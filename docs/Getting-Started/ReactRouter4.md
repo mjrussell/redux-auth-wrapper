@@ -43,7 +43,7 @@ When the user navigates to `/profile`, one of the following occurs:
 
 ## Redirecting from Login
 
-We've only done half of the work however. When a user logs into the login page, we want to send them back to `/profile`. Additionally, if a user is already logged in, but navigates to our login page, we may want to send them to a landing page (`/landing`). Luckily we can easily do both of these with our wrapper.
+We've only done half of the work however. When a user logs into the login page, we want to send them back to `/profile`. Additionally, if a user is already logged in, but navigates to our login page, we may want to send them to a landing page (`/landing`). Luckily we can easily do both of these with another wrapper.
 
 ```js
 import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
@@ -60,6 +60,11 @@ const userIsNotAuthenticated = connectedRouterRedirect({
   // A nice display name for this check
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
+```
+
+```js
+<Route path="profile" component={userIsAuthenticated(Profile)}/>
+<Route path="login" component={userIsNotAuthenticated(Login)}/>
 ```
 
 ## Displaying an AuthenticatingComponent Component
@@ -90,7 +95,6 @@ To do this, swap out the import of `connectedRouterRedirect` for `connectedRedux
 
 ```js
 import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
-// TODO what import here??????
 import { routerActions } from 'react-router-redux'
 
 const userIsAuthenticated = connectedReduxRedirect({
@@ -101,3 +105,7 @@ const userIsAuthenticated = connectedReduxRedirect({
   redirectAction: routerActions.replace,
 })
 ```
+
+## Next Steps
+
+Check out the [examples](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples) or browse the [API documentation](/docs/API.md).

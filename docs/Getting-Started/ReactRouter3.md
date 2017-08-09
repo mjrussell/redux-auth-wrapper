@@ -47,7 +47,7 @@ When the user navigates to `/profile`, one of the following occurs:
 
 ## Redirecting from Login
 
-We've only done half of the work however. When a user logs into the login page, we want to send them back to `/profile`. Additionally, if a user is already logged in, but navigates to our login page, we may want to send them to a landing page (`/landing`). Luckily we can easily do both of these with our wrapper.
+We've only done half of the work however. When a user logs into the login page, we want to send them back to `/profile`. Additionally, if a user is already logged in, but navigates to our login page, we may want to send them to a landing page (`/landing`). Luckily we can easily do both of these with another wrapper.
 
 ```js
 import locationHelperBuilder from 'redux-auth-wrapper/history3/locationHelper'
@@ -64,6 +64,11 @@ const userIsNotAuthenticated = connectedRouterRedirect({
   // A nice display name for this check
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
+```
+
+```js
+<Route path="profile" component={userIsAuthenticated(Profile)}/>
+<Route path="login" component={userIsNotAuthenticated(Login)}/>
 ```
 
 ## Displaying an AuthenticatingComponent Component
@@ -107,4 +112,4 @@ const userIsAuthenticated = connectedReduxRedirect({
 
 ## Next Steps
 
-Check out the [examples](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples) or browse the [API documentation](). If you are using server side rendering (SSR) with React Router 3, you should also check out the [Server Side Rendering](/docs/AdvancedUsage/ReactRouter3.md) documentation.
+Check out the [examples](https://github.com/mjrussell/redux-auth-wrapper/tree/master/examples) or browse the [API documentation](/docs/API.md). If you are using server side rendering (SSR) with React Router 3, you should also check out the [Server Side Rendering](/docs/AdvancedUsage/ReactRouter3.md) documentation.
