@@ -76,7 +76,7 @@ When `authenticatingSelector` returns true, no redirection will be performed and
 ```js
 const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
-  authenticatedSelector: state => state.user.data. !== null,
+  authenticatedSelector: state => state.user.data !== null,
   wrapperDisplayName: 'UserIsAuthenticated'
   // Returns true if the user auth state is loading
   authenticatingSelector: state => state.user.isLoading,
