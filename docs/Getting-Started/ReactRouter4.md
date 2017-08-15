@@ -94,7 +94,7 @@ If you want to dispatch a redux action to perform navigation instead of interact
 To do this, swap out the import of `connectedRouterRedirect` for `connectedReduxRedirect` and pass the `redirectAction` parameter to the config object:
 
 ```js
-import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history4/redirect'
 import { routerActions } from 'react-router-redux'
 
 const userIsAuthenticated = connectedReduxRedirect({
