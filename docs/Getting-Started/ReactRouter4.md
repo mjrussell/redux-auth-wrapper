@@ -76,12 +76,12 @@ When `authenticatingSelector` returns true, no redirection will be performed and
 ```js
 const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
-  authenticatedSelector: state => state.user.data. !== null,
-  wrapperDisplayName: 'UserIsAuthenticated'
+  authenticatedSelector: state => state.user.data !== null,
+  wrapperDisplayName: 'UserIsAuthenticated',
   // Returns true if the user auth state is loading
   authenticatingSelector: state => state.user.isLoading,
   // Render this component when the authenticatingSelector returns true
-  AuthenticatingComponent: LoadingSpinner,
+  AuthenticatingComponent: LoadingSpinner
 })
 ```
 
@@ -94,7 +94,7 @@ If you want to dispatch a redux action to perform navigation instead of interact
 To do this, swap out the import of `connectedRouterRedirect` for `connectedReduxRedirect` and pass the `redirectAction` parameter to the config object:
 
 ```js
-import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history4/redirect'
 import { routerActions } from 'react-router-redux'
 
 const userIsAuthenticated = connectedReduxRedirect({
