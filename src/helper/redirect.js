@@ -1,13 +1,23 @@
 import { connect } from 'react-redux'
 import invariant from 'invariant'
+import omit from 'lodash.omit'
 
 import authWrapper from '../authWrapper'
 import Redirect from '../redirect'
+
+const propMapper = allProps => {
+  if (!allProps.isAuthenticated && !allProps.isAuthenticating) {
+    return allProps
+  } else {
+    return omit(allProps, [ 'redirect', 'redirectPath', 'isAuthenticated', 'isAuthenticating' ])
+  }
+}
 
 const connectedDefaults = {
   authenticatingSelector: () => false,
   allowRedirectBack: true,
   FailureComponent: Redirect,
+  propMapper,
   redirectQueryParamName: 'redirect'
 }
 
