@@ -10,11 +10,11 @@ parameter using `redux-thunk` middleware. It depends slightly on if you are usin
 #### Using `react-router-redux` or `redux-router` and dispatching an extra redux action in the wrapper
 ```js
 import { replace } from 'react-router-redux'; // Or your redux-router equivalent
-import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedReduxRedirect } from 'redux-auth-wrapper/history3/redirect'
 import addNotification from './notificationActions';
 
 // Admin Authorization, redirects non-admins to /app
-export const userIsAdmin = connectedRouterRedirect({
+export const userIsAdmin = connectedReduxRedirect({
   redirectPath: '/app',
   allowRedirectBack: false,
   authenticatedSelector: state => state.user !== null && state.user.isAdmin,
@@ -32,7 +32,7 @@ import { browserHistory } from 'react-router'; // react router 3
 import addNotification from './notificationActions';
 
 // Admin Authorization, redirects non-admins to /app
-export const userIsAdmin = connectedRouterRedirect({
+export const userIsAdmin = connectedReduxRedirect({
   redirectPath: '/app',
   allowRedirectBack: false,
   authenticatedSelector: state => state.user !== null && state.user.isAdmin,
