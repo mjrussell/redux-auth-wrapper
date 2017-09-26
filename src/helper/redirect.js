@@ -43,14 +43,14 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
       replace(createRedirectLoc(allowRedirectBackFn(props, path))(props, path))
 
     const ConnectedFailureComponent = connect((state, ownProps) => ({
-      redirect: redirect(getRouterRedirect(ownProps)),
+      redirect: redirect(getRouterRedirect(ownProps))
     }))(FailureComponent)
 
     return (DecoratedComponent) =>
       connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
         isAuthenticated: authenticatedSelector(state, ownProps),
-        isAuthenticating: authenticatingSelector(state, ownProps),
+        isAuthenticating: authenticatingSelector(state, ownProps)
       }))(authWrapper({ ...allArgs, FailureComponent: ConnectedFailureComponent })(DecoratedComponent))
   }
 
