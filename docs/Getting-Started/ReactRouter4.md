@@ -17,8 +17,9 @@ The `connectedRouterRedirect` will build the redirect higher order component, bu
 const userIsAuthenticated = connectedRouterRedirect({
    // The url to redirect user to if they fail
   redirectPath: '/login',
-   // Determine if the user is authenticated or not
-  authenticatedSelector: state => state.user !== null,
+   // If selector is true, wrapper will not redirect
+   // For example let's check that state contains user data
+  authenticatedSelector: state => state.user.data !== null,
   // A nice display name for this check
   wrapperDisplayName: 'UserIsAuthenticated'
 })
@@ -55,8 +56,9 @@ const userIsNotAuthenticated = connectedRouterRedirect({
   redirectPath: (state, ownProps) => locationHelper.getRedirectQueryParam(ownProps) || '/landing',
   // This prevents us from adding the query parameter when we send the user away from the login page
   allowRedirectBack: false,
-  // Determine if the user is authenticated or not
-  authenticatedSelector: state => state.user.data !== null,
+   // If selector is true, wrapper will not redirect
+   // So if there is no user data, then we show the page
+  authenticatedSelector: state => state.user.data === null,
   // A nice display name for this check
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
