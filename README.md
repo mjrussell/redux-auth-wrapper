@@ -31,3 +31,7 @@ Having trouble? First check out the [Troubleshooting](https://mjrussell.github.i
 Other examples not yet updated to v2:
 * [Redux-Router and React-Router 1.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/auth-wrapper)
 * [React-Router-Redux and React-Router 2.0 with JWT](https://github.com/mjrussell/react-redux-jwt-auth-example/tree/react-router-redux)
+
+## Supporters
+
+This project is supported by ![](http://passportjs.org/images/supported_logo.svg) [Auth0](https://auth0.com/overview?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=redux-auth-wrapper&utm_content=auth) 
