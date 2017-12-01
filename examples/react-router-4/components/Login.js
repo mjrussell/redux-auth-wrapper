@@ -1,4 +1,7 @@
 import React, { Component, PropTypes } from 'react'
+// If you would use react latest version please see below:
+// React.PropTypes has moved into a different package since React v15.5. Please use the prop-types library instead.
+// import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import styles from './App.css'
 import { login } from '../actions/user'
