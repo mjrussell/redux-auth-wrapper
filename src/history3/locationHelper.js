@@ -23,7 +23,14 @@ export default (args) => {
     let query
 
     if (allowRedirectBack) {
-      query = { [redirectQueryParamName]: `${location.pathname}${location.search}${location.hash}` }
+      const regex = new RegExp(`${redirectQueryParamName}=(.+)`);
+      const result = regex.exec(location.search)
+
+      if (result === null) {
+        query = { [redirectQueryParamName]: `${location.pathname}${location.search}${location.hash}` }
+      } else {
+        query = { [redirectQueryParamName]: `${decodeURIComponent(result[1])}${location.hash}` }
+      }
     } else {
       query = {}
     }
