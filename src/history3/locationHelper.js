@@ -23,7 +23,7 @@ export default (args) => {
     let query
 
     if (allowRedirectBack) {
-      const regex = new RegExp(`${redirectQueryParamName}=(.+)`);
+      const regex = new RegExp(`${redirectQueryParamName}=(.+)`)
       const result = regex.exec(location.search)
 
       if (result === null) {
