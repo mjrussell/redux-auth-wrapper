@@ -69,6 +69,8 @@ const userIsNotAuthenticated = connectedRouterRedirect({
 <Route path="login" component={userIsNotAuthenticated(Login)}/>
 ```
 
+The `locationHelper` requre `location` object in props. Therefore if component is not directly route component then `withRouter` must be applied before, for example like this `withRouter(userIsNotAuthenticated(Login))`.
+
 ## Displaying an AuthenticatingComponent Component
 
 Its often useful to display some sort of loading component or animation when you are checking if the user's credentials are valid or if the user is already logged in. We can add a loading component to both our Login and Profile page easily:
