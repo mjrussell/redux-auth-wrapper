@@ -38,7 +38,7 @@ When the user navigates to `/profile`, one of the following occurs:
 
 1. If The `state.user` is null:
 
-    The user is redirected to `/login?redirect=%2profile`
+    The user is redirected to `/login?redirect=%2Fprofile`
 
     *Notice the url contains the query parameter `redirect` for sending the user back to after you log them into your app*
 2. Otherwise:
