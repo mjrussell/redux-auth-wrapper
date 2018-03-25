@@ -22,7 +22,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (nextState: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -38,7 +38,7 @@ connectedReduxRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (nextState: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -54,7 +54,7 @@ createOnEnter({
   ?authenticatingSelector: (state: Object, nextState: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (nextState: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): (store: Object, nextState: Object: replace: (location: Object => void))
 ```
@@ -74,7 +74,7 @@ locationHelperBuilder({
 
 LocationHelper: {
   getRedirectQueryParam: (props: Object) => string,
-  createRedirectLoc: allowRedirectBack: boolean => (props: Object, redirectPath: string) => LocationObject,
+  createRedirectLoc: allowRedirectBack: boolean => (nextState: Object, redirectPath: string) => LocationObject,
 }
 ```
 
@@ -91,7 +91,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (nextState: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -108,7 +108,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (nextState: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -126,7 +126,7 @@ locationHelperBuilder({
 
 LocationHelper: {
   getRedirectQueryParam: (props: Object) => string,
-  createRedirectLoc: allowRedirectBack: boolean => (props: Object, redirectPath: string) => LocationObject,
+  createRedirectLoc: allowRedirectBack: boolean => (nextState: Object, redirectPath: string) => LocationObject,
 }
 ```
 
