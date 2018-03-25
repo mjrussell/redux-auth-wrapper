@@ -22,7 +22,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: string | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -38,7 +38,7 @@ connectedReduxRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: string | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -54,7 +54,7 @@ createOnEnter({
   ?authenticatingSelector: (state: Object, nextState: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: string | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): (store: Object, nextState: Object: replace: (location: Object => void))
 ```
@@ -91,7 +91,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: string | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
@@ -108,7 +108,7 @@ connectedRouterRedirect({
   ?authenticatingSelector: (state: Object, ownProps: Object) => boolean,
   ?AuthenticatingComponent: ReactClass | ReactFunctionalComponent | string,
   ?wrapperDisplayName: string,
-  ?allowRedirectBack: string | (props: Object, redirectPath: String) => boolean,
+  ?allowRedirectBack: boolean | (props: Object, redirectPath: String) => boolean,
   ?redirectQueryParamName: string
 }): HigherOrderComponent
 ```
