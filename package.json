@@ -4,7 +4,9 @@
   "main": "index.js",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
   "scripts": {
-    "build": "mkdirp lib && babel ./src --out-dir ./lib",
+    "build": "mkdirp lib && npm run build:cjs && npm run build:es",
+    "build:cjs": "babel ./src --out-dir ./lib",
+    "build:es": "BABEL_ENV=es babel ./src --out-dir ./lib/es",
     "build:clean": "rimraf ./lib",
     "build:copyFiles": "cp -rf package.json LICENSE.txt README.md lib/.",
     "dist": "cd lib && npm publish",
