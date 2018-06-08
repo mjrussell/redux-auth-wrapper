@@ -60,7 +60,7 @@
     "webpack": "1.13.3"
   },
   "dependencies": {
-    "hoist-non-react-statics": "1.2.0",
+    "hoist-non-react-statics": "2.5.0",
     "invariant": "2.2.2",
     "lodash.isempty": "4.4.0",
     "prop-types": "^15.5.0",
