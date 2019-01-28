@@ -1,5 +1,8 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.3...HEAD)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.1.0...HEAD)
 Nothing yet
+
+## [2.1.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.3...v2.1.0)
+- Upgrade deps and relax bounds [#244](https://github.com/mjrussell/redux-auth-wrapper/pull/244)
 
 ## [2.0.3](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.2...v2.0.3)
 - Warning fix for React 16.3+ [#235](https://github.com/mjrussell/redux-auth-wrapper/pull/235) (contributed by @tpai)
