@@ -1,7 +1,7 @@
 ## Table of Contents
 
 * [Read Me](README.md)
-* [Getting Starting](docs/Getting-Started/Overview.md)
+* [Getting Started](docs/Getting-Started/Overview.md)
   * [React Router 3](docs/Getting-Started/ReactRouter3.md)
   * [React Router 4](docs/Getting-Started/ReactRouter4.md)
   * [React Native](docs/Getting-Started/ReactNative.md)
