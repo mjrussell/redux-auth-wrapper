@@ -101,7 +101,7 @@ connectedRouterRedirect({
 ```js
 import { connectedReduxRedirect } from 'redux-auth-wrapper/history4/redirect'
 
-connectedRouterRedirect({
+connectedReduxRedirect({
   redirectPath: string | (state: Object, ownProps: Object) => string,
   redirectAction: (location: Object) => ReduxAction,
   authenticatedSelector: (state: Object, ownProps: Object) => boolean,
