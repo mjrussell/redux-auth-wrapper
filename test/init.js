@@ -9,6 +9,9 @@ Enzyme.configure({ adapter: new Adapter() })
 global.expect = chai.expect
 
 // JsDom browser
-global.document = jsdom.jsdom('<!doctype html><html><body></body></html>')
+const { JSDOM } = jsdom;
+
+const { document } = (new JSDOM('')).window;
+global.document = document;
 global.window = document.defaultView
 global.navigator = global.window.navigator
