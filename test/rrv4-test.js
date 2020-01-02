@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { mount } from 'enzyme'
 import { parse } from 'query-string'
-import { ConnectedRouter, routerReducer, routerMiddleware, replace } from 'react-router-redux'
+import { ConnectedRouter, connectRouter, routerMiddleware, replace } from 'connected-react-router'
 
 import { userReducer } from './helpers'
 import baseTests from './redirectBase-test'
@@ -46,7 +46,7 @@ const setupReactRouter4Test = (testRoutes) => {
 const setupReactRouterReduxTest = (testRoutes) => {
   const history = createMemoryHistory()
   const middleware = routerMiddleware(history)
-  const rootReducer = combineReducers({ user: userReducer, router: routerReducer })
+  const rootReducer = combineReducers({ user: userReducer, router: connectRouter(history) })
 
   const store = createStore(
     rootReducer,

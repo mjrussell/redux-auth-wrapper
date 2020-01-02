@@ -120,7 +120,7 @@ describe('React Router V3 onEnter', () => {
       { path: 'onEnter', component: UnprotectedComponent, onEnter: connect(onEnter) }
     ]
 
-    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    const { history, store: createdStore, getLocation, wrapper } = setupReactRouter3Test(routesOnEnter)
     store = createdStore
 
     expect(getLocation().pathname).to.equal('/')
@@ -128,9 +128,11 @@ describe('React Router V3 onEnter', () => {
 
     // Redirects when not authorized
     store.dispatch(userLoggedOut())
+    wrapper.update()
     // Have to force re-check because wont recheck with store changes
     history.push('/')
     history.push('/onEnter')
+    wrapper.update()
     expect(authenticatedSelectorSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.calledOnce).to.be.true
     expect(failureRedirectSpy.firstCall.args[0].user).to.deep.equal(store.getState().user) // cant compare location because its changed
@@ -166,6 +168,7 @@ describe('React Router V3 onEnter', () => {
     // Supports isAuthenticating
     store.dispatch(userLoggingIn())
     history.push('/onEnter')
+    wrapper.update()
     const nextState = _.pick(wrapper.find(App).props(), [ 'location', 'params', 'routes' ])
     const storeState = store.getState()
     expect(authenticatedSelectorSpy.calledOnce).to.be.true
@@ -181,6 +184,7 @@ describe('React Router V3 onEnter', () => {
     // Have to force re-check because wont recheck with store changes
     history.push('/')
     history.push('/onEnter')
+    wrapper.update()
     expect(authenticatingSelectorSpy.calledTwice).to.be.true
     expect(authenticatedSelectorSpy.calledTwice).to.be.true
     expect(failureRedirectSpy.calledOnce).to.be.true
@@ -206,16 +210,18 @@ describe('React Router V3 onEnter', () => {
       { path: '/authNoRedir', component: UnprotectedComponent, onEnter: connect(onEnter) }
     ]
 
-    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    const { history, store: createdStore, getLocation, wrapper } = setupReactRouter3Test(routesOnEnter)
     store = createdStore
 
     store.dispatch(userLoggedIn())
 
     history.push('/auth')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login')
     expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
 
     history.push('/authNoRedir')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login')
     expect(getQueryParams(getLocation())).to.deep.equal({})
   })
@@ -239,17 +245,19 @@ describe('React Router V3 onEnter', () => {
       { path: '/auth/:id', component: UnprotectedComponent, onEnter: connect(onEnter) }
     ]
 
-    const { history, store: createdStore, getLocation } = setupReactRouter3Test(routesOnEnter)
+    const { history, store: createdStore, getLocation, wrapper } = setupReactRouter3Test(routesOnEnter)
     store = createdStore
 
     expect(getLocation().pathname).to.equal('/')
     expect(getQueryParams(getLocation())).to.be.empty
 
     history.push('/auth/1')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login/1')
     expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/1' })
 
     history.push('/auth/2')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login/0')
     expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth/2' })
   })
@@ -281,19 +289,23 @@ describe('wrapper React Router V3 Additions', () => {
       ] }
     ]
 
-    const { history, store, getLocation } = setupReactRouter3Test(routes)
+    const { history, store, getLocation, wrapper } = setupReactRouter3Test(routes)
 
     history.push('/parent/child')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login')
     expect(getLocation().search).to.equal('?redirect=%2Fparent%2Fchild')
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     history.push('/parent/child')
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/parent/child')
     expect(getLocation().query).to.be.empty
 
     store.dispatch(userLoggedOut())
+    wrapper.update()
     expect(getLocation().pathname).to.equal('/login')
     expect(getLocation().search).to.equal('?redirect=%2Fparent%2Fchild')
   })
