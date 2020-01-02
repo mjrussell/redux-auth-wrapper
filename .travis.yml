@@ -4,13 +4,14 @@ cache:
   directories:
   - node_modules
 node_js:
-  - "4"
-  - "5"
+  - "8"
+  - "10"
+  - "12"
 env:
   - REACT_ROUTER_VERSION=3
   - REACT_ROUTER_VERSION=4
 script:
-  - npm run lint
+  - yarn run lint
   - ./runTests.sh
 after_success:
 - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

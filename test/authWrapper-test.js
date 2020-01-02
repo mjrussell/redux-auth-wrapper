@@ -31,9 +31,10 @@ describe('connectedAuthWrapper', () => {
     )
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(wrapper.find(AuthedComponent).html()).to.be.null
+    expect(wrapper.find(AuthedComponent).html()).to.equal('')
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
   })
@@ -56,14 +57,16 @@ describe('connectedAuthWrapper', () => {
     )
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(wrapper.find(AuthedComponent).html()).to.be.null
+    expect(wrapper.find(AuthedComponent).html()).to.equal('')
 
     store.dispatch(userLoggingIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(wrapper.find(AuthedComponent).html()).to.be.null
+    expect(wrapper.find(AuthedComponent).html()).to.equal('')
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
   })
@@ -89,9 +92,11 @@ describe('connectedAuthWrapper', () => {
     expect(wrapper.find(FailureComponent).length).to.equal(1)
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
 
     store.dispatch(userLoggedOut())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
     expect(wrapper.find(FailureComponent).length).to.equal(1)
@@ -117,14 +122,17 @@ describe('connectedAuthWrapper', () => {
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
 
     store.dispatch(userLoggedOut())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
 
     store.dispatch(userLoggedIn('Matt'))
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
   })
@@ -147,12 +155,13 @@ describe('connectedAuthWrapper', () => {
     )
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(wrapper.find(AuthedComponent).html()).to.be.null
+    expect(wrapper.find(AuthedComponent).html()).to.equal('')
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
-    expect(wrapper.find(AuthedComponent).node.renderedElement.type.displayName).to.equal('Better Name(UnprotectedComponent)')
+    expect(wrapper.find(AuthedComponent).childAt(0).name()).to.equal('Better Name(UnprotectedComponent)')
   })
 
   it('Display name works for name-less components', () => {
@@ -170,11 +179,12 @@ describe('connectedAuthWrapper', () => {
     )
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(wrapper.find(AuthedComponent).html()).to.be.null
+    expect(wrapper.find(AuthedComponent).html()).to.equal('')
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
-    expect(wrapper.find(AuthedComponent).node.renderedElement.type.displayName).to.equal('AuthWrapper(Component)')
+    expect(wrapper.find(AuthedComponent).childAt(0).name()).to.equal('AuthWrapper(Component)')
   })
 
   it('passes through props to components', () => {
@@ -202,6 +212,7 @@ describe('connectedAuthWrapper', () => {
     })
 
     store.dispatch(userLoggingIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
     expect(_.omit(wrapper.find(AuthenticatingComponent).props(), [ 'dispatch' ])).to.deep.equal({
@@ -209,6 +220,7 @@ describe('connectedAuthWrapper', () => {
     })
 
     store.dispatch(userLoggedIn())
+    wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
     expect(_.omit(wrapper.find(UnprotectedComponent).props(), [ 'dispatch' ])).to.deep.equal({
