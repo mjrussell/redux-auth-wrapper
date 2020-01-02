@@ -1,7 +1,3 @@
-import { createDevTools } from 'redux-devtools'
-import LogMonitor from 'redux-devtools-log-monitor'
-import DockMonitor from 'redux-devtools-dock-monitor'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
@@ -20,17 +16,9 @@ const reducer = combineReducers(Object.assign({}, reducers, {
   routing: routerReducer
 }))
 
-const DevTools = createDevTools(
-  <DockMonitor toggleVisibilityKey="ctrl-h"
-               changePositionKey="ctrl-q">
-    <LogMonitor theme="tomorrow" />
-  </DockMonitor>
-)
-
 const enhancer = compose(
   // Middleware you want to use in development:
   applyMiddleware(thunkMiddleware, routingMiddleware),
-  DevTools.instrument()
 )
 
 // Note: passing enhancer as the last argument requires redux@>=3.1.0
@@ -39,17 +27,14 @@ const history = syncHistoryWithStore(baseHistory, store)
 
 ReactDOM.render(
   <Provider store={store}>
-    <div>
-      <Router history={history}>
-        <Route path="/" component={App}>
-          <IndexRoute component={Home}/>
-          <Route path="login" component={userIsNotAuthenticated(Login)}/>
-          <Route path="foo" component={userIsAuthenticated(Foo)}/>
-          <Route path="admin" component={userIsAuthenticated(userIsAdmin(Admin))}/>
-        </Route>
-      </Router>
-      <DevTools />
-    </div>
+    <Router history={history}>
+      <Route path="/" component={App}>
+        <IndexRoute component={Home}/>
+        <Route path="login" component={userIsNotAuthenticated(Login)}/>
+        <Route path="foo" component={userIsAuthenticated(Foo)}/>
+        <Route path="admin" component={userIsAuthenticated(userIsAdmin(Admin))}/>
+      </Route>
+    </Router>
   </Provider>,
   document.getElementById('mount')
 )

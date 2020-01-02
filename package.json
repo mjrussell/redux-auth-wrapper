@@ -32,7 +32,6 @@
     "babel-core": "6.26.3",
     "babel-eslint": "10.0.3",
     "babel-istanbul": "0.12.2",
-    "babel-loader": "6.4.1",
     "babel-plugin-transform-decorators-legacy": "1.3.5",
     "babel-polyfill": "6.26.0",
     "babel-preset-es2015": "6.24.1",
@@ -56,8 +55,7 @@
     "react-redux": "7.1.3",
     "redux": "4.0.5",
     "rimraf": "3.0.0",
-    "sinon": "8.0.2",
-    "webpack": "1.13.3"
+    "sinon": "8.0.2"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.0",

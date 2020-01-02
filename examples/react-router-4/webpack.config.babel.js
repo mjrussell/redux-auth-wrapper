@@ -20,10 +20,10 @@ module.exports = {
     }
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loaders: [ 'babel' ],
+        loaders: [ 'babel-loader' ],
         exclude: /node_modules/,
         include: __dirname
       },
@@ -55,9 +55,5 @@ if (fs.existsSync(lib)) {
   //   include: lib
   // })
 } else {
-  throw ```
-    redux-auth-wrapper source not built. Run the following:
-      'pushd ../.. && rm -rf node_modules && npm install && npm run build && popd'
-    and then rerun 'npm start'
-    ```
+    throw "redux-auth-wrapper source not built. Run the following: 'pushd ../.. && rm -rf node_modules && yarn install && yarn run build && popd' and then rerun 'yarn start'"
 }
