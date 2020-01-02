@@ -47,7 +47,7 @@
     "expect": "1.20.2",
     "gitbook-cli": "2.3.0",
     "jsdom": "9.8.3",
-    "lodash": "4.16.6",
+    "lodash": "4.17.15",
     "mkdirp": "0.5.1",
     "mocha": "3.1.2",
     "react": "15.3.2",
