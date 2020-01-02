@@ -55,8 +55,7 @@
     "react-redux": "7.1.3",
     "redux": "4.0.5",
     "rimraf": "3.0.0",
-    "sinon": "8.0.2",
-    "webpack": "1.13.3"
+    "sinon": "8.0.2"
   },
   "dependencies": {
     "hoist-non-react-statics": "^3.3.0",
