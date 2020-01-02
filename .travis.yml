@@ -4,7 +4,9 @@ cache:
   directories:
   - node_modules
 node_js:
-  - "lts/*"
+  - "8"
+  - "10"
+  - "12"
 env:
   - REACT_ROUTER_VERSION=3
   - REACT_ROUTER_VERSION=4
