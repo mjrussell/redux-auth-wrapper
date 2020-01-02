@@ -4,7 +4,7 @@ rm -rf node_modules/react-router*
 rm -rf node_modules/history
 
 if [ "$REACT_ROUTER_VERSION" = "3" ]; then
-  yarn add react-router@3.0.2
+  yarn add react-router@3.2.5
   yarn add react-router-redux@4.0.8
   yarn run test:cov test/rrv3-test.js
 elif [ "$REACT_ROUTER_VERSION" = "4" ]; then

@@ -1,5 +1,6 @@
 /* eslint-env node, mocha, jasmine */
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import _ from 'lodash'
 import createMemoryHistory from 'react-router/lib/createMemoryHistory'
 import { routerMiddleware, syncHistoryWithStore, routerActions, routerReducer } from 'react-router-redux'
