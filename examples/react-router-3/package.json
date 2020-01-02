@@ -16,7 +16,7 @@
     "babel-preset-es2015": "6.18.0",
     "babel-preset-react": "6.16.0",
     "babel-preset-stage-0": "6.16.0",
-    "eslint": "1.7.1",
+    "eslint": "6.8.0",
     "eslint-config-rackt": "1.1.1",
     "eslint-plugin-react": "3.16.0",
     "html-webpack-plugin": "2.24.1",
