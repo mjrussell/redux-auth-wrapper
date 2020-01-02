@@ -8,7 +8,7 @@ export default class Redirect extends Component {
     redirect: PropTypes.func.isRequired
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.redirect(this.props, this.props.redirectPath)
   }
 
