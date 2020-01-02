@@ -10,7 +10,7 @@ env:
   - REACT_ROUTER_VERSION=3
   - REACT_ROUTER_VERSION=4
 script:
-  - npm run lint
+  - yarn run lint
   - ./runTests.sh
 after_success:
 - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
