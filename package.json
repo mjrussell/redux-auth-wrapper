@@ -7,17 +7,17 @@
     "build": "mkdirp lib && babel ./src --out-dir ./lib",
     "build:clean": "rimraf ./lib",
     "build:copyFiles": "cp -rf package.json LICENSE.txt README.md lib/.",
-    "dist": "cd lib && npm publish",
-    "dist:prepare": "npm run build:clean && npm run build && npm run build:copyFiles",
+    "dist": "cd lib && yarn publish",
+    "dist:prepare": "yarn run build:clean && yarn run build && yarn run build:copyFiles",
     "lint": "eslint src test examples",
     "test": "mocha --compilers js:babel-core/register --recursive --require test/init.js test/authWrapper-test.js",
-    "test:cov": "babel-node --max-old-space-size=4076 $(npm bin)/babel-istanbul cover $(npm bin)/_mocha -- --require test/init.js test/authWrapper-test.js",
+    "test:cov": "babel-node --max-old-space-size=4076 $(yarn bin)/babel-istanbul cover $(yarn bin)/_mocha -- --require test/init.js test/authWrapper-test.js",
     "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w test/authWrapper-test.js",
     "docs:clean": "rimraf _book",
     "docs:prepare": "gitbook install",
-    "docs:build": "npm run docs:prepare && gitbook build",
-    "docs:watch": "npm run docs:prepare && gitbook serve",
-    "docs:publish": "npm run docs:clean && npm run docs:build && cp README.md _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:mjrussell/redux-auth-wrapper gh-pages --force"
+    "docs:build": "yarn run docs:prepare && gitbook build",
+    "docs:watch": "yarn run docs:prepare && gitbook serve",
+    "docs:publish": "yarn run docs:clean && yarn run docs:build && cp README.md _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:mjrussell/redux-auth-wrapper gh-pages --force"
   },
   "repository": {
     "type": "git",
