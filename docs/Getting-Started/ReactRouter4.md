@@ -1,4 +1,6 @@
-# React Router 4 Redirection
+# React Router 4/5 Redirection
+
+_note: this guide refers mainlys to React Router 4. React Router 5 is the same API and redux-auth-wrapper 3.x is fully compatible with React Router 5._
 
 React Router 4 removed `onEnter` and `onChange` in favor of performing those routing logic actions inside component life cycle methods. This is what redux-auth-wrapper already does with Higher Order Components!
 
@@ -73,7 +75,7 @@ The `locationHelper` requires the `location` object in props. If the component i
 
 ```js
 withRouter(userIsNotAuthenticated(Login))
-```  
+```
 
 ## Displaying an AuthenticatingComponent Component
 
@@ -103,14 +105,14 @@ To do this, swap out the import of `connectedRouterRedirect` for `connectedRedux
 
 ```js
 import { connectedReduxRedirect } from 'redux-auth-wrapper/history4/redirect'
-import { routerActions } from 'react-router-redux'
+import { replace } from 'connected-react-router'
 
 const userIsAuthenticated = connectedReduxRedirect({
   redirectPath: '/login',
   authenticatedSelector: state => state.user !== null,
   wrapperDisplayName: 'UserIsAuthenticated',
   // This should be a redux action creator
-  redirectAction: routerActions.replace,
+  redirectAction: replace,
 })
 ```
 

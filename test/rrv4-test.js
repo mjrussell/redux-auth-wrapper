@@ -81,5 +81,5 @@ const getQueryParams = (location) => parse(location.search)
 baseTests(setupReactRouter4Test, 'React Router V4', getRouteParams, getQueryParams,
           locationHelper.getRedirectQueryParam, connectedRouterRedirect)
 
-baseTests(setupReactRouterReduxTest, 'React Router V4 with react-router-redux', getRouteParams, getQueryParams,
+baseTests(setupReactRouterReduxTest, 'React Router V4 with connected-react-router', getRouteParams, getQueryParams,
           locationHelper.getRedirectQueryParam, (config) => connectedReduxRedirect({ ...config, redirectAction: replace }))
