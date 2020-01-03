@@ -1,5 +1,9 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.1.0...HEAD)
-Nothing yet
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v3.0.0...HEAD)
+-Nothing yet
+
+## [3.0.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.1.0...v3.0.0)
+- **Breaking Change:** Fix deprecated lifecyle method for react 16.3+ support[#250](https://github.com/mjrussell/redux-auth-wrapper/pull/250) (contributed by @JackHowa)
+- Dependency upgrades for react 16.3 support
 
 ## [2.1.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v2.0.3...v2.1.0)
 - Upgrade deps and relax bounds [#244](https://github.com/mjrussell/redux-auth-wrapper/pull/244)
