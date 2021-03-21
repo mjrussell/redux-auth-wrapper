@@ -1,4 +1,7 @@
-## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...master)
+## [HEAD](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.1...master)
+
+## [1.1.1](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.1.0...v1.1.1)
+- **Update:** Bump and loosen prop-types dependency to get rid of audit warnings [#279](https://github.com/mjrussell/redux-auth-wrapper/pull/278) (Contributed by @bj00rn)
 
 ## [1.1.0](https://github.com/mjrussell/redux-auth-wrapper/compare/v1.0.0...v1.1.0)
 - **Feature:** Support hash fragments in building the redirect location [#121](https://github.com/mjrussell/redux-auth-wrapper/issues/121)
