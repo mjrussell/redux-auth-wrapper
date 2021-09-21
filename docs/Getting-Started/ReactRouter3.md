@@ -60,7 +60,7 @@ const userIsNotAuthenticated = connectedRouterRedirect({
   // This prevents us from adding the query parameter when we send the user away from the login page
   allowRedirectBack: false,
   // Determine if the user is authenticated or not
-  authenticatedSelector: state => state.user.data !== null,
+  authenticatedSelector: state => state.user === null,
   // A nice display name for this check
   wrapperDisplayName: 'UserIsNotAuthenticated'
 })
@@ -86,7 +86,7 @@ When `authenticatingSelector` returns true, no redirection will be performed and
 ```js
 const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/login',
-  authenticatedSelector: state => state.user.data. !== null,
+  authenticatedSelector: state => state.user !== null,
   wrapperDisplayName: 'UserIsAuthenticated'
   // Returns true if the user auth state is loading
   authenticatingSelector: state => state.user.isLoading,
