@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 
 const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
@@ -20,6 +20,10 @@ export default (args) => {
 
     class UserAuthWrapper extends Component {
 
+      componentDidMount() {
+        this.props.preAuthAction();
+      }
+
       static displayName = `${wrapperDisplayName}(${displayName})`;
 
       static propTypes = {
@@ -35,7 +39,7 @@ export default (args) => {
         const { isAuthenticated, isAuthenticating } = this.props
         if (isAuthenticated) {
           return <DecoratedComponent {...this.props} />
-        } else if(isAuthenticating) {
+        } else if (isAuthenticating) {
           return <AuthenticatingComponent {...this.props} />
         } else {
           return <FailureComponent {...this.props} />
