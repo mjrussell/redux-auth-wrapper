@@ -14,6 +14,10 @@ redux-auth-wrapper is a utility library for handling authentication and authoriz
 
 Read the documentation at https://mjrussell.github.io/redux-auth-wrapper
 
+## Custom Release
+
+yarn build && yarn build:copyFiles && yarn dist
+
 ## Version 3
 Version 3.x has the same external API as version 2, however it only supports React >= 16.3. It is also tested with react-router v5 and [connected-react-router](https://github.com/supasate/connected-react-router) which replaced [react-router-redux](https://github.com/reactjs/react-router-redux).
 
