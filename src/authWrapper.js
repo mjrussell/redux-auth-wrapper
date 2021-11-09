@@ -21,7 +21,9 @@ export default (args) => {
     class UserAuthWrapper extends Component {
 
       componentDidMount() {
-        this.props.preAuthAction();
+        if (this.props.preAuthAction) {
+          this.props.preAuthAction();
+        }
       }
 
       static displayName = `${wrapperDisplayName}(${displayName})`;
