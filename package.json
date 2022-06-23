@@ -45,7 +45,7 @@
     "eslint-plugin-react": "7.17.0",
     "expect": "24.9.0",
     "gitbook-cli": "2.3.2",
-    "jsdom": "15.2.1",
+    "jsdom": "16.5.0",
     "lodash": "4.17.21",
     "mkdirp": "0.5.1",
     "mocha": "6.2.2",
