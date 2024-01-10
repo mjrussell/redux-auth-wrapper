@@ -1,19 +1,19 @@
-import { Component } from 'react'
+import { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
-export default class Redirect extends Component {
+const Redirect = (props) => {
+  useEffect(() => {
+    if (!!props.redirect && !!props.redirectPath) {
+      props.redirect(props, props.redirectPath);
+    }
+  }, [props.redirect, props.redirectPath])
 
-  static propTypes = {
-    redirectPath: PropTypes.string.isRequired,
-    redirect: PropTypes.func.isRequired
-  };
-
-  UNSAFE_componentWillMount() {
-    this.props.redirect(this.props, this.props.redirectPath)
-  }
-
-  render() {
-    // Redirect should happen before this is rendered
-    return null
-  }
+  return null
 }
+
+Redirect.propTypes = {
+  redirectPath: PropTypes.string.isRequired,
+  redirect: PropTypes.func.isRequired
+};
+
+export default Redirect;
