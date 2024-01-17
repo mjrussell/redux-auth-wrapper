@@ -73,7 +73,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(getLocation().pathname).to.equal('/login')
       expect(getQueryParams(getLocation())).to.deep.equal({ redirect: '/auth' })
     })
-
+    
     it('renders the specified component when authenticating', async () => {
       const auth = authWrapper({
         ...defaultConfig,
@@ -355,7 +355,7 @@ export default (setupTest, versionName, getRouteParams, getQueryParams, getRedir
       expect(comp.props().testProp).to.equal(true)
       // No extra wrapper props
       expect(Object.keys(_.omit(wrapper.find(UnprotectedComponent).props(), [
-        'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext', 'dispatch'
+        'children', 'location', 'params', 'route', 'routeParams', 'router', 'routes', 'history', 'match', 'staticContext', 'dispatch', 'preAuthAction'
       ])).sort()).to.deep.equal([
         'isAuthenticated', 'isAuthenticating', 'redirectPath', 'testProp'
       ])

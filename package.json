@@ -20,7 +20,7 @@
     "docs:publish": "yarn run docs:clean && yarn run docs:build && cp README.md _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:mjrussell/redux-auth-wrapper gh-pages --force",
     "docs:watch": "yarn run docs:prepare && gitbook serve",
     "lint": "eslint src test examples",
-    "test": "mocha --require babel-core/register --recursive --require test/init.js test/authWrapper-test.js",
+    "test": "mocha --require babel-core/register --recursive --require test/init.js test/rrv6-test.js",
     "test:cov": "babel-node --max-old-space-size=4076 $(yarn bin)/babel-istanbul cover $(yarn bin)/_mocha -- --require test/init.js test/authWrapper-test.js",
     "test:watch": "mocha --require babel-core/register --recursive --require test/init.js -w test/authWrapper-test.js"
   },

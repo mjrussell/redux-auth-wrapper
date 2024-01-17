@@ -10,7 +10,8 @@ const defaults = {
 }
 
 export default (args) => {
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName } = {
+  // Add history field to args, it will have only type { replace: func }
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, history } = {
     ...defaults,
     ...args
   }
@@ -23,7 +24,7 @@ export default (args) => {
       let location = {}
       try { location = useLocation() } catch(e) {}
       const params = useParams()
-      const newProps = {...props, location, params}
+      const newProps = {...props, location, params, history}
       const { isAuthenticated, isAuthenticating, preAuthAction } = props
       
       React.useEffect(() => {
