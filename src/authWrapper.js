@@ -24,7 +24,13 @@ export default (args) => {
       try { location = useLocation() } catch(e) {}
       const params = useParams()
       const newProps = {...props, location, params}
-      const { isAuthenticated, isAuthenticating } = props
+      const { isAuthenticated, isAuthenticating, preAuthAction } = props
+      
+      React.useEffect(() => {
+        if (preAuthAction) {
+          preAuthAction();
+        }
+      }, [])
       
       if (isAuthenticated) {
         return <DecoratedComponent {...newProps} />

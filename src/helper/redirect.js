@@ -4,7 +4,6 @@ import invariant from 'invariant'
 
 import authWrapper from '../authWrapper'
 import Redirect from '../redirect'
-import { useNavigate } from 'react-router'
 
 const connectedDefaults = {
   authenticatingSelector: () => false,
@@ -17,7 +16,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
 
   const connectedRouterRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { FailureComponent, redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectQueryParamName } = allArgs
+    const { FailureComponent, redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectQueryParamName, preAuthAction } = allArgs
 
     const { createRedirectLoc } = locationHelperBuilder({
       redirectQueryParamName
@@ -41,24 +40,29 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
       invariant(false, 'allowRedirectBack must be either a boolean or a function')
     }
 
-    const ConnectedFailureComponent = (ownProps) => {
-      const navigate = useNavigate()
-      const redirect = (props, path) => { 
-        navigate(createRedirectLoc(allowRedirectBackFn(props, path))(props, path))
-      }
-      return <FailureComponent {...ownProps} redirect={redirect} />
-    }
+    const redirect = (replace) => (props, path) =>
+      replace(createRedirectLoc(allowRedirectBackFn(props, path))(props, path))
+
+    const ConnectedFailureComponent = connect((state, ownProps) => ({
+      redirect: redirect(getRouterRedirect(ownProps))
+    }))(FailureComponent)
 
     return (DecoratedComponent) => connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
         isAuthenticated: authenticatedSelector(state, ownProps),
         isAuthenticating: authenticatingSelector(state, ownProps)
+      }), (dispatch) => ({
+        preAuthAction: () => {
+          if (preAuthAction) {
+            dispatch(preAuthAction())
+          }
+        }
       }))(authWrapper({ ...allArgs, FailureComponent: ConnectedFailureComponent })(DecoratedComponent))
   }
 
   const connectedReduxRedirect = (args) => {
     const allArgs = { ...connectedDefaults, ...args }
-    const { FailureComponent, redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectAction, redirectQueryParamName } = allArgs
+    const { FailureComponent, redirectPath, authenticatedSelector, authenticatingSelector, allowRedirectBack, redirectAction, redirectQueryParamName, preAuthAction } = allArgs
 
     const { createRedirectLoc } = locationHelperBuilder({
       redirectQueryParamName
@@ -92,7 +96,13 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
       connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
         isAuthenticated: authenticatedSelector(state, ownProps),
-        isAuthenticating: authenticatingSelector(state, ownProps)
+        isAuthenticating: authenticatingSelector(state, ownProps),
+      }), (dispatch) => ({
+        preAuthAction: () => {
+          if (preAuthAction) {
+            dispatch(preAuthAction())
+          }
+        }
       }))(authWrapper({ ...allArgs, FailureComponent: ConnectedFailureComponent })(DecoratedComponent))
   }
 
