@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
-import { useLocation, useParams } from 'react-router'
+import { useLocation, useParams, useNavigate } from 'react-router'
 
 const defaults = {
   AuthenticatingComponent: () => null, // dont render anything while authenticating
@@ -10,8 +10,7 @@ const defaults = {
 }
 
 export default (args) => {
-  // Add history field to args, it will have only type { replace: func }
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName,  LoadingComponent, history } = {
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName,  LoadingComponent } = {
     ...defaults,
     ...args
   }
@@ -23,16 +22,18 @@ export default (args) => {
     const UserAuthWrapper = (props) => {
       let location = {}
       try { location = useLocation() } catch(e) {}
+      const navigate = useNavigate()
       const params = useParams()
-      const [loading, setLoading] = useState(false)
-      const newProps = {...props, location, params, history}
+      const [loading, setLoading] = useState(true)
+      const replace = (path) => navigate(path, {replace: true})
+      const newProps = {...props, location, params, replace}
       const { isAuthenticated, isAuthenticating, preAuthAction } = props
       
       React.useEffect(() => {
         if (preAuthAction) {
           preAuthAction();
         }
-        setLoading(true);
+        setLoading(false);
       }, [])
       
       if (loading) {

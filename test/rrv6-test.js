@@ -25,10 +25,9 @@ const setupReactRouter6Test = (testRoutes) => {
   const store = createStore(rootReducer)
 
   const App = () => {
-    const navigate = useNavigate()
     history.location = useLocation()
-    history.push = (path) => navigate(path)
-    history.replace = (path) => navigate(path, {replace: true})
+    history.push = useNavigate()
+    // history.replace = (path) => navigate(path, {replace: true})
     
     return (
       <div id="testRoot">
@@ -103,7 +102,7 @@ const getRouteParams = (ownProps) => ownProps.params
 const getQueryParams = (location) => parse(location.search)
 
 baseTests(setupReactRouter6Test, 'React Router V6', getRouteParams, getQueryParams,
-          locationHelper.getRedirectQueryParam, (config) => connectedRouterRedirect({ ...config, history }))
+          locationHelper.getRedirectQueryParam, connectedRouterRedirect)
 
 baseTests(setupReactRouterReduxTest, 'React Router V6 with redux-first-history', getRouteParams, getQueryParams,
           locationHelper.getRedirectQueryParam, (config) => connectedReduxRedirect({ ...config, redirectAction: replace }))
