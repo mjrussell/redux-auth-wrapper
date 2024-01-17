@@ -1,32 +1,35 @@
 {
-  "name": "redux-auth-wrapper",
-  "version": "3.0.0",
-  "main": "index.js",
+  "name": "@cdmbase/redux-auth-wrapper",
+  "version": "5.3.0",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mjrussell/redux-auth-wrapper.git"
+  },
+  "license": "MIT",
+  "main": "index.js",
   "scripts": {
     "build": "mkdirp lib && babel ./src --out-dir ./lib",
     "build:clean": "rimraf ./lib",
     "build:copyFiles": "cp -rf package.json LICENSE.txt README.md lib/.",
     "dist": "cd lib && yarn publish",
     "dist:prepare": "yarn run build:clean && yarn run build && yarn run build:copyFiles",
+    "docs:build": "yarn run docs:prepare && gitbook build",
+    "docs:clean": "rimraf _book",
+    "docs:prepare": "gitbook install",
+    "docs:publish": "yarn run docs:clean && yarn run docs:build && cp README.md _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:mjrussell/redux-auth-wrapper gh-pages --force",
+    "docs:watch": "yarn run docs:prepare && gitbook serve",
     "lint": "eslint src test examples",
     "test": "mocha --compilers js:babel-core/register --recursive --require test/init.js test/authWrapper-test.js",
     "test:cov": "babel-node --max-old-space-size=4076 $(yarn bin)/babel-istanbul cover $(yarn bin)/_mocha -- --require test/init.js test/authWrapper-test.js",
-    "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w test/authWrapper-test.js",
-    "docs:clean": "rimraf _book",
-    "docs:prepare": "gitbook install",
-    "docs:build": "yarn run docs:prepare && gitbook build",
-    "docs:watch": "yarn run docs:prepare && gitbook serve",
-    "docs:publish": "yarn run docs:clean && yarn run docs:build && cp README.md _book && cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:mjrussell/redux-auth-wrapper gh-pages --force"
+    "test:watch": "mocha --compilers js:babel-core/register --recursive --require test/init.js -w test/authWrapper-test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mjrussell/redux-auth-wrapper.git"
+  "dependencies": {
+    "hoist-non-react-statics": "^3.3.0",
+    "invariant": "^2.2.4",
+    "lodash.isempty": "^4.4.0",
+    "query-string": "^6.9.0"
   },
-  "authors": [
-    "Matthew Russell"
-  ],
-  "license": "MIT",
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-core": "6.26.3",
@@ -57,10 +60,10 @@
     "rimraf": "3.0.0",
     "sinon": "8.0.2"
   },
-  "dependencies": {
-    "hoist-non-react-statics": "^3.3.0",
-    "invariant": "^2.2.4",
-    "lodash.isempty": "^4.4.0",
-    "query-string": "^6.9.0"
-  }
+  "publishConfig": {
+    "access": "public"
+  },
+  "authors": [
+    "Matthew Russell"
+  ]
 }
