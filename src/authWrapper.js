@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
 import { useLocation, useParams } from 'react-router'
@@ -11,7 +11,7 @@ const defaults = {
 
 export default (args) => {
   // Add history field to args, it will have only type { replace: func }
-  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName, history } = {
+  const { AuthenticatingComponent, FailureComponent, wrapperDisplayName,  LoadingComponent, history } = {
     ...defaults,
     ...args
   }
@@ -24,6 +24,7 @@ export default (args) => {
       let location = {}
       try { location = useLocation() } catch(e) {}
       const params = useParams()
+      const [loading, setLoading] = useState(false)
       const newProps = {...props, location, params, history}
       const { isAuthenticated, isAuthenticating, preAuthAction } = props
       
@@ -31,9 +32,23 @@ export default (args) => {
         if (preAuthAction) {
           preAuthAction();
         }
+        setLoading(true);
       }, [])
       
-      if (isAuthenticated) {
+      if (loading) {
+        /**
+         * If loading component is not provided then render the authenticating component as a fallback, Since mostly
+         * authenticating component will be a loader or a spinner.
+         */
+        return (
+          <React.Fragment>
+            {LoadingComponent
+              ? <LoadingComponent />
+              : <AuthenticatingComponent {...newProps} />
+            }
+          </React.Fragment>
+        )
+      } else if (isAuthenticated) {
         return <DecoratedComponent {...newProps} />
       } else if(isAuthenticating) {
         return <AuthenticatingComponent {...newProps} />
