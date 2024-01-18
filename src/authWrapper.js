@@ -14,7 +14,7 @@ export default (args) => {
     ...defaults,
     ...args
   }
-
+  
   // Wraps the component that needs the auth enforcement
   function wrapComponent(DecoratedComponent) {
     const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
@@ -25,15 +25,16 @@ export default (args) => {
       const navigate = useNavigate()
       const params = useParams()
       const [loading, setLoading] = useState(true)
-      const replace = (path) => navigate(path, {replace: true})
-      const newProps = {...props, location, params, replace}
-      const { isAuthenticated, isAuthenticating, preAuthAction } = props
+      const authProps = {...ownProps, location, params, replace: (path) => navigate(path, {replace: true})}
+      const { isAuthenticated, isAuthenticating, preAuthAction, replace, redirectPath, ...props } = authProps
       
       React.useEffect(() => {
-        if (preAuthAction) {
-          preAuthAction();
+        if (loading) {
+          if (preAuthAction) {
+            preAuthAction();
+          }
+          setLoading(false);
         }
-        setLoading(false);
       }, [])
       
       if (loading) {
@@ -45,16 +46,16 @@ export default (args) => {
           <React.Fragment>
             {LoadingComponent
               ? <LoadingComponent />
-              : <AuthenticatingComponent {...newProps} />
+              : <AuthenticatingComponent {...props} />
             }
           </React.Fragment>
         )
       } else if (isAuthenticated) {
-        return <DecoratedComponent {...newProps} />
+        return <DecoratedComponent {...props} />
       } else if(isAuthenticating) {
-        return <AuthenticatingComponent {...newProps} />
+        return <AuthenticatingComponent {...props} />
       } else {
-        return <FailureComponent {...newProps} />
+        return <FailureComponent {...authProps} />
       }
     }
 
