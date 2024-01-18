@@ -19,7 +19,7 @@ export default (args) => {
   function wrapComponent(DecoratedComponent) {
     const displayName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component'
 
-    const UserAuthWrapper = (props) => {
+    const UserAuthWrapper = (ownProps) => {
       let location = {}
       try { location = useLocation() } catch(e) {}
       const navigate = useNavigate()
