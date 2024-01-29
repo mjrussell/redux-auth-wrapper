@@ -1,8 +1,9 @@
-import invariant from 'invariant'
+import * as React from 'react'
 import { connect } from 'react-redux'
+import invariant from 'invariant'
+
 import authWrapper from '../authWrapper'
 import Redirect from '../redirect'
-
 
 const connectedDefaults = {
   authenticatingSelector: () => false,
@@ -46,8 +47,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
       redirect: redirect(getRouterRedirect(ownProps))
     }))(FailureComponent)
 
-    return (DecoratedComponent) =>
-      connect((state, ownProps) => ({
+    return (DecoratedComponent) => connect((state, ownProps) => ({
         redirectPath: redirectPathSelector(state, ownProps),
         isAuthenticated: authenticatedSelector(state, ownProps),
         isAuthenticating: authenticatingSelector(state, ownProps)
@@ -57,7 +57,7 @@ export default ({ locationHelperBuilder, getRouterRedirect }) => {
             dispatch(preAuthAction())
           }
         }
-      }) )(authWrapper({ ...allArgs, FailureComponent: ConnectedFailureComponent })(DecoratedComponent))
+      }))(authWrapper({ ...allArgs, FailureComponent: ConnectedFailureComponent })(DecoratedComponent))
   }
 
   const connectedReduxRedirect = (args) => {

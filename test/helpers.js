@@ -94,3 +94,9 @@ export class UnprotectedParentComponent extends Component {
     )
   }
 }
+
+export const history = {
+  push: null,
+  replace: null,
+  location: null
+};
