@@ -1,6 +1,6 @@
 {
   "name": "@cdmbase/redux-auth-wrapper",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
   "repository": {
     "type": "git",
@@ -8,8 +8,9 @@
   },
   "license": "MIT",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "mkdirp lib && babel ./src --out-dir ./lib",
+    "build": "node esbuild.config.js",
     "build:clean": "rimraf ./lib",
     "build:copyFiles": "cp -rf package.json LICENSE.txt README.md lib/.",
     "dist": "cd lib && yarn publish",
@@ -32,6 +33,7 @@
     "react-router-dom": "^6.4.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.23.9",
     "babel-cli": "6.26.0",
     "babel-core": "6.26.3",
     "babel-eslint": "10.0.3",
@@ -45,6 +47,7 @@
     "coveralls": "3.0.9",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.2",
+    "esbuild": "^0.20.1",
     "eslint": "6.8.0",
     "eslint-plugin-react": "7.17.0",
     "expect": "24.9.0",
@@ -63,7 +66,9 @@
     "redux-first-history": "^5.2.0",
     "regenerator-runtime": "^0.14.1",
     "rimraf": "3.0.0",
-    "sinon": "8.0.2"
+    "rollup": "^4.12.0",
+    "sinon": "8.0.2",
+    "url": "^0.11.3"
   },
   "publishConfig": {
     "access": "public"

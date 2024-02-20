@@ -1,5 +1,5 @@
-import locationHelperBuilder from '../history3/locationHelper'
-import redirectUtil from '../helper/redirect'
+import locationHelperBuilder from '../history3/locationHelper.js'
+import redirectUtil from '../helper/redirect.js'
 import invariant from 'invariant'
 
 export const { connectedRouterRedirect, connectedReduxRedirect } = redirectUtil({

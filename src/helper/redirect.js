@@ -2,8 +2,8 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 import invariant from 'invariant'
 
-import authWrapper from '../authWrapper'
-import Redirect from '../redirect'
+import authWrapper from '../authWrapper.js'
+import Redirect from '../redirect.js'
 
 const connectedDefaults = {
   authenticatingSelector: () => false,
