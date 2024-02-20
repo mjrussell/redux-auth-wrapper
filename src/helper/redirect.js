@@ -1,7 +1,7 @@
 import invariant from 'invariant'
 import { connect } from 'react-redux'
-import authWrapper from '../authWrapper'
-import Redirect from '../redirect'
+import authWrapper from '../authWrapper.js'
+import Redirect from '../redirect.js'
 
 
 const connectedDefaults = {

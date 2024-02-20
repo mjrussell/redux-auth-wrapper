@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import authWrapper from './authWrapper'
+import authWrapper from './authWrapper.js'
 
 
 const connectedDefaults = {
