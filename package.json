@@ -1,6 +1,6 @@
 {
   "name": "@cdmbase/redux-auth-wrapper",
-  "version": "5.7.0",
+  "version": "5.8.0",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "hoist-non-react-statics": "^3.3.0",
     "invariant": "^2.2.4",
     "lodash.isempty": "^4.4.0",
-    "query-string": "^6.9.0"
+    "query-string": "^9.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",

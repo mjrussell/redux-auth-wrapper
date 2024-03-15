@@ -1,4 +1,4 @@
-import url from 'url'
+import * as url from 'url'
 
 const defaults = {
   redirectQueryParamName: 'redirect',
