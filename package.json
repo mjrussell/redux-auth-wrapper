@@ -1,6 +1,6 @@
 {
   "name": "@cdmbase/redux-auth-wrapper",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "description": "A utility library for handling authentication and authorization for redux and react-router",
   "repository": {
     "type": "git",
