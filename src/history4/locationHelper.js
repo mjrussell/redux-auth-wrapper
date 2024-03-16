@@ -1,5 +1,5 @@
 import * as url from 'url'
-import { stringify, parse } from 'query-string'
+import queryString from 'query-string'
 
 const defaults = {
   redirectQueryParamName: 'redirect',
@@ -14,7 +14,7 @@ export default (args) => {
 
   const getRedirectQueryParam = (props) => {
     const location = locationSelector(props)
-    const query = parse(location.search)
+    const query = queryString.parse(location.search)
     return query[redirectQueryParamName]
   }
 
@@ -38,7 +38,7 @@ export default (args) => {
     return {
       pathname: redirectLoc.pathname,
       hash: redirectLoc.hash,
-      search: stringify(query)
+      search: queryString.stringify(query)
     }
   }
 
