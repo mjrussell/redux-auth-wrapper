@@ -207,7 +207,7 @@ describe('connectedAuthWrapper', () => {
     )
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(_.omit(wrapper.find(FailureComponent).props(), [ 'dispatch' ])).to.deep.equal({
+    expect(_.omit(wrapper.find(FailureComponent).props(), ['dispatch', 'location', 'params', 'preAuthAction', 'history'])).to.deep.equal({
       isAuthenticated: false, isAuthenticating: false, testProp: 'test'
     })
 
@@ -215,7 +215,7 @@ describe('connectedAuthWrapper', () => {
     wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(0)
-    expect(_.omit(wrapper.find(AuthenticatingComponent).props(), [ 'dispatch' ])).to.deep.equal({
+    expect(_.omit(wrapper.find(AuthenticatingComponent).props(), ['dispatch', 'location', 'params', 'preAuthAction', 'history'])).to.deep.equal({
       isAuthenticated: false, isAuthenticating: true, testProp: 'test'
     })
 
@@ -223,7 +223,7 @@ describe('connectedAuthWrapper', () => {
     wrapper.update()
 
     expect(wrapper.find(UnprotectedComponent).length).to.equal(1)
-    expect(_.omit(wrapper.find(UnprotectedComponent).props(), [ 'dispatch' ])).to.deep.equal({
+    expect(_.omit(wrapper.find(UnprotectedComponent).props(), ['dispatch', 'location', 'params', 'preAuthAction', 'history'])).to.deep.equal({
       isAuthenticated: true, isAuthenticating: false, testProp: 'test'
     })
   })
